@@ -118,13 +118,14 @@
         }
 
         // Función para dibujar las estrellas en el lienzo
-        function drawStars(alpha, beta, gamma) {
+        function drawStars(alpha, beta) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Dibujar todas las estrellas
             stars.forEach(star => {
-                const x = (canvas.width / 2) + (star.x - beta) * 10; // Alinear según el movimiento
-                const y = (canvas.height / 2) + (star.y - alpha) * 10; // Alinear según el movimiento
+                // Ajuste de las posiciones con el movimiento
+                const x = (canvas.width / 2) + (star.x - beta) * 10;
+                const y = (canvas.height / 2) + (star.y - alpha) * 10;
 
                 if (x > 0 && x < canvas.width && y > 0 && y < canvas.height) {
                     ctx.fillStyle = star.color;
@@ -147,9 +148,10 @@
         // Escuchar el evento de orientación del dispositivo
         if (window.DeviceOrientationEvent) {
             window.addEventListener('deviceorientation', (event) => {
-                currentAlpha = -event.alpha || 0;  // Invertir la dirección de la rotación horizontal
-                currentBeta = -event.beta || 0;    // Invertir la dirección de la rotación vertical
-                drawStars(currentAlpha, currentBeta, 0); // Dibujar las estrellas según la orientación
+                // Invertir correctamente los controles para que la dirección coincida con el movimiento
+                currentAlpha = event.alpha || 0;
+                currentBeta = event.beta || 0;
+                drawStars(currentAlpha, currentBeta); // Dibujar las estrellas según la orientación
             });
         } else {
             introText.textContent = 'Tu dispositivo no soporta detección de orientación.';
