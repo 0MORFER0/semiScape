@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semi Scape Room</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: #f4f4f9;
+            color: #333;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            width: 100%;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            text-align: center;
+            padding: 1rem;
+        }
+        .button {
+            display: inline-block;
+            margin: 1rem 0;
+            padding: 0.8rem 1.5rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .hidden {
+            display: none;
+        }
+        .responsive-image {
+            max-width: 100%;
+            height: auto;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 0.5rem;
+            }
+            .button {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Semi Scape Room</h1>
+    </header>
+
+    <div class="container" id="start-screen">
+        <h2>Bienvenidos al desafío</h2>
+        <p>Resuelve todos los enigmas para completar la misión. ¡Buena suerte!</p>
+        <button class="button" onclick="startGame()">Comenzar</button>
+    </div>
+
+    <div class="container hidden" id="level-1">
+        <h2>Nivel 1: Descifra el código</h2>
+        <p>El código está oculto en la siguiente pista:</p>
+        <p><strong>"¿Cuántas patas tienen 3 arañas?"</strong></p>
+        <input type="text" id="answer-1" placeholder="Escribe tu respuesta aquí">
+        <button class="button" onclick="checkAnswer1()">Enviar</button>
+        <p id="feedback-1"></p>
+    </div>
+
+    <div class="container hidden" id="level-2">
+        <h2>Nivel 2: Encuentra la palabra oculta</h2>
+        <p>Descifra el mensaje:</p>
+        <img src="https://via.placeholder.com/300x200" alt="Código visual" class="responsive-image">
+        <p><strong>Pista:</strong> Usa el alfabeto (A=1, B=2...)</p>
+        <input type="text" id="answer-2" placeholder="Escribe tu respuesta aquí">
+        <button class="button" onclick="checkAnswer2()">Enviar</button>
+        <p id="feedback-2"></p>
+    </div>
+
+    <div class="container hidden" id="win-screen">
+        <h2>¡Felicidades!</h2>
+        <p>Has completado todos los desafíos. ¡Buen trabajo, equipo!</p>
+    </div>
+
+    <script>
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('level-1').classList.remove('hidden');
+        }
+
+        function checkAnswer1() {
+            const answer = document.getElementById('answer-1').value.trim();
+            if (answer === '24') {
+                document.getElementById('level-1').classList.add('hidden');
+                document.getElementById('level-2').classList.remove('hidden');
+            } else {
+                document.getElementById('feedback-1').textContent = 'Respuesta incorrecta. Inténtalo de nuevo.';
+            }
+        }
+
+        function checkAnswer2() {
+            const answer = document.getElementById('answer-2').value.trim().toLowerCase();
+            if (answer === 'escape') {
+                document.getElementById('level-2').classList.add('hidden');
+                document.getElementById('win-screen').classList.remove('hidden');
+            } else {
+                document.getElementById('feedback-2').textContent = 'Respuesta incorrecta. Inténtalo de nuevo.';
+            }
+        }
+    </script>
+</body>
+</html>
