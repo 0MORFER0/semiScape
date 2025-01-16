@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Cofre Mágico</title>
+    <title>El Telescopio de las Estrellas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,11 +13,19 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: #fff;
+            background: black;
+            color: white;
+            overflow: hidden;
             text-align: center;
         }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
         .container {
+            position: relative;
+            z-index: 2;
             max-width: 90%;
         }
         h1 {
@@ -28,63 +36,98 @@
             font-size: 1.2rem;
             margin-bottom: 1.5rem;
         }
-        .chest {
-            width: 150px;
-            height: 150px;
-            margin: 0 auto;
-            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Treasure_chest_closed.svg/1024px-Treasure_chest_closed.svg.png') no-repeat center;
-            background-size: contain;
-        }
-        .open {
-            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Treasure_chest_open.svg/1024px-Treasure_chest_open.svg.png') no-repeat center;
-            background-size: contain;
+        #target {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: yellow;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
         }
     </style>
 </head>
 <body>
+    <canvas id="starCanvas"></canvas>
+    <div id="target"></div>
     <div class="container">
-        <h1>El Cofre Mágico</h1>
-        <p>Sacude tu dispositivo para abrir el cofre y descubrir el tesoro escondido.</p>
-        <div id="chest" class="chest"></div>
-        <p id="message"></p>
+        <h1>El Telescopio de las Estrellas</h1>
+        <p>Usa tu móvil para mover el telescopio y encontrar la estrella oculta.</p>
+        <p id="status">Buscando...</p>
     </div>
 
     <script>
-        let shakeThreshold = 15; // Umbral para detectar sacudidas
-        let lastTime = 0;
+        const canvas = document.getElementById('starCanvas');
+        const ctx = canvas.getContext('2d');
+        const target = document.getElementById('target');
+        const status = document.getElementById('status');
 
-        if (window.DeviceMotionEvent) {
-            window.addEventListener('devicemotion', (event) => {
-                const acceleration = event.acceleration;
-                const currentTime = Date.now();
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-                if ((currentTime - lastTime) > 100) { // Reducir frecuencia de detección
-                    lastTime = currentTime;
+        const stars = [];
+        const starCount = 200;
+        const targetPosition = { x: Math.random() * canvas.width, y: Math.random() * canvas.height };
 
-                    const delta = Math.sqrt(
-                        (acceleration.x || 0) ** 2 +
-                        (acceleration.y || 0) ** 2 +
-                        (acceleration.z || 0) ** 2
-                    );
+        target.style.left = `${targetPosition.x - 15}px`;
+        target.style.top = `${targetPosition.y - 15}px`;
 
-                    if (delta > shakeThreshold) {
-                        openChest();
-                    }
+        for (let i = 0; i < starCount; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2 + 1
+            });
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            stars.forEach(star => {
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', (event) => {
+                const alpha = event.alpha || 0; // Rotación alrededor del eje Z
+                const beta = event.beta || 0;   // Rotación alrededor del eje X
+                const gamma = event.gamma || 0; // Rotación alrededor del eje Y
+
+                // Mapeamos los valores del móvil a posiciones en pantalla
+                const x = canvas.width / 2 + (gamma * canvas.width / 90);
+                const y = canvas.height / 2 - (beta * canvas.height / 180);
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawStars();
+
+                // Dibujamos el área del telescopio
+                ctx.strokeStyle = 'yellow';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(x, y, 50, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Detectamos si el telescopio está alineado con la estrella
+                const dx = x - targetPosition.x;
+                const dy = y - targetPosition.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 50) {
+                    status.textContent = '¡Has encontrado la estrella oculta!';
+                    status.style.color = 'yellow';
+                } else {
+                    status.textContent = 'Buscando...';
+                    status.style.color = 'white';
                 }
             });
         } else {
-            document.getElementById('message').textContent = 'Tu dispositivo no soporta detección de movimiento.';
+            status.textContent = 'Tu dispositivo no soporta detección de orientación.';
         }
 
-        function openChest() {
-            const chest = document.getElementById('chest');
-            const message = document.getElementById('message');
-
-            if (!chest.classList.contains('open')) {
-                chest.classList.add('open');
-                message.textContent = '¡Has abierto el cofre y encontrado el tesoro escondido!';
-            }
-        }
+        drawStars();
     </script>
 </body>
 </html>
