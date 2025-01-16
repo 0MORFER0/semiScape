@@ -3,165 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Telescopio de las Estrellas</title>
+    <title>Simulación de Habitación 3D</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: black;
-            color: white;
             overflow: hidden;
-            text-align: center;
+            height: 100vh;
+            background: #000;
         }
         canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        .container {
-            position: relative;
-            z-index: 2;
-            max-width: 90%;
-        }
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            transition: all 1s ease-in-out;
-        }
-        p {
-            font-size: 1.2rem;
-            margin-bottom: 1.5rem;
-        }
-        .popup {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            display: none;
-            text-align: center;
-        }
-        .popup img {
-            max-width: 100%;
-            height: auto;
-        }
-        #centralPoint {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: red;
-            border-radius: 50%;
-            z-index: 5;
+            display: block;
         }
     </style>
 </head>
 <body>
-    <canvas id="starCanvas"></canvas>
-    <div class="container">
-        <h1 id="title">El Telescopio de las Estrellas</h1>
-        <p id="introText">Usa tu móvil para explorar las estrellas y encontrar las 3 constelaciones ocultas.</p>
-    </div>
-    <div id="popup" class="popup">
-        <h2 id="constellationName"></h2>
-        <img id="constellationImage" src="" alt="Constelación">
-    </div>
-    <div id="centralPoint"></div>
+    <canvas id="roomCanvas"></canvas>
 
     <script>
-        const canvas = document.getElementById('starCanvas');
+        const canvas = document.getElementById('roomCanvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        const popup = document.getElementById('popup');
-        const constellationName = document.getElementById('constellationName');
-        const constellationImage = document.getElementById('constellationImage');
-        const introText = document.getElementById('introText');
+        let alpha = 0;  // Ángulo de rotación (yaw)
+        let beta = 0;   // Ángulo de inclinación (pitch)
+        let gamma = 0;  // Ángulo de giro lateral (roll)
 
-        const stars = [];
-        const starCount = 1000; // Número total de estrellas
-        const targetStars = [];
-        const constellations = [
-            { name: "Orión", image: "https://example.com/orion.jpg" },
-            { name: "Casiopea", image: "https://example.com/cassiopeia.jpg" },
-            { name: "Andrómeda", image: "https://example.com/andromeda.jpg" }
-        ];
+        // Colores de las paredes y el techo/suelo
+        const colors = {
+            floor: 'white',
+            ceiling: 'gray',
+            leftWall: 'blue',
+            rightWall: 'red',
+            frontWall: 'green',
+            backWall: 'yellow',
+        };
 
-        // Crear estrellas
-        for (let i = 0; i < starCount; i++) {
-            stars.push({
-                x: Math.random() * 360,
-                y: Math.random() * 360,
-                size: Math.random() * 2 + 1,
-                color: 'white',
-                unique: false
-            });
-        }
-
-        // Asignar las 3 estrellas objetivo
-        while (targetStars.length < 3) {
-            const index = Math.floor(Math.random() * stars.length);
-            if (!stars[index].unique) {
-                stars[index].unique = true;
-                stars[index].color = 'blue';  // Estrellas objetivo en azul
-                stars[index].size = stars[index].size * 3; // Hacerlas 3 veces más grandes
-                targetStars.push(stars[index]);
-            }
-        }
-
-        // Función para dibujar las estrellas en el lienzo
-        function drawStars(alpha, beta) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Dibujar todas las estrellas
-            stars.forEach(star => {
-                // Ajuste de las posiciones con el movimiento
-                const x = (canvas.width / 2) + (star.x - beta) * 10;
-                const y = (canvas.height / 2) + (star.y - alpha) * 10;
-
-                if (x > 0 && x < canvas.width && y > 0 && y < canvas.height) {
-                    ctx.fillStyle = star.color;
-                    ctx.beginPath();
-                    ctx.arc(x, y, star.size, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            });
-
-            // Dibujar el punto central una sola vez
-            ctx.fillStyle = 'red';
-            ctx.beginPath();
-            ctx.arc(canvas.width / 2, canvas.height / 2, 5, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        let currentAlpha = 0;
-        let currentBeta = 0;
-
-        // Escuchar el evento de orientación del dispositivo
+        // Escuchar los eventos de orientación del dispositivo
         if (window.DeviceOrientationEvent) {
             window.addEventListener('deviceorientation', (event) => {
-                // Invertir correctamente los controles para que la dirección coincida con el movimiento
-                currentAlpha = event.alpha || 0;
-                currentBeta = event.beta || 0;
-                drawStars(currentAlpha, currentBeta); // Dibujar las estrellas según la orientación
+                // Obtenemos los ángulos de rotación
+                alpha = event.alpha || 0;
+                beta = event.beta || 0;
+                gamma = event.gamma || 0;
+                drawRoom();
             });
         } else {
-            introText.textContent = 'Tu dispositivo no soporta detección de orientación.';
+            alert('Tu dispositivo no soporta detección de orientación.');
         }
 
-        // Texto inicial desaparece después de 5 segundos
-        setTimeout(() => {
-            document.getElementById('title').style.display = 'none';
-            document.getElementById('introText').style.display = 'none';
-        }, 5000);
+        function drawRoom() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2); // Centro de la pantalla
+
+            // Calculamos la perspectiva para el efecto 3D
+            const perspective = 1000; // Distancia de perspectiva
+
+            // Paredes
+            drawWall(-500, -500, colors.frontWall, 0, 0, 1);  // Pared del frente
+            drawWall(500, -500, colors.backWall, 0, 0, -1);  // Pared del fondo
+            drawWall(-500, 500, colors.leftWall, 1, 0, 0);   // Pared izquierda
+            drawWall(500, 500, colors.rightWall, -1, 0, 0);   // Pared derecha
+
+            // Techo y suelo
+            drawFloorOrCeiling(perspective, colors.floor, 0, -1);  // Suelo
+            drawFloorOrCeiling(perspective, colors.ceiling, 0, 1); // Techo
+
+            ctx.restore();
+        }
+
+        // Función para dibujar una pared (rectángulo en perspectiva)
+        function drawWall(xOffset, yOffset, color, rotationX, rotationY, rotationZ) {
+            ctx.save();
+            ctx.rotateX(rotationX * beta * Math.PI / 180);
+            ctx.rotateY(rotationY * alpha * Math.PI / 180);
+            ctx.rotateZ(rotationZ * gamma * Math.PI / 180);
+
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(xOffset, yOffset);
+            ctx.lineTo(xOffset + 500, yOffset);
+            ctx.lineTo(xOffset + 500, yOffset + 500);
+            ctx.lineTo(xOffset, yOffset + 500);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // Función para dibujar el suelo o el techo
+        function drawFloorOrCeiling(perspective, color, rotateX, rotateY) {
+            ctx.save();
+            ctx.rotateX(rotateX * Math.PI / 180);
+            ctx.rotateY(rotateY * Math.PI / 180);
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(-perspective, -perspective);
+            ctx.lineTo(perspective, -perspective);
+            ctx.lineTo(perspective, perspective);
+            ctx.lineTo(-perspective, perspective);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // Iniciar el dibujo de la habitación
+        drawRoom();
     </script>
 </body>
 </html>
