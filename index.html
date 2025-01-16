@@ -36,14 +36,34 @@
             font-size: 1.2rem;
             margin-bottom: 1.5rem;
         }
+        .popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+            text-align: center;
+        }
+        .popup img {
+            max-width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
     <canvas id="starCanvas"></canvas>
     <div class="container">
         <h1>El Telescopio de las Estrellas</h1>
-        <p>Usa tu móvil para explorar las estrellas y encontrar el objeto oculto. Solo tienes 3 intentos.</p>
+        <p>Usa tu móvil para explorar las estrellas y encontrar las 3 constelaciones ocultas. Solo tienes 3 intentos por estrella.</p>
         <p id="status">Intentos restantes: 3</p>
+    </div>
+    <div id="popup" class="popup">
+        <h2 id="constellationName"></h2>
+        <img id="constellationImage" src="" alt="Constelación">
     </div>
 
     <script>
@@ -52,29 +72,48 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
+        const popup = document.getElementById('popup');
+        const constellationName = document.getElementById('constellationName');
+        const constellationImage = document.getElementById('constellationImage');
+
         const stars = [];
         const starCount = 500;
-        const targetStarIndex = Math.floor(Math.random() * starCount);
+        const targetStars = [];
+        const constellations = [
+            { name: "Orión", image: "https://example.com/orion.jpg" },
+            { name: "Casiopea", image: "https://example.com/cassiopeia.jpg" },
+            { name: "Andrómeda", image: "https://example.com/andromeda.jpg" }
+        ];
         let attemptsLeft = 3;
+        let foundCount = 0;
 
         for (let i = 0; i < starCount; i++) {
             stars.push({
                 x: Math.random() * 360,
                 y: Math.random() * 360,
-                size: i === targetStarIndex ? 5 : Math.random() * 2 + 1,
-                unique: i === targetStarIndex
+                size: Math.random() * 2 + 1,
+                color: 'white',
+                unique: false
             });
+        }
+
+        while (targetStars.length < 3) {
+            const index = Math.floor(Math.random() * stars.length);
+            if (!stars[index].unique) {
+                stars[index].unique = true;
+                stars[index].color = 'red';
+                targetStars.push(stars[index]);
+            }
         }
 
         function drawStars(alpha, beta, gamma) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'white';
-
             stars.forEach(star => {
                 const x = (canvas.width / 2) + (star.x - alpha) * 10;
                 const y = (canvas.height / 2) + (star.y - beta) * 10;
 
                 if (x > 0 && x < canvas.width && y > 0 && y < canvas.height) {
+                    ctx.fillStyle = star.color;
                     ctx.beginPath();
                     ctx.arc(x, y, star.size, 0, Math.PI * 2);
                     ctx.fill();
@@ -82,22 +121,43 @@
             });
         }
 
+        function showPopup(constellation) {
+            constellationName.textContent = constellation.name;
+            constellationImage.src = constellation.image;
+            popup.style.display = 'block';
+
+            setTimeout(() => {
+                popup.style.display = 'none';
+                attemptsLeft = 3;
+                document.getElementById('status').textContent = `Intentos restantes: ${attemptsLeft}`;
+
+                if (foundCount === 3) {
+                    document.getElementById('status').textContent = '¡Has encontrado todas las constelaciones!';
+                }
+            }, 6000);
+        }
+
         function handleTouch(event) {
-            if (attemptsLeft <= 0) return;
+            if (attemptsLeft <= 0 || foundCount === 3) return;
 
             const touchX = event.touches[0].clientX;
             const touchY = event.touches[0].clientY;
 
-            const targetStar = stars[targetStarIndex];
-            const targetX = (canvas.width / 2) + (targetStar.x - currentAlpha) * 10;
-            const targetY = (canvas.height / 2) + (targetStar.y - currentBeta) * 10;
+            const found = targetStars.some((targetStar, index) => {
+                const targetX = (canvas.width / 2) + (targetStar.x - currentAlpha) * 10;
+                const targetY = (canvas.height / 2) + (targetStar.y - currentBeta) * 10;
+                const distance = Math.sqrt((touchX - targetX) ** 2 + (touchY - targetY) ** 2);
 
-            const distance = Math.sqrt((touchX - targetX) ** 2 + (touchY - targetY) ** 2);
+                if (distance < 20) {
+                    showPopup(constellations[index]);
+                    targetStars.splice(index, 1);
+                    foundCount++;
+                    return true;
+                }
+                return false;
+            });
 
-            if (distance < 20) {
-                document.getElementById('status').textContent = '¡Encontraste la estrella especial!';
-                document.getElementById('status').style.color = 'yellow';
-            } else {
+            if (!found) {
                 attemptsLeft--;
                 if (attemptsLeft > 0) {
                     document.getElementById('status').textContent = `Intentos restantes: ${attemptsLeft}`;
