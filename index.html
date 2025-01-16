@@ -56,9 +56,6 @@
         }
         #centralPoint {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             width: 10px;
             height: 10px;
             background-color: red;
@@ -136,6 +133,12 @@
                     ctx.fill();
                 }
             });
+
+            // Dibujar el punto central
+            ctx.fillStyle = 'red';
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height / 2, 5, 0, Math.PI * 2);
+            ctx.fill();
         }
 
         function showPopup(constellation) {
@@ -191,8 +194,9 @@
 
         if (window.DeviceOrientationEvent) {
             window.addEventListener('deviceorientation', (event) => {
-                currentAlpha = event.alpha || 0;
-                currentBeta = event.beta || 0;
+                // Corregir la orientación (invertir los valores)
+                currentAlpha = -event.alpha || 0;  // Invertir la dirección de la rotación horizontal
+                currentBeta = -event.beta || 0;    // Invertir la dirección de la rotación vertical
                 currentGamma = event.gamma || 0;
                 drawStars(currentAlpha, currentBeta, currentGamma);
             });
@@ -202,13 +206,9 @@
 
         canvas.addEventListener('touchstart', handleTouch);
 
-        // Texto inicial
+        // Texto inicial desaparece después de 5 segundos
         setTimeout(() => {
-            document.getElementById('title').style.position = 'fixed';
-            document.getElementById('title').style.top = '0';
-            document.getElementById('title').style.fontSize = '1rem';
-            document.getElementById('title').style.marginBottom = '0.5rem';
-            document.getElementById('title').style.transition = 'all 1s ease-in-out';
+            document.getElementById('title').style.display = 'none';
         }, 5000);
     </script>
 </body>
