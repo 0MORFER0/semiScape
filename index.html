@@ -61,28 +61,19 @@
             border-radius: 50%;
             z-index: 5;
         }
-        #status {
-            position: fixed;
-            top: 10px;
-            width: 100%;
-            font-size: 1.2rem;
-            text-align: center;
-            z-index: 10;
-        }
     </style>
 </head>
 <body>
     <canvas id="starCanvas"></canvas>
     <div class="container">
         <h1 id="title">El Telescopio de las Estrellas</h1>
-        <p id="introText">Usa tu móvil para explorar las estrellas y encontrar las 3 constelaciones ocultas. Solo tienes 3 intentos por estrella.</p>
+        <p id="introText">Usa tu móvil para explorar las estrellas y encontrar las 3 constelaciones ocultas.</p>
     </div>
     <div id="popup" class="popup">
         <h2 id="constellationName"></h2>
         <img id="constellationImage" src="" alt="Constelación">
     </div>
     <div id="centralPoint"></div>
-    <div id="status">Intentos restantes: 3</div>
 
     <script>
         const canvas = document.getElementById('starCanvas');
@@ -94,20 +85,17 @@
         const constellationName = document.getElementById('constellationName');
         const constellationImage = document.getElementById('constellationImage');
         const introText = document.getElementById('introText');
-        const statusText = document.getElementById('status');
 
         const stars = [];
-        const starCount = 1000; // Aumentamos el número de estrellas
+        const starCount = 1000; // Número total de estrellas
         const targetStars = [];
         const constellations = [
             { name: "Orión", image: "https://example.com/orion.jpg" },
             { name: "Casiopea", image: "https://example.com/cassiopeia.jpg" },
             { name: "Andrómeda", image: "https://example.com/andromeda.jpg" }
         ];
-        let attemptsLeft = 3;
-        let foundCount = 0;
 
-        // Crear más estrellas
+        // Crear estrellas
         for (let i = 0; i < starCount; i++) {
             stars.push({
                 x: Math.random() * 360,
@@ -129,11 +117,14 @@
             }
         }
 
+        // Función para dibujar las estrellas en el lienzo
         function drawStars(alpha, beta, gamma) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Dibujar todas las estrellas
             stars.forEach(star => {
-                const x = (canvas.width / 2) + (star.x - alpha) * 10;
-                const y = (canvas.height / 2) + (star.y - beta) * 10;
+                const x = (canvas.width / 2) + (star.x - beta) * 10; // Alinear según el movimiento
+                const y = (canvas.height / 2) + (star.y - alpha) * 10; // Alinear según el movimiento
 
                 if (x > 0 && x < canvas.width && y > 0 && y < canvas.height) {
                     ctx.fillStyle = star.color;
@@ -150,70 +141,19 @@
             ctx.fill();
         }
 
-        function showPopup(constellation) {
-            constellationName.textContent = constellation.name;
-            constellationImage.src = constellation.image;
-            popup.style.display = 'block';
-
-            setTimeout(() => {
-                popup.style.display = 'none';
-                attemptsLeft = 3;
-                statusText.textContent = `Intentos restantes: ${attemptsLeft}`;
-
-                if (foundCount === 3) {
-                    statusText.textContent = '¡Has encontrado todas las constelaciones!';
-                }
-            }, 6000);
-        }
-
-        function handleTouch(event) {
-            if (attemptsLeft <= 0 || foundCount === 3) return;
-
-            const touchX = event.touches[0].clientX;
-            const touchY = event.touches[0].clientY;
-
-            const found = targetStars.some((targetStar, index) => {
-                const targetX = (canvas.width / 2) + (targetStar.x - currentAlpha) * 10;
-                const targetY = (canvas.height / 2) + (targetStar.y - currentBeta) * 10;
-                const distance = Math.sqrt((touchX - targetX) ** 2 + (touchY - targetY) ** 2);
-
-                if (distance < 20) {
-                    showPopup(constellations[index]);
-                    targetStars.splice(index, 1);
-                    foundCount++;
-                    return true;
-                }
-                return false;
-            });
-
-            if (!found) {
-                attemptsLeft--;
-                if (attemptsLeft > 0) {
-                    statusText.textContent = `Intentos restantes: ${attemptsLeft}`;
-                } else {
-                    statusText.textContent = '¡Te quedaste sin intentos!';
-                    statusText.style.color = 'red';
-                }
-            }
-        }
-
         let currentAlpha = 0;
         let currentBeta = 0;
-        let currentGamma = 0;
 
+        // Escuchar el evento de orientación del dispositivo
         if (window.DeviceOrientationEvent) {
             window.addEventListener('deviceorientation', (event) => {
-                // Corregir la orientación (invertir los valores)
                 currentAlpha = -event.alpha || 0;  // Invertir la dirección de la rotación horizontal
                 currentBeta = -event.beta || 0;    // Invertir la dirección de la rotación vertical
-                currentGamma = event.gamma || 0;
-                drawStars(currentAlpha, currentBeta, currentGamma);
+                drawStars(currentAlpha, currentBeta, 0); // Dibujar las estrellas según la orientación
             });
         } else {
-            statusText.textContent = 'Tu dispositivo no soporta detección de orientación.';
+            introText.textContent = 'Tu dispositivo no soporta detección de orientación.';
         }
-
-        canvas.addEventListener('touchstart', handleTouch);
 
         // Texto inicial desaparece después de 5 segundos
         setTimeout(() => {
