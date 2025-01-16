@@ -75,9 +75,34 @@
     camera.position.y = 0;
     camera.position.x = 0;
 
-    // Manejar los movimientos del dispositivo
+    // Inicializar las coordenadas
     let alpha = 0, beta = 0, gamma = 0;
+    let initialAlpha = 0, initialBeta = 0, initialGamma = 0;
 
+    // Función para almacenar la orientación inicial
+    function setInitialOrientation(event) {
+        initialAlpha = event.alpha || 0;
+        initialBeta = event.beta || 0;
+        initialGamma = event.gamma || 0;
+        window.removeEventListener('deviceorientation', setInitialOrientation);
+    }
+
+    // Establecer la orientación inicial cuando la página carga
+    window.addEventListener('deviceorientation', setInitialOrientation);
+
+    // Manejar los movimientos del dispositivo
+    function updateCamera() {
+        // Ajustar la cámara según los valores de orientación del dispositivo, restando la orientación inicial
+        const adjustedAlpha = (alpha - initialAlpha) * (Math.PI / 180);   // Rotación horizontal
+        const adjustedBeta = (beta - initialBeta) * (Math.PI / 180);     // Inclinación
+        const adjustedGamma = (gamma - initialGamma) * (Math.PI / 180);   // Rotación lateral
+
+        camera.rotation.x = adjustedBeta;   
+        camera.rotation.y = adjustedAlpha;  
+        camera.rotation.z = adjustedGamma;  
+    }
+
+    // Manejar la orientación del dispositivo
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', (event) => {
             alpha = event.alpha || 0;
@@ -85,13 +110,6 @@
             gamma = event.gamma || 0;
             updateCamera();
         });
-    }
-
-    function updateCamera() {
-        // Ajustar la cámara según los valores de orientación del dispositivo
-        camera.rotation.x = beta * (Math.PI / 180);   // Inclinación
-        camera.rotation.y = alpha * (Math.PI / 180);  // Rotación horizontal
-        camera.rotation.z = gamma * (Math.PI / 180);  // Rotación lateral
     }
 
     // Función para renderizar la escena
