@@ -36,98 +36,94 @@
             font-size: 1.2rem;
             margin-bottom: 1.5rem;
         }
-        #target {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background-color: yellow;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 1;
-        }
     </style>
 </head>
 <body>
     <canvas id="starCanvas"></canvas>
-    <div id="target"></div>
     <div class="container">
         <h1>El Telescopio de las Estrellas</h1>
-        <p>Usa tu móvil para mover el telescopio y encontrar la estrella oculta.</p>
-        <p id="status">Buscando...</p>
+        <p>Usa tu móvil para explorar las estrellas y encontrar el objeto oculto. Solo tienes 3 intentos.</p>
+        <p id="status">Intentos restantes: 3</p>
     </div>
 
     <script>
         const canvas = document.getElementById('starCanvas');
         const ctx = canvas.getContext('2d');
-        const target = document.getElementById('target');
-        const status = document.getElementById('status');
-
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
         const stars = [];
-        const starCount = 200;
-        const targetPosition = { x: Math.random() * canvas.width, y: Math.random() * canvas.height };
-
-        target.style.left = `${targetPosition.x - 15}px`;
-        target.style.top = `${targetPosition.y - 15}px`;
+        const starCount = 500;
+        const targetStarIndex = Math.floor(Math.random() * starCount);
+        let attemptsLeft = 3;
 
         for (let i = 0; i < starCount; i++) {
             stars.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                size: Math.random() * 2 + 1
+                x: Math.random() * 360,
+                y: Math.random() * 360,
+                size: i === targetStarIndex ? 5 : Math.random() * 2 + 1,
+                unique: i === targetStarIndex
             });
         }
 
-        function drawStars() {
+        function drawStars(alpha, beta, gamma) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'white';
+
             stars.forEach(star => {
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-                ctx.fill();
+                const x = (canvas.width / 2) + (star.x - alpha) * 10;
+                const y = (canvas.height / 2) + (star.y - beta) * 10;
+
+                if (x > 0 && x < canvas.width && y > 0 && y < canvas.height) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, star.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
             });
         }
+
+        function handleTouch(event) {
+            if (attemptsLeft <= 0) return;
+
+            const touchX = event.touches[0].clientX;
+            const touchY = event.touches[0].clientY;
+
+            const targetStar = stars[targetStarIndex];
+            const targetX = (canvas.width / 2) + (targetStar.x - currentAlpha) * 10;
+            const targetY = (canvas.height / 2) + (targetStar.y - currentBeta) * 10;
+
+            const distance = Math.sqrt((touchX - targetX) ** 2 + (touchY - targetY) ** 2);
+
+            if (distance < 20) {
+                document.getElementById('status').textContent = '¡Encontraste la estrella especial!';
+                document.getElementById('status').style.color = 'yellow';
+            } else {
+                attemptsLeft--;
+                if (attemptsLeft > 0) {
+                    document.getElementById('status').textContent = `Intentos restantes: ${attemptsLeft}`;
+                } else {
+                    document.getElementById('status').textContent = '¡Te quedaste sin intentos!';
+                    document.getElementById('status').style.color = 'red';
+                }
+            }
+        }
+
+        let currentAlpha = 0;
+        let currentBeta = 0;
+        let currentGamma = 0;
 
         if (window.DeviceOrientationEvent) {
             window.addEventListener('deviceorientation', (event) => {
-                const alpha = event.alpha || 0; // Rotación alrededor del eje Z
-                const beta = event.beta || 0;   // Rotación alrededor del eje X
-                const gamma = event.gamma || 0; // Rotación alrededor del eje Y
-
-                // Mapeamos los valores del móvil a posiciones en pantalla
-                const x = canvas.width / 2 + (gamma * canvas.width / 90);
-                const y = canvas.height / 2 - (beta * canvas.height / 180);
-
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                drawStars();
-
-                // Dibujamos el área del telescopio
-                ctx.strokeStyle = 'yellow';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.arc(x, y, 50, 0, Math.PI * 2);
-                ctx.stroke();
-
-                // Detectamos si el telescopio está alineado con la estrella
-                const dx = x - targetPosition.x;
-                const dy = y - targetPosition.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < 50) {
-                    status.textContent = '¡Has encontrado la estrella oculta!';
-                    status.style.color = 'yellow';
-                } else {
-                    status.textContent = 'Buscando...';
-                    status.style.color = 'white';
-                }
+                currentAlpha = event.alpha || 0;
+                currentBeta = event.beta || 0;
+                currentGamma = event.gamma || 0;
+                drawStars(currentAlpha, currentBeta, currentGamma);
             });
         } else {
-            status.textContent = 'Tu dispositivo no soporta detección de orientación.';
+            document.getElementById('status').textContent = 'Tu dispositivo no soporta detección de orientación.';
         }
 
-        drawStars();
+        canvas.addEventListener('touchstart', handleTouch);
     </script>
 </body>
 </html>
