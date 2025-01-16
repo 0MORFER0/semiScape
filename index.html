@@ -27,7 +27,6 @@
             position: relative;
             z-index: 2;
             max-width: 90%;
-            transition: all 1s ease-in-out;
         }
         h1 {
             font-size: 2rem;
@@ -62,20 +61,28 @@
             border-radius: 50%;
             z-index: 5;
         }
+        #status {
+            position: fixed;
+            top: 10px;
+            width: 100%;
+            font-size: 1.2rem;
+            text-align: center;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
     <canvas id="starCanvas"></canvas>
     <div class="container">
         <h1 id="title">El Telescopio de las Estrellas</h1>
-        <p>Usa tu móvil para explorar las estrellas y encontrar las 3 constelaciones ocultas. Solo tienes 3 intentos por estrella.</p>
-        <p id="status">Intentos restantes: 3</p>
+        <p id="introText">Usa tu móvil para explorar las estrellas y encontrar las 3 constelaciones ocultas. Solo tienes 3 intentos por estrella.</p>
     </div>
     <div id="popup" class="popup">
         <h2 id="constellationName"></h2>
         <img id="constellationImage" src="" alt="Constelación">
     </div>
     <div id="centralPoint"></div>
+    <div id="status">Intentos restantes: 3</div>
 
     <script>
         const canvas = document.getElementById('starCanvas');
@@ -86,6 +93,8 @@
         const popup = document.getElementById('popup');
         const constellationName = document.getElementById('constellationName');
         const constellationImage = document.getElementById('constellationImage');
+        const introText = document.getElementById('introText');
+        const statusText = document.getElementById('status');
 
         const stars = [];
         const starCount = 1000; // Aumentamos el número de estrellas
@@ -134,7 +143,7 @@
                 }
             });
 
-            // Dibujar el punto central
+            // Dibujar el punto central una sola vez
             ctx.fillStyle = 'red';
             ctx.beginPath();
             ctx.arc(canvas.width / 2, canvas.height / 2, 5, 0, Math.PI * 2);
@@ -149,10 +158,10 @@
             setTimeout(() => {
                 popup.style.display = 'none';
                 attemptsLeft = 3;
-                document.getElementById('status').textContent = `Intentos restantes: ${attemptsLeft}`;
+                statusText.textContent = `Intentos restantes: ${attemptsLeft}`;
 
                 if (foundCount === 3) {
-                    document.getElementById('status').textContent = '¡Has encontrado todas las constelaciones!';
+                    statusText.textContent = '¡Has encontrado todas las constelaciones!';
                 }
             }, 6000);
         }
@@ -180,10 +189,10 @@
             if (!found) {
                 attemptsLeft--;
                 if (attemptsLeft > 0) {
-                    document.getElementById('status').textContent = `Intentos restantes: ${attemptsLeft}`;
+                    statusText.textContent = `Intentos restantes: ${attemptsLeft}`;
                 } else {
-                    document.getElementById('status').textContent = '¡Te quedaste sin intentos!';
-                    document.getElementById('status').style.color = 'red';
+                    statusText.textContent = '¡Te quedaste sin intentos!';
+                    statusText.style.color = 'red';
                 }
             }
         }
@@ -201,7 +210,7 @@
                 drawStars(currentAlpha, currentBeta, currentGamma);
             });
         } else {
-            document.getElementById('status').textContent = 'Tu dispositivo no soporta detección de orientación.';
+            statusText.textContent = 'Tu dispositivo no soporta detección de orientación.';
         }
 
         canvas.addEventListener('touchstart', handleTouch);
@@ -209,6 +218,7 @@
         // Texto inicial desaparece después de 5 segundos
         setTimeout(() => {
             document.getElementById('title').style.display = 'none';
+            document.getElementById('introText').style.display = 'none';
         }, 5000);
     </script>
 </body>
