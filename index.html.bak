@@ -3,23 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semi Scape Room</title>
+    <title>Detección de Giro del Móvil</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            overflow: hidden;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #fff;
+            text-align: center;
         }
         .container {
-            text-align: center;
-            padding: 1rem;
             max-width: 90%;
         }
         h1 {
@@ -27,74 +25,47 @@
             margin-bottom: 1rem;
         }
         p {
-            font-size: 1rem;
+            font-size: 1.2rem;
             margin-bottom: 1.5rem;
         }
-        .input-container {
-            margin-top: 1rem;
-        }
-        input {
-            padding: 0.8rem;
-            font-size: 1rem;
-            border-radius: 5px;
-            border: none;
-            outline: none;
-            width: 80%;
-            max-width: 300px;
-            margin-bottom: 1rem;
-        }
-        button {
-            padding: 0.8rem 1.5rem;
-            font-size: 1rem;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .hidden {
-            display: none;
+        .highlight {
+            color: #00ff00;
         }
     </style>
 </head>
 <body>
-    <div class="container" id="puzzle-container">
-        <h1>¡Descifra el Enigma!</h1>
-        <p>"El código para continuar solo se revelará si giras tu dispositivo y resuelves la pista."</p>
-        <p id="hint" class="hidden">Pista: El código es la suma de 123 y 456.</p>
-        <div class="input-container">
-            <input type="text" id="answer" placeholder="Escribe tu respuesta aquí">
-            <button onclick="checkAnswer()">Enviar</button>
-        </div>
-        <p id="feedback"></p>
+    <div class="container">
+        <h1>Detección de Giro del Móvil</h1>
+        <p>Gira tu dispositivo para interactuar con el enigma.</p>
+        <p>Estado: <span id="rotation-status">Esperando...</span></p>
+        <p id="rotation-data" class="highlight"></p>
     </div>
 
     <script>
-        // Detectar si el dispositivo se gira
-        window.addEventListener('orientationchange', () => {
-            const hint = document.getElementById('hint');
-            if (window.orientation === 90 || window.orientation === -90) {
-                // Mostrar la pista si el dispositivo está en modo horizontal
-                hint.classList.remove('hidden');
-            } else {
-                hint.classList.add('hidden');
-            }
-        });
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', (event) => {
+                // Obtenemos las rotaciones del dispositivo
+                const alpha = Math.round(event.alpha); // Rotación alrededor del eje Z
+                const beta = Math.round(event.beta);   // Rotación alrededor del eje X
+                const gamma = Math.round(event.gamma); // Rotación alrededor del eje Y
 
-        function checkAnswer() {
-            const answer = document.getElementById('answer').value.trim();
-            const feedback = document.getElementById('feedback');
+                // Mostramos la información en pantalla
+                document.getElementById('rotation-data').textContent =
+                    `Alpha (Z): ${alpha}° | Beta (X): ${beta}° | Gamma (Y): ${gamma}°`;
 
-            if (answer === '579') {
-                feedback.textContent = '¡Correcto! Has resuelto el enigma.';
-                feedback.style.color = 'lightgreen';
-            } else {
-                feedback.textContent = 'Respuesta incorrecta. Inténtalo de nuevo.';
-                feedback.style.color = 'red';
-            }
+                // Detectamos si hay giro activo
+                const rotationStatus = document.getElementById('rotation-status');
+                if (Math.abs(beta) > 20 || Math.abs(gamma) > 20) {
+                    rotationStatus.textContent = '¡Dispositivo en movimiento!';
+                    rotationStatus.style.color = '#00ff00';
+                } else {
+                    rotationStatus.textContent = 'Dispositivo estático.';
+                    rotationStatus.style.color = '#ff0000';
+                }
+            });
+        } else {
+            document.getElementById('rotation-status').textContent =
+                'El dispositivo no soporta el API de orientación.';
         }
     </script>
 </body>
