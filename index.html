@@ -22,12 +22,14 @@
 <script>
     // Configuración básica de la escena 3D
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);  // Aumento del rango de visión
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Crear las paredes y el techo/suelo
+    // Aumentar el tamaño de la habitación (paredes, suelo, techo)
+    const roomSize = 5000; // Tamaño de la habitación (mayor que antes)
+
     const materials = {
         floor: new THREE.MeshBasicMaterial({ color: 0xffffff }),
         ceiling: new THREE.MeshBasicMaterial({ color: 0x808080 }),
@@ -38,36 +40,36 @@
     };
 
     // Crear las paredes
-    const wallGeometry = new THREE.PlaneGeometry(1000, 1000);
-    const floorGeometry = new THREE.PlaneGeometry(1000, 1000);
+    const wallGeometry = new THREE.PlaneGeometry(roomSize, roomSize);
+    const floorGeometry = new THREE.PlaneGeometry(roomSize, roomSize);
     
     const frontWall = new THREE.Mesh(wallGeometry, materials.frontWall);
-    frontWall.position.z = -500;
+    frontWall.position.z = -roomSize / 2;
     scene.add(frontWall);
 
     const backWall = new THREE.Mesh(wallGeometry, materials.backWall);
-    backWall.position.z = 500;
+    backWall.position.z = roomSize / 2;
     scene.add(backWall);
 
     const leftWall = new THREE.Mesh(wallGeometry, materials.leftWall);
     leftWall.rotation.y = Math.PI / 2;
-    leftWall.position.x = -500;
+    leftWall.position.x = -roomSize / 2;
     scene.add(leftWall);
 
     const rightWall = new THREE.Mesh(wallGeometry, materials.rightWall);
     rightWall.rotation.y = -Math.PI / 2;
-    rightWall.position.x = 500;
+    rightWall.position.x = roomSize / 2;
     scene.add(rightWall);
 
     // Techo y Suelo
     const floor = new THREE.Mesh(floorGeometry, materials.floor);
     floor.rotation.x = -Math.PI / 2;
-    floor.position.y = -500;
+    floor.position.y = -roomSize / 2;
     scene.add(floor);
 
     const ceiling = new THREE.Mesh(floorGeometry, materials.ceiling);
     ceiling.rotation.x = Math.PI / 2;
-    ceiling.position.y = 500;
+    ceiling.position.y = roomSize / 2;
     scene.add(ceiling);
 
     // Configuración de la cámara
