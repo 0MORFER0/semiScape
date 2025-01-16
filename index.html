@@ -27,10 +27,12 @@
             position: relative;
             z-index: 2;
             max-width: 90%;
+            transition: all 1s ease-in-out;
         }
         h1 {
             font-size: 2rem;
             margin-bottom: 1rem;
+            transition: all 1s ease-in-out;
         }
         p {
             font-size: 1.2rem;
@@ -57,7 +59,7 @@
 <body>
     <canvas id="starCanvas"></canvas>
     <div class="container">
-        <h1>El Telescopio de las Estrellas</h1>
+        <h1 id="title">El Telescopio de las Estrellas</h1>
         <p>Usa tu móvil para explorar las estrellas y encontrar las 3 constelaciones ocultas. Solo tienes 3 intentos por estrella.</p>
         <p id="status">Intentos restantes: 3</p>
     </div>
@@ -87,6 +89,7 @@
         let attemptsLeft = 3;
         let foundCount = 0;
 
+        // Crear estrellas
         for (let i = 0; i < starCount; i++) {
             stars.push({
                 x: Math.random() * 360,
@@ -97,11 +100,13 @@
             });
         }
 
+        // Asignar las 3 estrellas objetivo
         while (targetStars.length < 3) {
             const index = Math.floor(Math.random() * stars.length);
             if (!stars[index].unique) {
                 stars[index].unique = true;
-                stars[index].color = 'red';
+                stars[index].color = 'blue';  // Estrellas objetivo en azul
+                stars[index].size = stars[index].size * 3; // Hacerlas 3 veces más grandes
                 targetStars.push(stars[index]);
             }
         }
@@ -184,6 +189,15 @@
         }
 
         canvas.addEventListener('touchstart', handleTouch);
+
+        // Texto inicial
+        setTimeout(() => {
+            document.getElementById('title').style.position = 'absolute';
+            document.getElementById('title').style.top = '0';
+            document.getElementById('title').style.fontSize = '1rem';
+            document.getElementById('title').style.marginBottom = '0.5rem';
+            document.getElementById('title').style.transition = 'all 1s ease-in-out';
+        }, 5000);
     </script>
 </body>
 </html>
