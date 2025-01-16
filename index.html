@@ -54,6 +54,17 @@
             max-width: 100%;
             height: auto;
         }
+        #centralPoint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+            z-index: 5;
+        }
     </style>
 </head>
 <body>
@@ -67,6 +78,7 @@
         <h2 id="constellationName"></h2>
         <img id="constellationImage" src="" alt="Constelación">
     </div>
+    <div id="centralPoint"></div>
 
     <script>
         const canvas = document.getElementById('starCanvas');
@@ -79,7 +91,7 @@
         const constellationImage = document.getElementById('constellationImage');
 
         const stars = [];
-        const starCount = 500;
+        const starCount = 1000; // Aumentamos el número de estrellas
         const targetStars = [];
         const constellations = [
             { name: "Orión", image: "https://example.com/orion.jpg" },
@@ -89,7 +101,7 @@
         let attemptsLeft = 3;
         let foundCount = 0;
 
-        // Crear estrellas
+        // Crear más estrellas
         for (let i = 0; i < starCount; i++) {
             stars.push({
                 x: Math.random() * 360,
@@ -192,7 +204,7 @@
 
         // Texto inicial
         setTimeout(() => {
-            document.getElementById('title').style.position = 'absolute';
+            document.getElementById('title').style.position = 'fixed';
             document.getElementById('title').style.top = '0';
             document.getElementById('title').style.fontSize = '1rem';
             document.getElementById('title').style.marginBottom = '0.5rem';
