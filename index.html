@@ -9,107 +9,99 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            height: 100vh;
-            background: #000;
         }
         canvas {
             display: block;
         }
     </style>
+    <!-- Incluimos Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-    <canvas id="roomCanvas"></canvas>
 
-    <script>
-        const canvas = document.getElementById('roomCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+<script>
+    // Configuración básica de la escena 3D
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
-        let alpha = 0;  // Ángulo de rotación (yaw)
-        let beta = 0;   // Ángulo de inclinación (pitch)
-        let gamma = 0;  // Ángulo de giro lateral (roll)
+    // Crear las paredes y el techo/suelo
+    const materials = {
+        floor: new THREE.MeshBasicMaterial({ color: 0xffffff }),
+        ceiling: new THREE.MeshBasicMaterial({ color: 0x808080 }),
+        leftWall: new THREE.MeshBasicMaterial({ color: 0x0000ff }),
+        rightWall: new THREE.MeshBasicMaterial({ color: 0xff0000 }),
+        frontWall: new THREE.MeshBasicMaterial({ color: 0x00ff00 }),
+        backWall: new THREE.MeshBasicMaterial({ color: 0xffff00 }),
+    };
 
-        // Colores de las paredes y el techo/suelo
-        const colors = {
-            floor: 'white',
-            ceiling: 'gray',
-            leftWall: 'blue',
-            rightWall: 'red',
-            frontWall: 'green',
-            backWall: 'yellow',
-        };
+    // Crear las paredes
+    const wallGeometry = new THREE.PlaneGeometry(1000, 1000);
+    const floorGeometry = new THREE.PlaneGeometry(1000, 1000);
+    
+    const frontWall = new THREE.Mesh(wallGeometry, materials.frontWall);
+    frontWall.position.z = -500;
+    scene.add(frontWall);
 
-        // Escuchar los eventos de orientación del dispositivo
-        if (window.DeviceOrientationEvent) {
-            window.addEventListener('deviceorientation', (event) => {
-                // Obtenemos los ángulos de rotación
-                alpha = event.alpha || 0;
-                beta = event.beta || 0;
-                gamma = event.gamma || 0;
-                drawRoom();
-            });
-        } else {
-            alert('Tu dispositivo no soporta detección de orientación.');
-        }
+    const backWall = new THREE.Mesh(wallGeometry, materials.backWall);
+    backWall.position.z = 500;
+    scene.add(backWall);
 
-        function drawRoom() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.save();
-            ctx.translate(canvas.width / 2, canvas.height / 2); // Centro de la pantalla
+    const leftWall = new THREE.Mesh(wallGeometry, materials.leftWall);
+    leftWall.rotation.y = Math.PI / 2;
+    leftWall.position.x = -500;
+    scene.add(leftWall);
 
-            // Calculamos la perspectiva para el efecto 3D
-            const perspective = 1000; // Distancia de perspectiva
+    const rightWall = new THREE.Mesh(wallGeometry, materials.rightWall);
+    rightWall.rotation.y = -Math.PI / 2;
+    rightWall.position.x = 500;
+    scene.add(rightWall);
 
-            // Paredes
-            drawWall(-500, -500, colors.frontWall, 0, 0, 1);  // Pared del frente
-            drawWall(500, -500, colors.backWall, 0, 0, -1);  // Pared del fondo
-            drawWall(-500, 500, colors.leftWall, 1, 0, 0);   // Pared izquierda
-            drawWall(500, 500, colors.rightWall, -1, 0, 0);   // Pared derecha
+    // Techo y Suelo
+    const floor = new THREE.Mesh(floorGeometry, materials.floor);
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -500;
+    scene.add(floor);
 
-            // Techo y suelo
-            drawFloorOrCeiling(perspective, colors.floor, 0, -1);  // Suelo
-            drawFloorOrCeiling(perspective, colors.ceiling, 0, 1); // Techo
+    const ceiling = new THREE.Mesh(floorGeometry, materials.ceiling);
+    ceiling.rotation.x = Math.PI / 2;
+    ceiling.position.y = 500;
+    scene.add(ceiling);
 
-            ctx.restore();
-        }
+    // Configuración de la cámara
+    camera.position.z = 0;
+    camera.position.y = 0;
+    camera.position.x = 0;
 
-        // Función para dibujar una pared (rectángulo en perspectiva)
-        function drawWall(xOffset, yOffset, color, rotationX, rotationY, rotationZ) {
-            ctx.save();
-            ctx.rotateX(rotationX * beta * Math.PI / 180);
-            ctx.rotateY(rotationY * alpha * Math.PI / 180);
-            ctx.rotateZ(rotationZ * gamma * Math.PI / 180);
+    // Manejar los movimientos del dispositivo
+    let alpha = 0, beta = 0, gamma = 0;
 
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.moveTo(xOffset, yOffset);
-            ctx.lineTo(xOffset + 500, yOffset);
-            ctx.lineTo(xOffset + 500, yOffset + 500);
-            ctx.lineTo(xOffset, yOffset + 500);
-            ctx.closePath();
-            ctx.fill();
-            ctx.restore();
-        }
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', (event) => {
+            alpha = event.alpha || 0;
+            beta = event.beta || 0;
+            gamma = event.gamma || 0;
+            updateCamera();
+        });
+    }
 
-        // Función para dibujar el suelo o el techo
-        function drawFloorOrCeiling(perspective, color, rotateX, rotateY) {
-            ctx.save();
-            ctx.rotateX(rotateX * Math.PI / 180);
-            ctx.rotateY(rotateY * Math.PI / 180);
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.moveTo(-perspective, -perspective);
-            ctx.lineTo(perspective, -perspective);
-            ctx.lineTo(perspective, perspective);
-            ctx.lineTo(-perspective, perspective);
-            ctx.closePath();
-            ctx.fill();
-            ctx.restore();
-        }
+    function updateCamera() {
+        // Ajustar la cámara según los valores de orientación del dispositivo
+        camera.rotation.x = beta * (Math.PI / 180);   // Inclinación
+        camera.rotation.y = alpha * (Math.PI / 180);  // Rotación horizontal
+        camera.rotation.z = gamma * (Math.PI / 180);  // Rotación lateral
+    }
 
-        // Iniciar el dibujo de la habitación
-        drawRoom();
-    </script>
+    // Función para renderizar la escena
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
+
+    animate();
+</script>
+
 </body>
 </html>
