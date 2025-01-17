@@ -3,219 +3,126 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Escape Room - Desafío</title>
+  <title>Juego - Desafío de Colores</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-color: #2d3436;
-      color: #ffffff;
       text-align: center;
-      overflow: hidden;
     }
-
     .container {
       max-width: 90%;
-      display: none;
     }
-
-    #colorTable, #legend {
-      display: none;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+      gap: 5px;
+      margin-bottom: 20px;
     }
-
-    #colorTable table {
-      margin: 0 auto;
-      border-collapse: collapse;
-    }
-
-    #colorTable td {
-      width: 50px;
-      height: 50px;
-      border: 1px solid #ffffff;
-    }
-
-    #legend {
-      font-size: 1.2em;
-      text-align: left;
+    .grid div {
+      padding: 20px;
+      border-radius: 5px;
+      color: #fff;
+      font-weight: bold;
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
+      align-items: center;
     }
-
-    #legend .legend-item {
-      margin: 5px;
-      padding: 10px;
-      background-color: #3b3b3b;
-      border-radius: 5px;
-      color: #ffffff;
-    }
-
-    .input-container {
-      margin-top: 20px;
-    }
-
-    input[type="text"] {
-      width: 80%;
-      padding: 10px;
-      font-size: 1em;
-      border: none;
-      border-radius: 5px;
-      text-align: center;
-    }
-
-    button {
-      margin-top: 10px;
-      background-color: #0984e3;
-      color: #ffffff;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      font-size: 1em;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #74b9ff;
-    }
-
     #message {
       margin-top: 20px;
-      font-size: 1.1em;
-    }
-
-    .hint {
-      margin-bottom: 20px;
-      font-size: 1.2em;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Descifra el mensaje</h1>
-    <div class="hint"></div>
-    <div id="colorTable"></div>
-    <div id="legend"></div>
-    <div class="input-container">
-      <input id="answer" type="text" placeholder="Escribe tu respuesta aquí...">
-      <button onclick="checkAnswer()">Comprobar</button>
-      <div id="message"></div>
-    </div>
+    <h1>Desafío de Colores</h1>
+    <div id="colorGrid" class="grid"></div>
+    <input id="answer" type="text" placeholder="Escribe tu respuesta aquí...">
+    <button onclick="checkAnswer()">Comprobar</button>
+    <div id="message"></div>
   </div>
 
   <script>
-    // Configuración central
-    const initialHint = "Un cambio de perspectiva siempre es bueno..";
-    const encryptedMessage = "..salvo que tardes en verlo";
-    const colorMapping = ["red", "orange", "yellow", "green", "purple", "cyan", "pink"];
-    const alphabet = "abcdefghijklmnopqrstuvwxyz";
+    const encryptedMessage = "salvo que tardes en verlo"; // Frase codificada
+    const colorMapping = {
+      "s": "#1abc9c", "a": "#2ecc71", "l": "#3498db", "v": "#9b59b6",
+      "o": "#34495e", "q": "#f1c40f", "u": "#e67e22", "e": "#e74c3c",
+      "t": "#95a5a6", "r": "#d35400", "d": "#7f8c8d", "n": "#8e44ad"
+    };
 
-    // Asignar letras a colores de forma automática
-    const letterToColor = {};
-    let currentColorIndex = 0;
+    const apiUrl = "https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/respuestas";
 
-    for (const letter of encryptedMessage.replace(/[^a-z]/gi, "").toLowerCase()) {
-      if (!letterToColor[letter]) {
-        letterToColor[letter] = colorMapping[currentColorIndex];
-        currentColorIndex = (currentColorIndex + 1) % colorMapping.length;
-      }
+    // Crea la tabla de colores
+    function generateColorGrid() {
+      const grid = document.getElementById("colorGrid");
+      grid.innerHTML = "";
+      encryptedMessage.split("").forEach(char => {
+        const color = colorMapping[char.toLowerCase()] || "#2c3e50";
+        const div = document.createElement("div");
+        div.style.backgroundColor = color;
+        div.textContent = char === " " ? " " : "";
+        grid.appendChild(div);
+      });
     }
 
-    // Función para generar la tabla encriptada
-    function generateColorTable() {
-      const tableContainer = document.getElementById("colorTable");
-      const table = document.createElement("table");
-
-      let row = document.createElement("tr");
-      for (const char of encryptedMessage) {
-        if (char.match(/[a-z]/i)) {
-          const cell = document.createElement("td");
-          cell.style.backgroundColor = letterToColor[char.toLowerCase()];
-          row.appendChild(cell);
-        } else if (char === " ") {
-          // Nueva fila por cada espacio
-          table.appendChild(row);
-          row = document.createElement("tr");
+    // Obtiene el contador actual desde la API
+    async function getCounter() {
+      try {
+        const response = await fetch(`${apiUrl}/1`);
+        if (response.ok) {
+          const data = await response.json();
+          return data.contador || 0;
         }
+      } catch (error) {
+        console.error("Error obteniendo el contador:", error);
       }
-      if (row.childNodes.length > 0) table.appendChild(row);
-
-      tableContainer.appendChild(table);
+      return 0;
     }
 
-    // Función para generar la leyenda (en línea)
-    function generateLegend() {
-      const legendContainer = document.getElementById("legend");
-      legendContainer.innerHTML = ""; // Limpia la leyenda
+    // Actualiza el contador en la API
+    async function updateCounter() {
+      try {
+        const currentCounter = await getCounter();
+        const response = await fetch(`${apiUrl}/1`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ contador: currentCounter + 1 }),
+        });
 
-      for (const [letter, color] of Object.entries(letterToColor)) {
-        const item = document.createElement("div");
-        item.className = "legend-item";
-        item.textContent = `${letter.toUpperCase()}: ${color}`;
-        item.style.backgroundColor = color;
-        item.style.color = "#000000";
-        legendContainer.appendChild(item);
+        if (response.ok) {
+          console.log("Contador actualizado:", currentCounter + 1);
+        } else {
+          console.error("Error actualizando el contador");
+        }
+      } catch (error) {
+        console.error("Error actualizando el contador:", error);
       }
     }
 
-    // Ajustar la vista según la orientación
-    function adjustView() {
-      const orientation = window.innerWidth > window.innerHeight ? 'horizontal' : 'vertical';
-      const container = document.querySelector(".container");
-      const colorTable = document.getElementById("colorTable");
-      const legend = document.getElementById("legend");
-
-      if (orientation === 'vertical') {
-        colorTable.style.display = "block";
-        legend.style.display = "none";
-      } else {
-        colorTable.style.display = "none";
-        legend.style.display = "flex";
-      }
-
-      container.style.display = "block";
-    }
-
-    // Contador persistente (usando localStorage)
-    function updateCounter() {
-      const key = "correctAnswers";
-      let counter = parseInt(localStorage.getItem(key)) || 0;
-      counter += 1;
-      localStorage.setItem(key, counter);
-      console.log(`Respuestas correctas: ${counter}`);
-    }
-
-    // Comprobar respuesta
+    // Valida la respuesta
     function checkAnswer() {
       const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
-      const correctAnswer = encryptedMessage.toLowerCase();
       const message = document.getElementById("message");
 
-      if (userAnswer === correctAnswer) {
-        message.style.color = "#2ecc71";
-        message.textContent = "¡Correcto! Has descifrado el mensaje.";
-        updateCounter(); // Incrementar el contador
-        setTimeout(() => {
-          window.location.href = "game3.html"; // Redirige al siguiente desafío
-        }, 2000);
+      if (userAnswer === encryptedMessage.toLowerCase()) {
+        message.style.color = "green";
+        message.textContent = "¡Correcto!";
+        updateCounter(); // Incrementa el contador en la API
       } else {
-        message.style.color = "#e74c3c";
-        message.textContent = "Respuesta incorrecta. Inténtalo de nuevo.";
+        message.style.color = "red";
+        message.textContent = "Incorrecto. Inténtalo de nuevo.";
       }
     }
 
-    // Inicializar juego
-    window.addEventListener("resize", adjustView);
-    window.addEventListener("load", () => {
-      document.querySelector(".hint").textContent = initialHint;
-      generateColorTable();
-      generateLegend();
-      adjustView();
-    });
+    // Inicializa el juego
+    generateColorGrid();
   </script>
 </body>
 </html>
