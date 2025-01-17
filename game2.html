@@ -129,7 +129,7 @@
     // Mover al jugador usando sensores
     function handleTilt(event) {
       const { beta, gamma } = event; // Inclinaciones del dispositivo
-      const threshold = 10; // Sensibilidad
+      const threshold = 30; // Sensibilidad reducida (3 veces menos sensible)
 
       // Movimiento vertical
       if (beta > threshold && player.y < rows - 1 && maze[player.y + 1][player.x] === 0) {
