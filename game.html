@@ -41,6 +41,7 @@
 
     #legend {
       font-size: 1.2em;
+      text-align: left;
     }
 
     .input-container {
@@ -75,34 +76,19 @@
       margin-top: 20px;
       font-size: 1.1em;
     }
+
+    .hint {
+      margin-bottom: 20px;
+      font-size: 1.2em;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Descifra el mensaje</h1>
-    <div id="colorTable">
-      <table>
-        <!-- Tabla de colores -->
-        <tr>
-          <td style="background-color: red;"></td>
-          <td style="background-color: blue;"></td>
-          <td style="background-color: yellow;"></td>
-        </tr>
-        <tr>
-          <td style="background-color: green;"></td>
-          <td style="background-color: purple;"></td>
-          <td style="background-color: orange;"></td>
-        </tr>
-        <tr>
-          <td style="background-color: cyan;"></td>
-          <td style="background-color: pink;"></td>
-          <td style="background-color: brown;"></td>
-        </tr>
-      </table>
-    </div>
-    <div id="legend">
-      <p>Rojo: A<br>Azul: B<br>Amarillo: C<br>Verde: D<br>...</p>
-    </div>
+    <div class="hint"></div>
+    <div id="colorTable"></div>
+    <div id="legend"></div>
     <div class="input-container">
       <input id="answer" type="text" placeholder="Escribe tu respuesta aquí...">
       <button onclick="checkAnswer()">Comprobar</button>
@@ -111,43 +97,103 @@
   </div>
 
   <script>
-    const container = document.querySelector('.container');
-    const colorTable = document.getElementById('colorTable');
-    const legend = document.getElementById('legend');
-    const message = document.getElementById('message');
+    // Configuración central
+    const initialHint = "Un cambio de perspectiva siempre es bueno..";
+    const encryptedMessage = "..salvo que tardes en verlo";
+    const colorMapping = ["red", "orange", "yellow", "green", "purple", "cyan", "pink"];
+    const alphabet = "abcdefghijklmnopqrstuvwxyz";
 
+    // Asignar letras a colores de forma automática
+    const letterToColor = {};
+    let currentColorIndex = 0;
+
+    for (const letter of encryptedMessage.replace(/[^a-z]/gi, "").toLowerCase()) {
+      if (!letterToColor[letter]) {
+        letterToColor[letter] = colorMapping[currentColorIndex];
+        currentColorIndex = (currentColorIndex + 1) % colorMapping.length;
+      }
+    }
+
+    // Función para generar la tabla encriptada
+    function generateColorTable() {
+      const tableContainer = document.getElementById("colorTable");
+      const table = document.createElement("table");
+
+      let row = document.createElement("tr");
+      for (const char of encryptedMessage) {
+        if (char.match(/[a-z]/i)) {
+          const cell = document.createElement("td");
+          cell.style.backgroundColor = letterToColor[char.toLowerCase()];
+          row.appendChild(cell);
+        } else if (char === " ") {
+          // Nueva fila por cada espacio
+          table.appendChild(row);
+          row = document.createElement("tr");
+        }
+      }
+      if (row.childNodes.length > 0) table.appendChild(row);
+
+      tableContainer.appendChild(table);
+    }
+
+    // Función para generar la leyenda
+    function generateLegend() {
+      const legendContainer = document.getElementById("legend");
+      const legendList = document.createElement("ul");
+
+      for (const [letter, color] of Object.entries(letterToColor)) {
+        const item = document.createElement("li");
+        item.textContent = `${letter.toUpperCase()}: ${color}`;
+        legendList.appendChild(item);
+      }
+
+      legendContainer.appendChild(legendList);
+    }
+
+    // Ajustar la vista según la orientación
     function adjustView() {
       const orientation = window.innerWidth > window.innerHeight ? 'horizontal' : 'vertical';
+      const container = document.querySelector(".container");
+      const colorTable = document.getElementById("colorTable");
+      const legend = document.getElementById("legend");
 
       if (orientation === 'vertical') {
-        colorTable.style.display = 'block';
-        legend.style.display = 'none';
+        colorTable.style.display = "block";
+        legend.style.display = "none";
       } else {
-        colorTable.style.display = 'none';
-        legend.style.display = 'block';
+        colorTable.style.display = "none";
+        legend.style.display = "block";
       }
 
-      container.style.display = 'block';
+      container.style.display = "block";
     }
 
+    // Comprobar respuesta
     function checkAnswer() {
-      const correctAnswer = "tu frase descifrada"; // Ajusta la frase descifrada aquí
-      const userAnswer = document.getElementById('answer').value.trim().toLowerCase();
+      const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
+      const correctAnswer = encryptedMessage.toLowerCase();
+      const message = document.getElementById("message");
 
       if (userAnswer === correctAnswer) {
-        message.style.color = '#2ecc71';
-        message.textContent = '¡Correcto! Has descifrado el mensaje.';
+        message.style.color = "#2ecc71";
+        message.textContent = "¡Correcto! Has descifrado el mensaje.";
         setTimeout(() => {
-          window.location.href = 'game3.html'; // Redirige al siguiente desafío
+          window.location.href = "game3.html"; // Redirige al siguiente desafío
         }, 2000);
       } else {
-        message.style.color = '#e74c3c';
-        message.textContent = 'Respuesta incorrecta. Inténtalo de nuevo.';
+        message.style.color = "#e74c3c";
+        message.textContent = "Respuesta incorrecta. Inténtalo de nuevo.";
       }
     }
 
-    window.addEventListener('resize', adjustView);
-    window.addEventListener('load', adjustView);
+    // Inicializar juego
+    window.addEventListener("resize", adjustView);
+    window.addEventListener("load", () => {
+      document.querySelector(".hint").textContent = initialHint;
+      generateColorTable();
+      generateLegend();
+      adjustView();
+    });
   </script>
 </body>
 </html>
