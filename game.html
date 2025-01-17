@@ -42,6 +42,17 @@
     #legend {
       font-size: 1.2em;
       text-align: left;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    #legend .legend-item {
+      margin: 5px;
+      padding: 10px;
+      background-color: #3b3b3b;
+      border-radius: 5px;
+      color: #ffffff;
     }
 
     .input-container {
@@ -136,18 +147,19 @@
       tableContainer.appendChild(table);
     }
 
-    // Función para generar la leyenda
+    // Función para generar la leyenda (en línea)
     function generateLegend() {
       const legendContainer = document.getElementById("legend");
-      const legendList = document.createElement("ul");
+      legendContainer.innerHTML = ""; // Limpia la leyenda
 
       for (const [letter, color] of Object.entries(letterToColor)) {
-        const item = document.createElement("li");
+        const item = document.createElement("div");
+        item.className = "legend-item";
         item.textContent = `${letter.toUpperCase()}: ${color}`;
-        legendList.appendChild(item);
+        item.style.backgroundColor = color;
+        item.style.color = "#000000";
+        legendContainer.appendChild(item);
       }
-
-      legendContainer.appendChild(legendList);
     }
 
     // Ajustar la vista según la orientación
@@ -162,10 +174,19 @@
         legend.style.display = "none";
       } else {
         colorTable.style.display = "none";
-        legend.style.display = "block";
+        legend.style.display = "flex";
       }
 
       container.style.display = "block";
+    }
+
+    // Contador persistente (usando localStorage)
+    function updateCounter() {
+      const key = "correctAnswers";
+      let counter = parseInt(localStorage.getItem(key)) || 0;
+      counter += 1;
+      localStorage.setItem(key, counter);
+      console.log(`Respuestas correctas: ${counter}`);
     }
 
     // Comprobar respuesta
@@ -177,6 +198,7 @@
       if (userAnswer === correctAnswer) {
         message.style.color = "#2ecc71";
         message.textContent = "¡Correcto! Has descifrado el mensaje.";
+        updateCounter(); // Incrementar el contador
         setTimeout(() => {
           window.location.href = "game3.html"; // Redirige al siguiente desafío
         }, 2000);
