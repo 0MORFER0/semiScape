@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escape Room - Desafío 2</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #2c3e50;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 400px;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    p {
+      font-size: 1em;
+      margin-bottom: 20px;
+    }
+
+    canvas {
+      display: block;
+      background-color: #ecf0f1;
+      margin: 0 auto;
+      border: 2px solid #34495e;
+      touch-action: none; /* Optimización para pantallas táctiles */
+    }
+
+    button {
+      background-color: #27ae60;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2ecc71;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Desafío 2</h1>
+    <p>
+      ¡Ayuda al cuadrado a llegar al final del laberinto sin chocar con las paredes!
+    </p>
+    <canvas id="mazeCanvas" width="300" height="300"></canvas>
+    <p id="message"></p>
+    <button id="nextButton" style="display: none;" onclick="nextLevel()">Siguiente Desafío</button>
+  </div>
+
+  <script>
+    // Variables para el laberinto
+    const canvas = document.getElementById('mazeCanvas');
+    const ctx = canvas.getContext('2d');
+    const cellSize = 30; // Tamaño de cada celda
+    const rows = 10, cols = 10; // Tamaño del laberinto
+    const player = { x: 0, y: 0 }; // Posición inicial del jugador
+    const goal = { x: cols - 1, y: rows - 1 }; // Meta del laberinto
+    let maze = []; // Matriz del laberinto
+
+    // Genera un laberinto básico
+    function generateMaze() {
+      maze = Array(rows)
+        .fill(null)
+        .map(() => Array(cols).fill(1)); // Inicializa todas las celdas como paredes
+      for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+          if (Math.random() > 0.3 || (i === 0 && j === 0) || (i === rows - 1 && j === cols - 1)) {
+            maze[i][j] = 0; // Crea caminos aleatorios
+          }
+        }
+      }
+    }
+
+    // Dibuja el laberinto
+    function drawMaze() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+          ctx.fillStyle = maze[i][j] === 1 ? '#34495e' : '#ecf0f1'; // Paredes y caminos
+          ctx.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+        }
+      }
+      // Dibuja al jugador
+      ctx.fillStyle = '#e74c3c';
+      ctx.fillRect(player.x * cellSize, player.y * cellSize, cellSize, cellSize);
+
+      // Dibuja la meta
+      ctx.fillStyle = '#2ecc71';
+      ctx.fillRect(goal.x * cellSize, goal.y * cellSize, cellSize, cellSize);
+    }
+
+    // Movimiento del jugador
+    function movePlayer(direction) {
+      const { x, y } = player;
+      if (direction === 'up' && y > 0 && maze[y - 1][x] === 0) player.y--;
+      if (direction === 'down' && y < rows - 1 && maze[y + 1][x] === 0) player.y++;
+      if (direction === 'left' && x > 0 && maze[y][x - 1] === 0) player.x--;
+      if (direction === 'right' && x < cols - 1 && maze[y][x + 1] === 0) player.x++;
+
+      drawMaze();
+      checkWin();
+    }
+
+    // Verifica si el jugador ha ganado
+    function checkWin() {
+      if (player.x === goal.x && player.y === goal.y) {
+        document.getElementById('message').textContent = '¡Bien hecho! Has superado el desafío.';
+        document.getElementById('nextButton').style.display = 'block';
+      }
+    }
+
+    // Manejo de controles táctiles y de teclado
+    function handleControls(event) {
+      if (event.key === 'ArrowUp') movePlayer('up');
+      if (event.key === 'ArrowDown') movePlayer('down');
+      if (event.key === 'ArrowLeft') movePlayer('left');
+      if (event.key === 'ArrowRight') movePlayer('right');
+    }
+
+    // Inicialización del laberinto
+    generateMaze();
+    drawMaze();
+    document.addEventListener('keydown', handleControls);
+
+    // Pasar al siguiente desafío
+    function nextLevel() {
+      window.location.href = 'game3.html';
+    }
+  </script>
+</body>
+</html>
