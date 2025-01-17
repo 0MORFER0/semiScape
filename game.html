@@ -36,15 +36,53 @@
     #message {
       margin-top: 20px;
     }
+    .input-container {
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      text-align: center;
+    }
+    button {
+      background-color: #27ae60;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #2ecc71;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Desafío de Colores</h1>
-    <div id="colorGrid" class="grid"></div>
-    <input id="answer" type="text" placeholder="Escribe tu respuesta aquí...">
-    <button onclick="checkAnswer()">Comprobar</button>
-    <div id="message"></div>
+
+    <!-- Ingreso del nombre -->
+    <div id="namePrompt">
+      <p>¡Bienvenido! Ingresa tu nombre para comenzar:</p>
+      <input id="userName" type="text" placeholder="Tu nombre...">
+      <button onclick="startGame()">Iniciar juego</button>
+    </div>
+
+    <!-- Tabla de colores y respuesta -->
+    <div id="gameArea" style="display: none;">
+      <div id="colorGrid" class="grid"></div>
+      <div class="input-container">
+        <input id="answer" type="text" placeholder="Escribe tu respuesta aquí...">
+      </div>
+      <button onclick="checkAnswer()">Comprobar</button>
+      <div id="message"></div>
+    </div>
   </div>
 
   <script>
@@ -70,70 +108,58 @@
       });
     }
 
-    // Obtiene el contador actual desde la API
-    async function getCounter() {
-      try {
-        const response = await fetch(`${apiUrl}/2`);
-        if (response.ok) {
-          const data = await response.json();
-          return data.contador || 0; // Retorna el contador actual, por defecto 0 si no existe
-        }
-      } catch (error) {
-        console.error("Error obteniendo el contador:", error);
+    // Muestra el área del juego y oculta la solicitud de nombre
+    function startGame() {
+      const userName = document.getElementById("userName").value.trim();
+      if (userName) {
+        document.getElementById("namePrompt").style.display = "none";
+        document.getElementById("gameArea").style.display = "block";
+        sessionStorage.setItem("userName", userName); // Guarda el nombre en sessionStorage
+        generateColorGrid(); // Genera la tabla de colores
+      } else {
+        alert("Por favor, ingresa tu nombre.");
       }
-      return 0; // Valor por defecto en caso de error
     }
 
-    // Actualiza el registro con la respuesta y el contador
-    async function updateRecord(isCorrect) {
-      const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
-      const currentCounter = await getCounter();
+    // Función para enviar la respuesta y registrar en la API
+    async function saveUserAnswer(userName, answer) {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: userName,
+          respuesta: answer,
+          contador: 1,
+          numeroPrueba: 54119,
+        }),
+      });
 
-      // Prepara los datos para actualizar
-      const updatedData = {
-        respuesta: userAnswer,
-        contador: isCorrect ? currentCounter + 1 : currentCounter, // Aumenta el contador si la respuesta es correcta
-        numeroPrueba: 54119, // Valor numérico constante para esta prueba
-      };
-
-      try {
-        const response = await fetch(`${apiUrl}/2`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedData),
-        });
-
-        if (response.ok) {
-          console.log("Registro actualizado:", updatedData);
-        } else {
-          console.error("Error actualizando el registro");
-        }
-      } catch (error) {
-        console.error("Error al actualizar el registro:", error);
+      if (!response.ok) {
+        console.error("Error guardando respuesta");
       }
     }
 
     // Valida la respuesta
-    function checkAnswer() {
+    async function checkAnswer() {
+      const userName = sessionStorage.getItem("userName");
       const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
       const message = document.getElementById("message");
+
+      // Comprobamos si la respuesta es correcta
       const isCorrect = userAnswer === encryptedMessage.toLowerCase();
 
       if (isCorrect) {
         message.style.color = "green";
         message.textContent = "¡Correcto!";
-        updateRecord(true); // Actualiza el registro con respuesta correcta
+        await saveUserAnswer(userName, userAnswer); // Guarda la respuesta si es correcta
       } else {
         message.style.color = "red";
         message.textContent = "Incorrecto. Inténtalo de nuevo.";
-        updateRecord(false); // Actualiza el registro con respuesta incorrecta
+        await saveUserAnswer(userName, userAnswer); // Guarda la respuesta incorrecta también
       }
     }
-
-    // Inicializa el juego
-    generateColorGrid();
   </script>
 </body>
 </html>
