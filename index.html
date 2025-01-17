@@ -1,127 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulación de Habitación 3D</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        canvas {
-            display: block;
-        }
-    </style>
-    <!-- Incluimos Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escape Room Virtual</title>
+  <style>
+    /* Estilo general */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(120deg, #2c3e50, #4ca1af);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      padding: 20px;
+      max-width: 600px;
+      animation: fadeIn 2s ease;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+    }
+
+    button {
+      background-color: #e74c3c;
+      border: none;
+      color: white;
+      padding: 15px 30px;
+      font-size: 1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #c0392b;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <h1>¡Bienvenidos a la Escape Room Virtual!</h1>
+    <p>
+      Pon a prueba tu ingenio y resuelve los enigmas para escapar. ¿Estás listo para enfrentarte al desafío? 
+    </p>
+    <button onclick="startGame()">Comenzar</button>
+  </div>
 
-<script>
-    // Configuración básica de la escena 3D
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);  // Aumento del rango de visión
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    // Aumentar el tamaño de la habitación (paredes, suelo, techo)
-    const roomSize = 5000; // Tamaño de la habitación (mayor que antes)
-
-    const materials = {
-        floor: new THREE.MeshBasicMaterial({ color: 0xffffff }),
-        ceiling: new THREE.MeshBasicMaterial({ color: 0x808080 }),
-        leftWall: new THREE.MeshBasicMaterial({ color: 0x0000ff }),
-        rightWall: new THREE.MeshBasicMaterial({ color: 0xff0000 }),
-        frontWall: new THREE.MeshBasicMaterial({ color: 0x00ff00 }),
-        backWall: new THREE.MeshBasicMaterial({ color: 0xffff00 }),
-    };
-
-    // Crear las paredes
-    const wallGeometry = new THREE.PlaneGeometry(roomSize, roomSize);
-    const floorGeometry = new THREE.PlaneGeometry(roomSize, roomSize);
-    
-    const frontWall = new THREE.Mesh(wallGeometry, materials.frontWall);
-    frontWall.position.z = -roomSize / 2;
-    scene.add(frontWall);
-
-    const backWall = new THREE.Mesh(wallGeometry, materials.backWall);
-    backWall.position.z = roomSize / 2;
-    scene.add(backWall);
-
-    const leftWall = new THREE.Mesh(wallGeometry, materials.leftWall);
-    leftWall.rotation.y = Math.PI / 2;
-    leftWall.position.x = -roomSize / 2;
-    scene.add(leftWall);
-
-    const rightWall = new THREE.Mesh(wallGeometry, materials.rightWall);
-    rightWall.rotation.y = -Math.PI / 2;
-    rightWall.position.x = roomSize / 2;
-    scene.add(rightWall);
-
-    // Techo y Suelo
-    const floor = new THREE.Mesh(floorGeometry, materials.floor);
-    floor.rotation.x = -Math.PI / 2;
-    floor.position.y = -roomSize / 2;
-    scene.add(floor);
-
-    const ceiling = new THREE.Mesh(floorGeometry, materials.ceiling);
-    ceiling.rotation.x = Math.PI / 2;
-    ceiling.position.y = roomSize / 2;
-    scene.add(ceiling);
-
-    // Configuración de la cámara
-    camera.position.z = 0;
-    camera.position.y = 0;
-    camera.position.x = 0;
-
-    // Inicializar las coordenadas
-    let alpha = 0, beta = 0, gamma = 0;
-    let initialAlpha = 0, initialBeta = 0, initialGamma = 0;
-
-    // Función para almacenar la orientación inicial
-    function setInitialOrientation(event) {
-        initialAlpha = event.alpha || 0;
-        initialBeta = event.beta || 0;
-        initialGamma = event.gamma || 0;
-        window.removeEventListener('deviceorientation', setInitialOrientation);
+  <script>
+    function startGame() {
+      window.location.href = 'game.html'; // Redirige al juego principal
     }
-
-    // Establecer la orientación inicial cuando la página carga
-    window.addEventListener('deviceorientation', setInitialOrientation);
-
-    // Manejar los movimientos del dispositivo
-    function updateCamera() {
-        // Ajustar la cámara según los valores de orientación del dispositivo, restando la orientación inicial
-        const adjustedAlpha = (alpha - initialAlpha) * (Math.PI / 180);   // Rotación horizontal
-        const adjustedBeta = (beta - initialBeta) * (Math.PI / 180);     // Inclinación
-        const adjustedGamma = (gamma - initialGamma) * (Math.PI / 180);   // Rotación lateral
-
-        camera.rotation.x = adjustedBeta;   
-        camera.rotation.y = adjustedAlpha;  
-        camera.rotation.z = adjustedGamma;  
-    }
-
-    // Manejar la orientación del dispositivo
-    if (window.DeviceOrientationEvent) {
-        window.addEventListener('deviceorientation', (event) => {
-            alpha = event.alpha || 0;
-            beta = event.beta || 0;
-            gamma = event.gamma || 0;
-            updateCamera();
-        });
-    }
-
-    // Función para renderizar la escena
-    function animate() {
-        requestAnimationFrame(animate);
-        renderer.render(scene, camera);
-    }
-
-    animate();
-</script>
-
+  </script>
 </body>
 </html>
