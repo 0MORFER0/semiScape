@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resultados - Respuestas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #ecf0f1;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 80%;
+      margin: 20px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: auto;
+    }
+
+    h1 {
+      color: #2c3e50;
+      font-size: 2em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #2ecc71;
+      color: #fff;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .group-name {
+      background-color: #f39c12;
+      color: white;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Resultados de Respuestas</h1>
+    <table id="resultsTable">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Respuesta</th>
+          <th>Contador</th>
+          <th>Número de Prueba</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Los datos se cargarán aquí -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const apiUrl = "https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/respuestas";
+
+    async function fetchResults() {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      displayGroupedResults(data);
+    }
+
+    function displayGroupedResults(data) {
+      const groupedResults = {};
+
+      // Agrupar los resultados por nombre
+      data.forEach(item => {
+        if (!groupedResults[item.name]) {
+          groupedResults[item.name] = [];
+        }
+        groupedResults[item.name].push(item);
+      });
+
+      const resultsTable = document.getElementById("resultsTable").getElementsByTagName("tbody")[0];
+
+      // Mostrar los resultados agrupados
+      Object.keys(groupedResults).forEach(name => {
+        // Crear una fila para el nombre
+        const groupRow = resultsTable.insertRow();
+        const cell = groupRow.insertCell(0);
+        cell.colSpan = 4;
+        cell.classList.add("group-name");
+        cell.textContent = `Respuestas de ${name}`;
+
+        // Agregar los resultados de este grupo
+        groupedResults[name].forEach(item => {
+          const row = resultsTable.insertRow();
+          row.insertCell(0).textContent = item.name;
+          row.insertCell(1).textContent = item.respuesta;
+          row.insertCell(2).textContent = item.contador;
+          row.insertCell(3).textContent = item.numeroPrueba;
+        });
+      });
+    }
+
+    // Cargar los resultados al cargar la página
+    window.onload = fetchResults;
+  </script>
+</body>
+</html>
