@@ -73,36 +73,45 @@
     // Obtiene el contador actual desde la API
     async function getCounter() {
       try {
-        const response = await fetch(`${apiUrl}/1`);
+        const response = await fetch(`${apiUrl}/2`);
         if (response.ok) {
           const data = await response.json();
-          return data.contador || 0;
+          return data.contador || 0; // Retorna el contador actual, por defecto 0 si no existe
         }
       } catch (error) {
         console.error("Error obteniendo el contador:", error);
       }
-      return 0;
+      return 0; // Valor por defecto en caso de error
     }
 
-    // Actualiza el contador en la API
-    async function updateCounter() {
+    // Actualiza el registro con la respuesta y el contador
+    async function updateRecord(isCorrect) {
+      const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
+      const currentCounter = await getCounter();
+
+      // Prepara los datos para actualizar
+      const updatedData = {
+        respuesta: userAnswer,
+        contador: isCorrect ? currentCounter + 1 : currentCounter, // Aumenta el contador si la respuesta es correcta
+        numeroPrueba: 54119, // Valor numérico constante para esta prueba
+      };
+
       try {
-        const currentCounter = await getCounter();
-        const response = await fetch(`${apiUrl}/1`, {
+        const response = await fetch(`${apiUrl}/2`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ contador: currentCounter + 1 }),
+          body: JSON.stringify(updatedData),
         });
 
         if (response.ok) {
-          console.log("Contador actualizado:", currentCounter + 1);
+          console.log("Registro actualizado:", updatedData);
         } else {
-          console.error("Error actualizando el contador");
+          console.error("Error actualizando el registro");
         }
       } catch (error) {
-        console.error("Error actualizando el contador:", error);
+        console.error("Error al actualizar el registro:", error);
       }
     }
 
@@ -110,14 +119,16 @@
     function checkAnswer() {
       const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
       const message = document.getElementById("message");
+      const isCorrect = userAnswer === encryptedMessage.toLowerCase();
 
-      if (userAnswer === encryptedMessage.toLowerCase()) {
+      if (isCorrect) {
         message.style.color = "green";
         message.textContent = "¡Correcto!";
-        updateCounter(); // Incrementa el contador en la API
+        updateRecord(true); // Actualiza el registro con respuesta correcta
       } else {
         message.style.color = "red";
         message.textContent = "Incorrecto. Inténtalo de nuevo.";
+        updateRecord(false); // Actualiza el registro con respuesta incorrecta
       }
     }
 
