@@ -3,112 +3,151 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Escape Room - Desafío 1</title>
+  <title>Escape Room - Desafío</title>
   <style>
-    /* Estilos básicos */
     body {
       font-family: 'Arial', sans-serif;
       margin: 0;
       padding: 0;
-      background: #1e272e;
-      color: #ffffff;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      background-color: #2d3436;
+      color: #ffffff;
       text-align: center;
+      overflow: hidden;
     }
 
     .container {
-      max-width: 600px;
-      padding: 20px;
-      animation: fadeIn 2s ease;
+      max-width: 90%;
+      display: none;
     }
 
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 20px;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
+    #colorTable, #legend {
+      display: none;
     }
 
-    p {
+    #colorTable table {
+      margin: 0 auto;
+      border-collapse: collapse;
+    }
+
+    #colorTable td {
+      width: 50px;
+      height: 50px;
+      border: 1px solid #ffffff;
+    }
+
+    #legend {
       font-size: 1.2em;
-      margin-bottom: 30px;
     }
 
     .input-container {
-      margin-bottom: 20px;
+      margin-top: 20px;
     }
 
     input[type="text"] {
-      width: 100%;
+      width: 80%;
       padding: 10px;
       font-size: 1em;
       border: none;
       border-radius: 5px;
-      margin-top: 10px;
       text-align: center;
     }
 
     button {
-      background-color: #27ae60;
-      border: none;
-      color: white;
+      margin-top: 10px;
+      background-color: #0984e3;
+      color: #ffffff;
       padding: 10px 20px;
-      font-size: 1em;
-      text-transform: uppercase;
-      cursor: pointer;
+      border: none;
       border-radius: 5px;
-      transition: background-color 0.3s ease;
+      font-size: 1em;
+      cursor: pointer;
     }
 
     button:hover {
-      background-color: #2ecc71;
+      background-color: #74b9ff;
     }
 
-    .message {
+    #message {
       margin-top: 20px;
       font-size: 1.1em;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Desafío 1</h1>
-    <p>
-      Un cofre cerrado bloquea tu camino. Para abrirlo, debes responder esta pregunta:<br>
-      <strong>“Soy más rápido que el viento, pero no tengo pies. ¿Qué soy?”</strong>
-    </p>
+    <h1>Descifra el mensaje</h1>
+    <div id="colorTable">
+      <table>
+        <!-- Tabla de colores -->
+        <tr>
+          <td style="background-color: red;"></td>
+          <td style="background-color: blue;"></td>
+          <td style="background-color: yellow;"></td>
+        </tr>
+        <tr>
+          <td style="background-color: green;"></td>
+          <td style="background-color: purple;"></td>
+          <td style="background-color: orange;"></td>
+        </tr>
+        <tr>
+          <td style="background-color: cyan;"></td>
+          <td style="background-color: pink;"></td>
+          <td style="background-color: brown;"></td>
+        </tr>
+      </table>
+    </div>
+    <div id="legend">
+      <p>Rojo: A<br>Azul: B<br>Amarillo: C<br>Verde: D<br>...</p>
+    </div>
     <div class="input-container">
       <input id="answer" type="text" placeholder="Escribe tu respuesta aquí...">
+      <button onclick="checkAnswer()">Comprobar</button>
+      <div id="message"></div>
     </div>
-    <button onclick="checkAnswer()">Comprobar</button>
-    <div id="message" class="message"></div>
   </div>
 
   <script>
+    const container = document.querySelector('.container');
+    const colorTable = document.getElementById('colorTable');
+    const legend = document.getElementById('legend');
+    const message = document.getElementById('message');
+
+    function adjustView() {
+      const orientation = window.innerWidth > window.innerHeight ? 'horizontal' : 'vertical';
+
+      if (orientation === 'vertical') {
+        colorTable.style.display = 'block';
+        legend.style.display = 'none';
+      } else {
+        colorTable.style.display = 'none';
+        legend.style.display = 'block';
+      }
+
+      container.style.display = 'block';
+    }
+
     function checkAnswer() {
-      const correctAnswer = "la luz"; // Respuesta correcta (insensible a mayúsculas)
+      const correctAnswer = "tu frase descifrada"; // Ajusta la frase descifrada aquí
       const userAnswer = document.getElementById('answer').value.trim().toLowerCase();
-      const message = document.getElementById('message');
 
       if (userAnswer === correctAnswer) {
         message.style.color = '#2ecc71';
-        message.textContent = '¡Correcto! El cofre se abre...';
+        message.textContent = '¡Correcto! Has descifrado el mensaje.';
         setTimeout(() => {
-          window.location.href = 'game2.html'; // Redirige al siguiente desafío
+          window.location.href = 'game3.html'; // Redirige al siguiente desafío
         }, 2000);
       } else {
         message.style.color = '#e74c3c';
         message.textContent = 'Respuesta incorrecta. Inténtalo de nuevo.';
       }
     }
+
+    window.addEventListener('resize', adjustView);
+    window.addEventListener('load', adjustView);
   </script>
 </body>
 </html>
