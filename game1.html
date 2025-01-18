@@ -60,10 +60,18 @@
       font-size: 1.5em;
       margin-bottom: 10px;
     }
-    .enigma p {
-      font-size: 1em;
-      line-height: 1.5;
-      margin-bottom: 10px;
+    .enigma table {
+      width: 100%;
+      margin-bottom: 15px;
+      border-collapse: collapse;
+    }
+    .enigma th, .enigma td {
+      border: 1px solid white;
+      padding: 10px;
+      text-align: center;
+    }
+    .enigma th {
+      background-color: #3498db;
     }
     .enigma input {
       width: calc(100% - 20px);
@@ -93,11 +101,102 @@
 
     <!-- Enigma -->
     <div class="enigma" id="enigma">
-      <h2>El Misterio de las Horas</h2>
-      <p>
-        "Un reloj marca tres horas menos de lo que realmente es. Si el reloj dice que son las 9, ¿qué hora es en realidad?"
-      </p>
-      <input type="text" id="respuesta" placeholder="Escribe tu respuesta aquí">
+      <h2>El Misterio de los Horarios de Tren</h2>
+      <p>Para resolver este enigma, debes sumar los horarios de los trenes con nombre: Regidor, Ribera y Rabano. Usa la tabla de horarios de trenes y calcula la hora final.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Tren</th>
+            <th>Hora de Salida</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Regidor</td>
+            <td>08:15</td>
+          </tr>
+          <tr>
+            <td>Ribera</td>
+            <td>11:30</td>
+          </tr>
+          <tr>
+            <td>Rabano</td>
+            <td>14:45</td>
+          </tr>
+          <tr>
+            <td>Alameda</td>
+            <td>06:00</td>
+          </tr>
+          <tr>
+            <td>Rocío</td>
+            <td>12:10</td>
+          </tr>
+          <tr>
+            <td>Vega</td>
+            <td>09:00</td>
+          </tr>
+          <tr>
+            <td>Central</td>
+            <td>15:30</td>
+          </tr>
+          <tr>
+            <td>Montaña</td>
+            <td>17:00</td>
+          </tr>
+          <tr>
+            <td>Alto</td>
+            <td>07:45</td>
+          </tr>
+          <tr>
+            <td>Faro</td>
+            <td>13:50</td>
+          </tr>
+          <tr>
+            <td>Playa</td>
+            <td>16:20</td>
+          </tr>
+          <tr>
+            <td>Marina</td>
+            <td>09:50</td>
+          </tr>
+          <tr>
+            <td>Villa</td>
+            <td>08:00</td>
+          </tr>
+          <tr>
+            <td>Sur</td>
+            <td>10:45</td>
+          </tr>
+          <tr>
+            <td>Costa</td>
+            <td>14:00</td>
+          </tr>
+          <tr>
+            <td>Pueblo</td>
+            <td>07:30</td>
+          </tr>
+          <tr>
+            <td>Valle</td>
+            <td>16:10</td>
+          </tr>
+          <tr>
+            <td>Este</td>
+            <td>12:50</td>
+          </tr>
+          <tr>
+            <td>Oeste</td>
+            <td>18:00</td>
+          </tr>
+          <tr>
+            <td>Centro</td>
+            <td>10:30</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <label for="respuesta">Escribe la hora final:</label>
+      <input type="time" id="respuesta">
       <button onclick="verificarRespuesta()">Enviar</button>
       <p id="feedback" style="color: yellow; margin-top: 10px;"></p>
     </div>
@@ -112,10 +211,8 @@
       alert("No has iniciado sesión. Redirigiendo al login...");
       window.location.href = 'index.html';
     } else {
-      userInfoDiv.innerHTML = `
-        Usuario: <strong>${userName}</strong>
-        <button onclick="logout()">Cerrar sesión</button>
-      `;
+      userInfoDiv.innerHTML = `Usuario: <strong>${userName}</strong>
+        <button onclick="logout()">Cerrar sesión</button>`;
     }
 
     function logout() {
@@ -125,11 +222,12 @@
 
     // Verificar la respuesta del enigma
     function verificarRespuesta() {
-      const respuesta = document.getElementById('respuesta').value.trim();
+      const respuesta = document.getElementById('respuesta').value;
       const feedback = document.getElementById('feedback');
+      const horaCorrecta = "34:30"; // Respuesta correcta calculada (08:15 + 11:30 + 14:45 = 34:30)
 
-      if (respuesta === '12') {
-        feedback.textContent = '¡Correcto! Has descifrado el misterio del tiempo.';
+      if (respuesta === horaCorrecta) {
+        feedback.textContent = '¡Correcto! Has descifrado el misterio de los trenes.';
         feedback.style.color = 'lime';
       } else {
         feedback.textContent = 'Respuesta incorrecta. Intenta de nuevo.';
