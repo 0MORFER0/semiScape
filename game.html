@@ -12,9 +12,10 @@
       background: linear-gradient(120deg, #1abc9c, #2c3e50);
       color: white;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      height: 100vh;
+      justify-content: center;
+      min-height: 100vh;
       position: relative;
     }
     .user-info {
@@ -41,23 +42,77 @@
     }
     .container {
       text-align: center;
+      width: 90%;
+      max-width: 600px;
     }
     h1 {
       font-size: 2.5em;
       margin-bottom: 20px;
     }
-    p {
-      font-size: 1.2em;
+    .enigma {
+      margin-top: 30px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      text-align: left;
+    }
+    .enigma h2 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+    .enigma p {
+      font-size: 1em;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    .enigma input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      font-size: 1em;
+      margin-bottom: 10px;
+    }
+    .enigma button {
+      padding: 10px 20px;
+      background-color: #3498db;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+    }
+    .enigma button:hover {
+      background-color: #2980b9;
     }
   </style>
 </head>
 <body>
-  <div class="user-info" id="user-info">
-    <!-- El nombre de usuario se insertará aquí -->
-  </div>
+  <div class="user-info" id="user-info"></div>
   <div class="container">
     <h1>¡Bienvenido al Juego!</h1>
-    <p>Resuelve los enigmas para continuar avanzando.</p>
+    <p>Resuelve los enigmas para continuar avanzando en tu aventura.</p>
+
+    <!-- Enigma 1 -->
+    <div class="enigma" id="enigma-1">
+      <h2>Enigma 1: El acertijo del sabio</h2>
+      <p>
+        "Mi primer secreto yace en las palabras. Busca el número que habita entre la M y la Z. Recuerda: lo que se suma también se divide."
+      </p>
+      <input type="text" id="respuesta-1" placeholder="Escribe tu respuesta aquí">
+      <button onclick="verificarRespuesta1()">Enviar</button>
+      <p id="feedback-1" style="color: yellow; margin-top: 10px;"></p>
+    </div>
+
+    <!-- Espacio para próximos enigmas -->
+    <div class="enigma" id="enigma-2" style="display: none;">
+      <h2>Enigma 2: El mapa de las estrellas</h2>
+      <p>
+        "En el cielo nocturno, un patrón antiguo te guiará. Suma las estrellas de Orión y la Osa Mayor; el resultado abrirá el siguiente portal."
+      </p>
+      <input type="text" id="respuesta-2" placeholder="Escribe tu respuesta aquí">
+      <button onclick="verificarRespuesta2()">Enviar</button>
+      <p id="feedback-2" style="color: yellow; margin-top: 10px;"></p>
+    </div>
   </div>
 
   <script>
@@ -66,23 +121,48 @@
     const userInfoDiv = document.getElementById('user-info');
 
     if (!userName) {
-      // Si no hay un usuario logueado, redirigir al login
       alert("No has iniciado sesión. Redirigiendo al login...");
-      window.location.href = 'index.html'; // Cambia esta ruta según tu estructura
+      window.location.href = 'index.html';
     } else {
-      // Mostrar el nombre del usuario y un botón para cerrar sesión
       userInfoDiv.innerHTML = `
         Usuario: <strong>${userName}</strong>
         <button onclick="logout()">Cerrar sesión</button>
       `;
     }
 
-    // Función para cerrar sesión
     function logout() {
-      // Eliminar el nombre del usuario del almacenamiento local
       localStorage.removeItem('userName');
-      // Redirigir al login
       window.location.href = 'index.html';
+    }
+
+    // Verificar respuestas de los enigmas
+    function verificarRespuesta1() {
+      const respuesta = document.getElementById('respuesta-1').value.trim();
+      const feedback = document.getElementById('feedback-1');
+
+      if (respuesta === '13') {
+        feedback.textContent = '¡Correcto! Has avanzado al siguiente enigma.';
+        feedback.style.color = 'lime';
+        document.getElementById('enigma-1').style.display = 'none';
+        document.getElementById('enigma-2').style.display = 'block';
+      } else {
+        feedback.textContent = 'Respuesta incorrecta. Intenta de nuevo.';
+        feedback.style.color = 'red';
+      }
+    }
+
+    function verificarRespuesta2() {
+      const respuesta = document.getElementById('respuesta-2').value.trim();
+      const feedback = document.getElementById('feedback-2');
+
+      if (respuesta === '14') {
+        feedback.textContent = '¡Correcto! Has completado el segundo enigma.';
+        feedback.style.color = 'lime';
+        // Aquí se podría añadir lógica para desbloquear el siguiente enigma
+      } else {
+        feedback.textContent = 'Respuesta incorrecta. Intenta de nuevo.';
+        feedback.style.color = 'red';
+      }
     }
   </script>
 </body>
