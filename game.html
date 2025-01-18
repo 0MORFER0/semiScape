@@ -3,162 +3,86 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Juego - Desafío de Colores</title>
+  <title>Juego - Escape Room</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       margin: 0;
       padding: 0;
+      background: linear-gradient(120deg, #1abc9c, #2c3e50);
+      color: white;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      text-align: center;
+      position: relative;
     }
-    .container {
-      max-width: 90%;
+    .user-info {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 16px;
     }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-      gap: 5px;
-      margin-bottom: 20px;
-    }
-    .grid div {
-      padding: 20px;
-      border-radius: 5px;
-      color: #fff;
-      font-weight: bold;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    #message {
-      margin-top: 20px;
-    }
-    .input-container {
-      margin-bottom: 20px;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      font-size: 1em;
-      border: none;
-      border-radius: 5px;
-      text-align: center;
-    }
-    button {
-      background-color: #27ae60;
+    .user-info button {
+      margin-left: 10px;
+      background-color: #e74c3c;
       border: none;
       color: white;
-      padding: 10px 20px;
-      font-size: 1em;
-      text-transform: uppercase;
-      cursor: pointer;
+      padding: 5px 10px;
       border-radius: 5px;
+      cursor: pointer;
       transition: background-color 0.3s ease;
     }
-    button:hover {
-      background-color: #2ecc71;
+    .user-info button:hover {
+      background-color: #c0392b;
+    }
+    .container {
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 1.2em;
     }
   </style>
 </head>
 <body>
+  <div class="user-info" id="user-info">
+    <!-- El nombre de usuario se insertará aquí -->
+  </div>
   <div class="container">
-    <h1>Desafío de Colores</h1>
-
-    <!-- Ingreso del nombre -->
-    <div id="namePrompt">
-      <p>¡Bienvenido! Ingresa tu nombre para comenzar:</p>
-      <input id="userName" type="text" placeholder="Tu nombre...">
-      <button onclick="startGame()">Iniciar juego</button>
-    </div>
-
-    <!-- Tabla de colores y respuesta -->
-    <div id="gameArea" style="display: none;">
-      <div id="colorGrid" class="grid"></div>
-      <div class="input-container">
-        <input id="answer" type="text" placeholder="Escribe tu respuesta aquí...">
-      </div>
-      <button onclick="checkAnswer()">Comprobar</button>
-      <div id="message"></div>
-    </div>
+    <h1>¡Bienvenido al Juego!</h1>
+    <p>Resuelve los enigmas para continuar avanzando.</p>
   </div>
 
   <script>
-    const encryptedMessage = "salvo que tardes en verlo"; // Frase codificada
-    const colorMapping = {
-      "s": "#1abc9c", "a": "#2ecc71", "l": "#3498db", "v": "#9b59b6",
-      "o": "#34495e", "q": "#f1c40f", "u": "#e67e22", "e": "#e74c3c",
-      "t": "#95a5a6", "r": "#d35400", "d": "#7f8c8d", "n": "#8e44ad"
-    };
+    // Comprobar si hay un usuario en la sesión
+    const userName = localStorage.getItem('userName');
+    const userInfoDiv = document.getElementById('user-info');
 
-    const apiUrl = "https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/respuestas";
-
-    // Crea la tabla de colores
-    function generateColorGrid() {
-      const grid = document.getElementById("colorGrid");
-      grid.innerHTML = "";
-      encryptedMessage.split("").forEach(char => {
-        const color = colorMapping[char.toLowerCase()] || "#2c3e50";
-        const div = document.createElement("div");
-        div.style.backgroundColor = color;
-        div.textContent = char === " " ? " " : "";
-        grid.appendChild(div);
-      });
+    if (!userName) {
+      // Si no hay un usuario logueado, redirigir al login
+      alert("No has iniciado sesión. Redirigiendo al login...");
+      window.location.href = 'index.html'; // Cambia esta ruta según tu estructura
+    } else {
+      // Mostrar el nombre del usuario y un botón para cerrar sesión
+      userInfoDiv.innerHTML = `
+        Usuario: <strong>${userName}</strong>
+        <button onclick="logout()">Cerrar sesión</button>
+      `;
     }
 
-    // Muestra el área del juego y oculta la solicitud de nombre
-    function startGame() {
-      const userName = document.getElementById("userName").value.trim();
-      if (userName) {
-        document.getElementById("namePrompt").style.display = "none";
-        document.getElementById("gameArea").style.display = "block";
-        sessionStorage.setItem("userName", userName); // Guarda el nombre en sessionStorage
-        generateColorGrid(); // Genera la tabla de colores
-      } else {
-        alert("Por favor, ingresa tu nombre.");
-      }
-    }
-
-    // Función para enviar la respuesta y registrar en la API
-    async function saveUserAnswer(userName, answer) {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: userName,
-          respuesta: answer,
-          contador: 1,
-          numeroPrueba: 54119,
-        }),
-      });
-
-      if (!response.ok) {
-        console.error("Error guardando respuesta");
-      }
-    }
-
-    // Valida la respuesta
-    async function checkAnswer() {
-      const userName = sessionStorage.getItem("userName");
-      const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
-      const message = document.getElementById("message");
-
-      // Comprobamos si la respuesta es correcta
-      const isCorrect = userAnswer === encryptedMessage.toLowerCase();
-
-      if (isCorrect) {
-        message.style.color = "green";
-        message.textContent = "¡Correcto!";
-        await saveUserAnswer(userName, userAnswer); // Guarda la respuesta si es correcta
-      } else {
-        message.style.color = "red";
-        message.textContent = "Incorrecto. Inténtalo de nuevo.";
-        await saveUserAnswer(userName, userAnswer); // Guarda la respuesta incorrecta también
-      }
+    // Función para cerrar sesión
+    function logout() {
+      // Eliminar el nombre del usuario del almacenamiento local
+      localStorage.removeItem('userName');
+      // Redirigir al login
+      window.location.href = 'index.html';
     }
   </script>
 </body>
