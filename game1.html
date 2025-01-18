@@ -97,14 +97,14 @@
 <body>
   <div class="user-info" id="user-info"></div>
   <div class="container">
-    <h1>Juego 1: El Enigma del Tiempo</h1>
+    <h1>Juego 1: El Enigma de los Trenes</h1>
 
     <!-- Enigma -->
     <div class="enigma" id="enigma">
-      <h2>El Misterio de los Horarios de Tren</h2>
-      <p>Para resolver este enigma, debes sumar los horarios de los trenes con nombre: Regidor, Ribera y Rabano. Usa la tabla de horarios de trenes y calcula la hora final.</p>
+      <h2>El Misterio de la Casa</h2>
+      <p>En la tabla encontrarás tres trenes que están dirección a la casa. Encuentra sus nombres y suma las horas de los tres trenes, además de escribir sus tres iniciales.</p>
 
-      <table>
+      <table id="trenes">
         <thead>
           <tr>
             <th>Tren</th>
@@ -195,8 +195,10 @@
         </tbody>
       </table>
 
-      <label for="respuesta">Escribe la hora final:</label>
-      <input type="time" id="respuesta">
+      <label for="respuesta-hora">Escribe la hora final:</label>
+      <input type="time" id="respuesta-hora">
+      <label for="respuesta-iniciales">Escribe las iniciales de los trenes:</label>
+      <input type="text" id="respuesta-iniciales" maxlength="3">
       <button onclick="verificarRespuesta()">Enviar</button>
       <p id="feedback" style="color: yellow; margin-top: 10px;"></p>
     </div>
@@ -220,13 +222,30 @@
       window.location.href = 'index.html';
     }
 
+    // Función para mezclar aleatoriamente las filas de la tabla
+    function mezclarTabla() {
+      const tabla = document.getElementById('trenes');
+      const filas = Array.from(tabla.rows).slice(1); // Obtener todas las filas excepto el encabezado
+      for (let i = filas.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [filas[i], filas[j]] = [filas[j], filas[i]]; // Intercambiar filas
+      }
+      filas.forEach(fila => tabla.appendChild(fila)); // Añadir las filas mezcladas a la tabla
+    }
+
+    // Llamar a la función para mezclar la tabla al cargar la página
+    window.onload = mezclarTabla;
+
     // Verificar la respuesta del enigma
     function verificarRespuesta() {
-      const respuesta = document.getElementById('respuesta').value;
+      const respuestaHora = document.getElementById('respuesta-hora').value;
+      const respuestaIniciales = document.getElementById('respuesta-iniciales').value.toUpperCase();
       const feedback = document.getElementById('feedback');
-      const horaCorrecta = "34:30"; // Respuesta correcta calculada (08:15 + 11:30 + 14:45 = 34:30)
 
-      if (respuesta === horaCorrecta) {
+      const horaCorrecta = "34:30"; // 08:15 + 11:30 + 14:45 = 34:30
+      const inicialesCorrectas = "RRR"; // Iniciales de los trenes: Regidor, Ribera, Rabano
+
+      if (respuestaHora === horaCorrecta && respuestaIniciales === inicialesCorrectas) {
         feedback.textContent = '¡Correcto! Has descifrado el misterio de los trenes.';
         feedback.style.color = 'lime';
       } else {
