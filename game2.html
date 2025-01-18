@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juego 2 - Escape Room</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(120deg, #8e44ad, #2c3e50);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      position: relative;
+    }
+    .user-info {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    .user-info button {
+      margin-left: 10px;
+      background-color: #e74c3c;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .user-info button:hover {
+      background-color: #c0392b;
+    }
+    .container {
+      text-align: center;
+      width: 90%;
+      max-width: 600px;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+    .enigma {
+      margin-top: 30px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      text-align: left;
+    }
+    .enigma h2 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+    .enigma table {
+      width: 100%;
+      margin-bottom: 15px;
+      border-collapse: collapse;
+    }
+    .enigma th, .enigma td {
+      border: 1px solid white;
+      padding: 10px;
+      text-align: center;
+    }
+    .enigma th {
+      background-color: #3498db;
+    }
+    .enigma input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      font-size: 1em;
+      margin-bottom: 10px;
+    }
+    .enigma button {
+      padding: 10px 20px;
+      background-color: #3498db;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+    }
+    .enigma button:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <!-- Información del usuario -->
+  <div class="user-info" id="user-info"></div>
+
+  <div class="container">
+    <h1>Juego 2: El Enigma del Código Secreto</h1>
+
+    <!-- Enigma -->
+    <div class="enigma" id="enigma">
+      <h2>Descifra el Código Secreto</h2>
+      <p>En la siguiente tabla encontrarás códigos codificados que corresponden a letras. Usa el desplazamiento de 3 posiciones en el alfabeto (Cifrado César) para descifrar los mensajes.</p>
+
+      <table id="tabla-codigos">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Letras Codificadas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- La tabla se llena mediante JS -->
+        </tbody>
+      </table>
+
+      <label for="mensaje">Mensaje Descifrado:</label>
+      <input type="text" id="mensaje" placeholder="Escribe el mensaje">
+
+      <label for="clave">Clave (tres primeras letras):</label>
+      <input type="text" id="clave" placeholder="Ej. ABC">
+
+      <button onclick="verificarRespuesta()">Enviar</button>
+      <p id="feedback" style="color: yellow; margin-top: 10px;"></p>
+    </div>
+  </div>
+
+  <script>
+    // Verificar si hay un usuario en la sesión
+    const userName = localStorage.getItem('userName');
+    const userInfoDiv = document.getElementById('user-info');
+
+    if (!userName) {
+      alert("No has iniciado sesión. Redirigiendo al login...");
+      window.location.href = 'index.html';
+    } else {
+      userInfoDiv.innerHTML = `
+        Usuario: <strong>${userName}</strong>
+        <button onclick="logout()">Cerrar sesión</button>
+      `;
+    }
+
+    function logout() {
+      localStorage.removeItem('userName');
+      window.location.href = 'index.html';
+    }
+
+    // Lista de códigos con letras codificadas (Cifrado César con desplazamiento de 3)
+    const codigos = [
+      { codigo: "D", letra: "A" },
+      { codigo: "E", letra: "B" },
+      { codigo: "F", letra: "C" },
+      { codigo: "G", letra: "D" },
+      { codigo: "H", letra: "E" },
+      { codigo: "I", letra: "F" },
+      { codigo: "J", letra: "G" },
+      { codigo: "K", letra: "H" },
+      { codigo: "L", letra: "I" },
+      { codigo: "M", letra: "J" },
+      { codigo: "N", letra: "K" },
+      { codigo: "O", letra: "L" },
+      { codigo: "P", letra: "M" },
+      { codigo: "Q", letra: "N" },
+      { codigo: "R", letra: "O" },
+      { codigo: "S", letra: "P" },
+      { codigo: "T", letra: "Q" },
+      { codigo: "U", letra: "R" },
+      { codigo: "V", letra: "S" },
+      { codigo: "W", letra: "T" }
+    ];
+
+    // Función para mezclar aleatoriamente la tabla
+    function mezclarTabla() {
+      const tabla = document.getElementById('tabla-codigos').getElementsByTagName('tbody')[0];
+      let codigosMezclados = [...codigos];
+      codigosMezclados.sort(() => Math.random() - 0.5); // Mezcla aleatoriamente
+
+      // Vaciar la tabla antes de agregar las filas
+      tabla.innerHTML = '';
+
+      // Agregar las filas mezcladas a la tabla
+      codigosMezclados.forEach(codigo => {
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td>${codigo.codigo}</td>
+          <td>${codigo.letra}</td>
+        `;
+        tabla.appendChild(fila);
+      });
+    }
+
+    // Ejecutar la mezcla de la tabla al cargar la página
+    window.onload = mezclarTabla;
+
+    // Función para verificar la respuesta
+    function verificarRespuesta() {
+      const mensajeCorrecto = "HELLO";
+      const claveCorrecta = "ABC";
+
+      const mensaje = document.getElementById('mensaje').value.toUpperCase();
+      const clave = document.getElementById('clave').value.toUpperCase();
+      const feedback = document.getElementById('feedback');
+
+      if (mensaje === mensajeCorrecto && clave === claveCorrecta) {
+        feedback.textContent = '¡Correcto! Has descifrado el código secreto.';
+        feedback.style.color = 'lime';
+      } else {
+        feedback.textContent = 'Respuesta incorrecta. Intenta de nuevo.';
+        feedback.style.color = 'red';
+      }
+    }
+  </script>
+</body>
+</html>
