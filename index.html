@@ -3,75 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Escape Room Virtual</title>
+  <title>Login Escape Room</title>
   <style>
-    /* Estilo general */
     body {
       font-family: 'Arial', sans-serif;
       margin: 0;
       padding: 0;
-      background: linear-gradient(120deg, #2c3e50, #4ca1af);
-      color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      overflow: hidden;
-    }
-
-    .container {
-      text-align: center;
-      padding: 20px;
-      max-width: 600px;
-      animation: fadeIn 2s ease;
-    }
-
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 20px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-
-    p {
-      font-size: 1.2em;
-      margin-bottom: 30px;
-    }
-
-    button {
-      background-color: #e74c3c;
-      border: none;
+      background: linear-gradient(120deg, #8e44ad, #3498db);
       color: white;
-      padding: 15px 30px;
-      font-size: 1em;
-      text-transform: uppercase;
-      cursor: pointer;
+    }
+    .login-container {
+      text-align: center;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    input {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 80%;
+      max-width: 300px;
+      border: none;
       border-radius: 5px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
       transition: background-color 0.3s ease;
     }
-
     button:hover {
-      background-color: #c0392b;
+      background-color: #2ecc71;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-30px); }
-      to { opacity: 1; transform: translateY(0); }
+    .error {
+      color: #e74c3c;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>¡Bienvenidos a la Escape Room Virtual!</h1>
-    <p>
-      Pon a prueba tu ingenio y resuelve los enigmas para escapar. ¿Estás listo para enfrentarte al desafío? 
-    </p>
-    <button onclick="startGame()">Comenzar</button>
+  <div class="login-container">
+    <h1>Login Escape Room</h1>
+    <p>Introduce tu nombre de usuario y contraseña para comenzar.</p>
+    <input type="text" id="username" placeholder="Nombre de usuario">
+    <input type="password" id="password" placeholder="Contraseña">
+    <button onclick="login()">Iniciar Sesión</button>
+    <p class="error" id="error"></p>
   </div>
 
   <script>
-    function startGame() {
-      window.location.href = 'game.html'; // Redirige al juego principal
+    // Lista de usuarios y contraseñas
+    const usuarios = {
+      "Richland": "password123",
+      "Gerard": "12345",
+      "Maryann": "mypass",
+      "Amigos1": "escape1",
+      "Amigos2": "escape2"
+    };
+
+    async function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorDiv = document.getElementById('error');
+
+      // Verificar si el usuario existe y la contraseña es correcta
+      if (usuarios[username] && usuarios[username] === password) {
+        // Guardar el usuario en localStorage
+        localStorage.setItem("userName", username);
+
+        // Registrar el login en la API de logins
+        const dateLogin = new Date().toISOString();
+        await fetch("https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/logins", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nombre: username, dateLogin })
+        });
+
+        // Redirigir al juego principal
+        alert(`¡Hola, ${username}! Has iniciado sesión.`);
+        window.location.href = 'game.html';
+      } else {
+        errorDiv.textContent = "Usuario o contraseña incorrectos. Inténtalo de nuevo.";
+      }
     }
   </script>
 </body>
