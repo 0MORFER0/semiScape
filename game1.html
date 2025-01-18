@@ -173,21 +173,46 @@
     }
 
     // Ejecutar la mezcla de la tabla al cargar la página
-    window.onload = mezclarTabla;
+    window.onload = () => {
+      mezclarTabla();
+      mostrarUsuario();
+    };
+
+    // Mostrar el usuario logueado
+    function mostrarUsuario() {
+      const userName = localStorage.getItem('userName');
+      const userInfoDiv = document.getElementById('user-info');
+
+      if (!userName) {
+        alert("No has iniciado sesión. Redirigiendo al login...");
+        window.location.href = 'index.html'; // Redirigir al login si no hay usuario
+      } else {
+        userInfoDiv.innerHTML = `
+          Usuario: <strong>${userName}</strong>
+          <button onclick="logout()">Cerrar sesión</button>
+        `;
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('userName');
+      window.location.href = 'index.html'; // Redirigir al login al cerrar sesión
+    }
 
     // Función para verificar la respuesta
-     function verificarRespuesta() {
+    function verificarRespuesta() {
       const sumaDistancias = 361; // Suma de las distancias correctas de los trenes: Regidor, Ribera y Rabano
       const inicialesCorrectas = "RRR";
 
       const distancia = parseInt(document.getElementById('distancia').value);
-      const iniciales = document.getElementById('iniciales').value.toUpperCase();
+      const iniciales = document.getElementById('iniciales').value.toUpperCase().trim(); // Normaliza las iniciales
+
       const feedback = document.getElementById('feedback');
 
       if (distancia === sumaDistancias && iniciales === inicialesCorrectas) {
         feedback.textContent = '¡Correcto! Has descifrado el misterio del viaje.';
         feedback.style.color = 'lime';
-      // Redirigir a game2.html tras 2 segundos de éxito
+        // Redirigir a game2.html tras 2 segundos de éxito
         setTimeout(() => {
           window.location.href = 'game2.html';
         }, 2000);  // Espera 2 segundos antes de redirigir
