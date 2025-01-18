@@ -23,7 +23,7 @@
       border-radius: 10px;
       box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
     }
-    input {
+    select, input {
       display: block;
       margin: 10px auto;
       padding: 10px;
@@ -55,8 +55,10 @@
 <body>
   <div class="login-container">
     <h1>Login Escape Room</h1>
-    <p>Introduce tu nombre de usuario y contraseña para comenzar.</p>
-    <input type="text" id="username" placeholder="Nombre de usuario">
+    <p>Selecciona tu nombre de usuario y escribe la contraseña para comenzar.</p>
+    <select id="username">
+      <option value="" disabled selected>Selecciona tu nombre</option>
+    </select>
     <input type="password" id="password" placeholder="Contraseña">
     <button onclick="login()">Iniciar Sesión</button>
     <p class="error" id="error"></p>
@@ -72,12 +74,26 @@
       "Amigos2": "escape2"
     };
 
+    // Llenar el select con los nombres de usuario
+    const usernameSelect = document.getElementById('username');
+    for (const usuario in usuarios) {
+      const option = document.createElement('option');
+      option.value = usuario;
+      option.textContent = usuario;
+      usernameSelect.appendChild(option);
+    }
+
     async function login() {
-      const username = document.getElementById('username').value.trim();
+      const username = document.getElementById('username').value;
       const password = document.getElementById('password').value.trim();
       const errorDiv = document.getElementById('error');
 
-      // Verificar si el usuario existe y la contraseña es correcta
+      if (!username) {
+        errorDiv.textContent = "Por favor, selecciona tu nombre.";
+        return;
+      }
+
+      // Verificar si la contraseña es correcta
       if (usuarios[username] && usuarios[username] === password) {
         // Guardar el usuario en localStorage
         localStorage.setItem("userName", username);
@@ -94,7 +110,7 @@
         alert(`¡Hola, ${username}! Has iniciado sesión.`);
         window.location.href = 'game.html';
       } else {
-        errorDiv.textContent = "Usuario o contraseña incorrectos. Inténtalo de nuevo.";
+        errorDiv.textContent = "Contraseña incorrecta. Inténtalo de nuevo.";
       }
     }
   </script>
