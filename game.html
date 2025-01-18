@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Juego - Escape Room</title>
+  <title>Juego 1 - Escape Room</title>
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -89,29 +89,17 @@
 <body>
   <div class="user-info" id="user-info"></div>
   <div class="container">
-    <h1>¡Bienvenido al Juego!</h1>
-    <p>Resuelve los enigmas para continuar avanzando en tu aventura.</p>
+    <h1>Juego 1: El Enigma del Tiempo</h1>
 
-    <!-- Enigma 1 -->
-    <div class="enigma" id="enigma-1">
-      <h2>Enigma 1: El acertijo del sabio</h2>
+    <!-- Enigma -->
+    <div class="enigma" id="enigma">
+      <h2>El Misterio de las Horas</h2>
       <p>
-        "Mi primer secreto yace en las palabras. Busca el número que habita entre la M y la Z. Recuerda: lo que se suma también se divide."
+        "Un reloj marca tres horas menos de lo que realmente es. Si el reloj dice que son las 9, ¿qué hora es en realidad?"
       </p>
-      <input type="text" id="respuesta-1" placeholder="Escribe tu respuesta aquí">
-      <button onclick="verificarRespuesta1()">Enviar</button>
-      <p id="feedback-1" style="color: yellow; margin-top: 10px;"></p>
-    </div>
-
-    <!-- Espacio para próximos enigmas -->
-    <div class="enigma" id="enigma-2" style="display: none;">
-      <h2>Enigma 2: El mapa de las estrellas</h2>
-      <p>
-        "En el cielo nocturno, un patrón antiguo te guiará. Suma las estrellas de Orión y la Osa Mayor; el resultado abrirá el siguiente portal."
-      </p>
-      <input type="text" id="respuesta-2" placeholder="Escribe tu respuesta aquí">
-      <button onclick="verificarRespuesta2()">Enviar</button>
-      <p id="feedback-2" style="color: yellow; margin-top: 10px;"></p>
+      <input type="text" id="respuesta" placeholder="Escribe tu respuesta aquí">
+      <button onclick="verificarRespuesta()">Enviar</button>
+      <p id="feedback" style="color: yellow; margin-top: 10px;"></p>
     </div>
   </div>
 
@@ -135,30 +123,14 @@
       window.location.href = 'index.html';
     }
 
-    // Verificar respuestas de los enigmas
-    function verificarRespuesta1() {
-      const respuesta = document.getElementById('respuesta-1').value.trim();
-      const feedback = document.getElementById('feedback-1');
+    // Verificar la respuesta del enigma
+    function verificarRespuesta() {
+      const respuesta = document.getElementById('respuesta').value.trim();
+      const feedback = document.getElementById('feedback');
 
-      if (respuesta === '13') {
-        feedback.textContent = '¡Correcto! Has avanzado al siguiente enigma.';
+      if (respuesta === '12') {
+        feedback.textContent = '¡Correcto! Has descifrado el misterio del tiempo.';
         feedback.style.color = 'lime';
-        document.getElementById('enigma-1').style.display = 'none';
-        document.getElementById('enigma-2').style.display = 'block';
-      } else {
-        feedback.textContent = 'Respuesta incorrecta. Intenta de nuevo.';
-        feedback.style.color = 'red';
-      }
-    }
-
-    function verificarRespuesta2() {
-      const respuesta = document.getElementById('respuesta-2').value.trim();
-      const feedback = document.getElementById('feedback-2');
-
-      if (respuesta === '14') {
-        feedback.textContent = '¡Correcto! Has completado el segundo enigma.';
-        feedback.style.color = 'lime';
-        // Aquí se podría añadir lógica para desbloquear el siguiente enigma
       } else {
         feedback.textContent = 'Respuesta incorrecta. Intenta de nuevo.';
         feedback.style.color = 'red';
