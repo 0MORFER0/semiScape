@@ -3,137 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Enigma - Escape Room</title>
+  <title>Login Escape Room</title>
   <style>
     body {
       font-family: 'Arial', sans-serif;
       margin: 0;
       padding: 0;
-      background: linear-gradient(120deg, #1abc9c, #2c3e50);
-      color: white;
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      position: relative;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(120deg, #8e44ad, #3498db);
+      color: white;
     }
-    .user-info {
-      position: absolute;
-      top: 10px;
-      right: 20px;
+    .login-container {
+      text-align: center;
       background: rgba(0, 0, 0, 0.5);
-      padding: 10px 20px;
+      padding: 30px;
       border-radius: 10px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    select, input {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 80%;
+      max-width: 300px;
+      border: none;
+      border-radius: 5px;
       font-size: 16px;
     }
-    .user-info button {
-      margin-left: 10px;
-      background-color: #e74c3c;
-      border: none;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    .user-info button:hover {
-      background-color: #c0392b;
-    }
-    .container {
-      text-align: center;
-      width: 90%;
-      max-width: 600px;
-    }
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 20px;
-    }
-    .enigma {
-      margin-top: 30px;
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.5);
-      border-radius: 10px;
-      text-align: left;
-    }
-    .enigma h2 {
-      font-size: 1.5em;
-      margin-bottom: 10px;
-    }
-    .enigma p {
-      font-size: 1em;
-      line-height: 1.5;
-      margin-bottom: 10px;
-    }
-    .enigma input {
-      width: calc(100% - 20px);
-      padding: 10px;
-      font-size: 1em;
-      margin-bottom: 10px;
-    }
-    .enigma button {
+    button {
       padding: 10px 20px;
-      background-color: #3498db;
-      border: none;
+      background-color: #27ae60;
       color: white;
+      border: none;
       border-radius: 5px;
+      font-size: 16px;
       cursor: pointer;
-      font-size: 1em;
       transition: background-color 0.3s ease;
     }
-    .enigma button:hover {
-      background-color: #2980b9;
+    button:hover {
+      background-color: #2ecc71;
+    }
+    .error {
+      color: #e74c3c;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="user-info" id="user-info"></div>
-  <div class="container">
-    <h1>¡Bienvenido al Enigma!</h1>
-
-    <!-- Enigma -->
-    <div class="enigma" id="enigma">
-      <h2>El Misterio de las Palabras</h2>
-      <p>
-        "En el silencio de la noche, el sabio escribe un número que suma al total del día. La respuesta está escondida en esta frase, pero solo si sabes buscar. Piensa: ¿qué hace el día completo?"
-      </p>
-      <input type="text" id="respuesta" placeholder="Escribe tu respuesta aquí">
-      <button onclick="verificarRespuesta()">Enviar</button>
-      <p id="feedback" style="color: yellow; margin-top: 10px;"></p>
-    </div>
+  <div class="login-container">
+    <h1>Login Escape Room</h1>
+    <p>Selecciona tu nombre de usuario y escribe la contraseña para comenzar.</p>
+    <select id="username">
+      <option value="" disabled selected>Selecciona tu nombre</option>
+    </select>
+    <input type="password" id="password" placeholder="Contraseña">
+    <button onclick="login()">Iniciar Sesión</button>
+    <p class="error" id="error"></p>
   </div>
 
+  <script src="config.js"></script>
   <script>
-    // Comprobar si hay un usuario en la sesión
-    const userName = localStorage.getItem('userName');
-    const userInfoDiv = document.getElementById('user-info');
+    // Llenar el select con los nombres de usuario del config.js
+    const usernameSelect = document.getElementById('username');
+    groupConfig.users.forEach(user => {
+      const option = document.createElement('option');
+      option.value = user.name;
+      option.textContent = user.name;
+      usernameSelect.appendChild(option);
+    });
 
-    if (!userName) {
-      alert("No has iniciado sesión. Redirigiendo al login...");
-      window.location.href = 'index.html';
-    } else {
-      userInfoDiv.innerHTML = `
-        Usuario: <strong>${userName}</strong>
-        <button onclick="logout()">Cerrar sesión</button>
-      `;
-    }
+    async function login() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value.trim();
+      const errorDiv = document.getElementById('error');
 
-    function logout() {
-      localStorage.removeItem('userName');
-      window.location.href = 'index.html';
-    }
+      if (!username) {
+        errorDiv.textContent = "Por favor, selecciona tu nombre.";
+        return;
+      }
 
-    // Verificar la respuesta del enigma
-    function verificarRespuesta() {
-      const respuesta = document.getElementById('respuesta').value.trim();
-      const feedback = document.getElementById('feedback');
+      const user = groupConfig.users.find(u => u.name === username);
 
-      if (respuesta === '24') {
-        feedback.textContent = '¡Correcto! Has descifrado el misterio de las palabras.';
-        feedback.style.color = 'lime';
+      if (user && user.password === password) {
+        // Guardar usuario en localStorage
+        localStorage.setItem("userName", username);
+
+        // Registrar inicio de sesión en la API
+        const dateLogin = new Date().toISOString();
+        await fetch("https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/logins", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nombre: username, dateLogin })
+        });
+
+        alert(`¡Hola, ${username}! Has iniciado sesión.`);
+        window.location.href = 'game1.html';
       } else {
-        feedback.textContent = 'Respuesta incorrecta. Intenta de nuevo.';
-        feedback.style.color = 'red';
+        errorDiv.textContent = "Contraseña incorrecta. Inténtalo de nuevo.";
       }
     }
   </script>
