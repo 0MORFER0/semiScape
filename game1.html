@@ -176,22 +176,24 @@
     window.onload = mezclarTabla;
 
     // Función para verificar la respuesta
-    function verificarRespuesta() {
-      const sumaDistancias = 361; // Suma de las distancias correctas de los trenes: Regidor, Ribera y Rabano
-      const inicialesCorrectas = "RRR";
+   function verificarRespuesta() {
+  const respuesta = document.getElementById('respuesta').value;
+  const feedback = document.getElementById('feedback');
+  const horaCorrecta = "15:30"; // Respuesta correcta calculada
 
-      const distancia = parseInt(document.getElementById('distancia').value);
-      const iniciales = document.getElementById('iniciales').value.toUpperCase();
-      const feedback = document.getElementById('feedback');
+  if (respuesta === horaCorrecta) {
+    feedback.textContent = '¡Correcto! Has descifrado el misterio del tiempo.';
+    feedback.style.color = 'lime';
 
-      if (distancia === sumaDistancias && iniciales === inicialesCorrectas) {
-        feedback.textContent = '¡Correcto! Has descifrado el misterio del viaje.';
-        feedback.style.color = 'lime';
-      } else {
-        feedback.textContent = 'Respuesta incorrecta. Intenta de nuevo.';
-        feedback.style.color = 'red';
-      }
-    }
+    // Redirigir a game2.html tras 2 segundos de éxito
+    setTimeout(() => {
+      window.location.href = 'game2.html';
+    }, 2000);  // Espera 2 segundos antes de redirigir
+  } else {
+    feedback.textContent = 'Respuesta incorrecta. Intenta de nuevo.';
+    feedback.style.color = 'red';
+  }
+}
   </script>
 </body>
 </html>
