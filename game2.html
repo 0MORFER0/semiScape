@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Juego 2 - Escape Room</title>
   <style>
+    /* Estilo general */
     body {
       font-family: 'Arial', sans-serif;
       margin: 0;
@@ -111,7 +112,7 @@
       const username = sessionStorage.getItem("userName");
       if (!username) {
         alert("Debes iniciar sesión primero.");
-        window.location.href = 'login.html'; // Redirige si no hay sesión
+        window.location.href = 'index.html'; // Redirige al index si no hay sesión
       } else {
         document.getElementById('user-info').textContent = `Usuario: ${username}`;
       }
