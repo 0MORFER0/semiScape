@@ -28,19 +28,6 @@
       border-radius: 10px;
       font-size: 16px;
     }
-    .user-info button {
-      margin-left: 10px;
-      background-color: #e74c3c;
-      border: none;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    .user-info button:hover {
-      background-color: #c0392b;
-    }
     .container {
       text-align: center;
       width: 90%;
@@ -56,10 +43,6 @@
       background: rgba(0, 0, 0, 0.5);
       border-radius: 10px;
       text-align: left;
-    }
-    .enigma h2 {
-      font-size: 1.5em;
-      margin-bottom: 10px;
     }
     .color-buttons {
       display: flex;
@@ -77,11 +60,11 @@
     }
     .color-buttons button.active {
       opacity: 1;
-      transform: scale(1.2);
+      transform: scale(1.3);
     }
     #feedback {
-      color: yellow;
       margin-top: 10px;
+      font-size: 1.2em;
     }
   </style>
 </head>
@@ -89,9 +72,9 @@
   <div class="user-info" id="user-info"></div>
   <div class="container">
     <h1>Juego 2: El Desafío de Colores</h1>
-    <div class="enigma" id="enigma">
-      <h2>Recuerda las combinaciones de colores</h2>
-      <p>Los botones de colores se iluminarán en un orden aleatorio. Tu tarea es replicar ese orden de colores. ¡Buena suerte!</p>
+    <div class="enigma">
+      <h2>Recuerda la secuencia</h2>
+      <p>Los botones de colores se iluminarán en un orden aleatorio. Tu tarea es replicar esa secuencia. ¡Buena suerte!</p>
 
       <div class="color-buttons">
         <button id="btn1" style="background-color: red;"></button>
@@ -108,7 +91,7 @@
   </div>
 
   <script>
-    // Verificar autenticación del usuario
+    // Verificar que el usuario está autenticado
     window.onload = function() {
       const username = localStorage.getItem("userName");
       if (!username) {
@@ -123,28 +106,37 @@
     let sequence = [];
     let userSequence = [];
     let round = 1;
+    let displaySpeed = 1000; // Velocidad inicial para mostrar la secuencia (ms)
 
+    // Función para empezar una nueva ronda
     function startRound() {
       userSequence = [];
       document.getElementById("feedback").textContent = "";
-      if (round > 4) {
-        document.getElementById("feedback").textContent = "¡Has completado todas las rondas! ¡Felicidades!";
+      
+      if (round > 10) { // Máximo número de rondas
+        document.getElementById("feedback").textContent = "¡Has completado todas las rondas! ¡Eres un maestro del desafío de colores!";
         return;
       }
+
+      // Generar una secuencia aleatoria más larga con cada ronda
       sequence.push(colors[Math.floor(Math.random() * colors.length)]);
+      document.getElementById("start").disabled = true;
+
+      // Mostrar la secuencia
       displaySequence();
     }
 
+    // Función para mostrar la secuencia
     function displaySequence() {
-      let index = 0;
       const buttons = document.querySelectorAll(".color-buttons button");
-
-      document.getElementById("start").disabled = true;
+      let index = 0;
 
       const interval = setInterval(() => {
+        // Restablecer el estado de todos los botones
         buttons.forEach(button => button.classList.remove("active"));
 
         if (index < sequence.length) {
+          // Resaltar el color correspondiente en la secuencia
           const color = sequence[index];
           buttons.forEach(button => {
             if (button.style.backgroundColor === color) {
@@ -154,18 +146,28 @@
           index++;
         } else {
           clearInterval(interval);
+
+          // Permitir la interacción del usuario tras mostrar la secuencia
           setTimeout(() => {
             buttons.forEach(button => button.classList.remove("active"));
             document.getElementById("start").disabled = false;
           }, 500);
         }
-      }, 1000);
+      }, displaySpeed);
+
+      // Reducir el tiempo entre colores para aumentar la dificultad
+      if (displaySpeed > 400) {
+        displaySpeed -= 100;
+      }
     }
 
+    // Manejo de los clics en los botones
     document.querySelectorAll(".color-buttons button").forEach(button => {
       button.addEventListener("click", () => {
         if (userSequence.length < sequence.length) {
           userSequence.push(button.style.backgroundColor);
+
+          // Verificar la secuencia del usuario
           if (userSequence.length === sequence.length) {
             verifySequence();
           }
@@ -173,15 +175,21 @@
       });
     });
 
+    // Verificar si la secuencia es correcta
     function verifySequence() {
       if (userSequence.join(',') === sequence.join(',')) {
-        document.getElementById("feedback").textContent = "¡Correcto! Has pasado esta ronda.";
+        document.getElementById("feedback").textContent = "¡Correcto! Has pasado a la siguiente ronda.";
         document.getElementById("feedback").style.color = "lime";
         round++;
-        setTimeout(startRound, 2000);
+
+        // Empezar la próxima ronda tras un pequeño retraso
+        setTimeout(startRound, 1500);
       } else {
         document.getElementById("feedback").textContent = "Secuencia incorrecta. Intenta de nuevo.";
         document.getElementById("feedback").style.color = "red";
+        sequence = []; // Reiniciar la secuencia
+        round = 1; // Reiniciar la dificultad
+        displaySpeed = 1000; // Reiniciar la velocidad
       }
     }
   </script>
