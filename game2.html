@@ -67,16 +67,17 @@
       margin-bottom: 20px;
     }
     .color-buttons button {
-      width: 50px;
-      height: 50px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       border: none;
       cursor: pointer;
-      opacity: 0.7;
-      transition: opacity 0.3s ease;
+      opacity: 0.5;
+      transition: transform 0.3s ease, opacity 0.3s ease;
     }
-    .color-buttons button:hover {
+    .color-buttons button.active {
       opacity: 1;
+      transform: scale(1.2);
     }
     #feedback {
       color: yellow;
@@ -107,25 +108,22 @@
   </div>
 
   <script>
-    // Verificar que el usuario está autenticado
-    // Verificar que el usuario está autenticado
-window.onload = function() {
-  const username = localStorage.getItem("userName"); // Cambiado a localStorage
-  if (!username) {
-    alert("Debes iniciar sesión primero.");
-    window.location.href = 'index.html'; // Redirige si no hay sesión
-  } else {
-    document.getElementById('user-info').textContent = `Usuario: ${username}`;
-  }
-};
-   
+    // Verificar autenticación del usuario
+    window.onload = function() {
+      const username = localStorage.getItem("userName");
+      if (!username) {
+        alert("Debes iniciar sesión primero.");
+        window.location.href = 'index.html';
+      } else {
+        document.getElementById('user-info').textContent = `Usuario: ${username}`;
+      }
+    };
 
     const colors = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
     let sequence = [];
     let userSequence = [];
     let round = 1;
 
-    // Función para empezar una nueva ronda
     function startRound() {
       userSequence = [];
       document.getElementById("feedback").textContent = "";
@@ -133,51 +131,41 @@ window.onload = function() {
         document.getElementById("feedback").textContent = "¡Has completado todas las rondas! ¡Felicidades!";
         return;
       }
-
-      // Generar una secuencia aleatoria de colores
       sequence.push(colors[Math.floor(Math.random() * colors.length)]);
-
-      // Mostrar la secuencia de colores
       displaySequence();
     }
 
-    // Función para mostrar la secuencia
     function displaySequence() {
       let index = 0;
       const buttons = document.querySelectorAll(".color-buttons button");
 
-      // Desactivar el botón de iniciar mientras se muestra la secuencia
       document.getElementById("start").disabled = true;
 
       const interval = setInterval(() => {
-        buttons.forEach(button => button.style.opacity = 0.7); // Restablecer opacidad
+        buttons.forEach(button => button.classList.remove("active"));
 
-        // Resaltar el color en la secuencia
-        buttons.forEach(button => {
-          if (button.style.backgroundColor === sequence[index]) {
-            button.style.opacity = 1;
-          }
-        });
-
-        index++;
-
-        if (index === sequence.length) {
+        if (index < sequence.length) {
+          const color = sequence[index];
+          buttons.forEach(button => {
+            if (button.style.backgroundColor === color) {
+              button.classList.add("active");
+            }
+          });
+          index++;
+        } else {
           clearInterval(interval);
           setTimeout(() => {
-            // Habilitar los botones para que el usuario intente replicar la secuencia
+            buttons.forEach(button => button.classList.remove("active"));
             document.getElementById("start").disabled = false;
           }, 500);
         }
       }, 1000);
     }
 
-    // Función para manejar los clics de los botones de colores
-    document.querySelectorAll(".color-buttons button").forEach((button, idx) => {
+    document.querySelectorAll(".color-buttons button").forEach(button => {
       button.addEventListener("click", () => {
         if (userSequence.length < sequence.length) {
           userSequence.push(button.style.backgroundColor);
-
-          // Verificar si la secuencia del usuario es correcta
           if (userSequence.length === sequence.length) {
             verifySequence();
           }
@@ -185,15 +173,12 @@ window.onload = function() {
       });
     });
 
-    // Función para verificar si la secuencia del usuario es correcta
     function verifySequence() {
       if (userSequence.join(',') === sequence.join(',')) {
         document.getElementById("feedback").textContent = "¡Correcto! Has pasado esta ronda.";
         document.getElementById("feedback").style.color = "lime";
-
-        // Incrementar la ronda
         round++;
-        setTimeout(startRound, 2000); // Empezar la siguiente ronda
+        setTimeout(startRound, 2000);
       } else {
         document.getElementById("feedback").textContent = "Secuencia incorrecta. Intenta de nuevo.";
         document.getElementById("feedback").style.color = "red";
