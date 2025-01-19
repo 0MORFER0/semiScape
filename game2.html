@@ -108,15 +108,17 @@
 
   <script>
     // Verificar que el usuario está autenticado
-    window.onload = function() {
-      const username = sessionStorage.getItem("userName");
-      if (!username) {
-        alert("Debes iniciar sesión primero.");
-        window.location.href = 'index.html'; // Redirige al index si no hay sesión
-      } else {
-        document.getElementById('user-info').textContent = `Usuario: ${username}`;
-      }
-    };
+    // Verificar que el usuario está autenticado
+window.onload = function() {
+  const username = localStorage.getItem("userName"); // Cambiado a localStorage
+  if (!username) {
+    alert("Debes iniciar sesión primero.");
+    window.location.href = 'index.html'; // Redirige si no hay sesión
+  } else {
+    document.getElementById('user-info').textContent = `Usuario: ${username}`;
+  }
+};
+   
 
     const colors = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
     let sequence = [];
