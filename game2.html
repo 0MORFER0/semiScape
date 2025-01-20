@@ -42,25 +42,29 @@
       padding: 20px;
       background: rgba(0, 0, 0, 0.5);
       border-radius: 10px;
-      text-align: left;
     }
     .color-buttons {
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      justify-items: center;
+      margin: 20px 0;
     }
     .color-buttons button {
-      width: 60px;
-      height: 60px;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
       border: none;
       cursor: pointer;
+      background-color: gray;
       opacity: 0.5;
-      transition: transform 0.3s ease, opacity 0.3s ease;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
     }
     .color-buttons button.active {
       opacity: 1;
-      transform: scale(1.3);
+      transform: scale(1.5);
+      box-shadow: 0 0 20px currentColor;
     }
     #feedback {
       margin-top: 10px;
