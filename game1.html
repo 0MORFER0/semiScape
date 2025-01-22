@@ -62,7 +62,7 @@
     // Función para mezclar aleatoriamente la tabla
     function mezclarTabla() {
       const tabla = document.getElementById('tabla-trenes').getElementsByTagName('tbody')[0];
-      let trenesMezclados = [groupConfig.trenes];
+      let trenesMezclados = [...groupConfig.trenes];
       trenesMezclados.sort(() => Math.random() - 0.5); // Mezcla aleatoriamente
 
       // Vaciar la tabla antes de agregar las filas
@@ -113,7 +113,7 @@
 
       const feedback = document.getElementById('feedback');
 
-      if (distancia === CONFIG.sumaDistanciasCorrectas && iniciales === CONFIG.inicialesCorrectas) {
+      if (distancia === groupConfig.sumaDistanciasCorrectas && iniciales === groupConfig.inicialesCorrectas) {
         feedback.textContent = '¡Correcto! Has descifrado el misterio del viaje.';
         feedback.style.color = 'lime';
         // Redirigir a game2.html tras 2 segundos de éxito
