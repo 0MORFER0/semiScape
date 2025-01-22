@@ -111,9 +111,9 @@
     <table id="userTable" class="hidden">
       <thead>
         <tr>
-          <th>Nombre</th>
-          <th>Puntuación</th>
-          <th>Carta</th>
+          <th>Jugador 1</th>
+          <th>Jugador 2</th>
+          <th>Carta Común</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -201,16 +201,20 @@
 
       const userTableBody = document.querySelector("#userTable tbody");
       groupConfig.users.sort((a, b) => b.puntuacion - a.puntuacion);  // Ordenar por puntuación
-      groupConfig.users.forEach(user => {
+      for (let i = 0; i < groupConfig.users.length; i += 2) {
+        const user1 = groupConfig.users[i];
+        const user2 = groupConfig.users[i + 1] || { name: "Sin jugador", puntuacion: "-", carta: "-" };
+        const commonCard = user1.carta === user2.carta ? user1.carta : "No coinciden";
+
         const row = `
           <tr>
-            <td>${user.name}</td>
-            <td>${user.puntuacion}</td>
-            <td>${user.carta}</td>
+            <td>${user1.name}</td>
+            <td>${user2.name}</td>
+            <td>${commonCard}</td>
           </tr>
         `;
         userTableBody.innerHTML += row;
-      });
+      }
     }
 
     loadPage();
