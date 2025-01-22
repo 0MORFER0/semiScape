@@ -88,7 +88,6 @@
       <tr>
         <th>Nombre</th>
         <th>Puntuación</th>
-        <th>Pareja</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -107,7 +106,19 @@
   </table>
 
   <h1>Usuarios del Juego</h1>
-  <div id="users-container"></div>
+  <div id="users-container">
+    <h2 class="toggle-table" onclick="toggleTable()">Usuarios</h2>
+    <table id="userTable" class="hidden">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Puntuación</th>
+          <th>Carta</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
   <button onclick="shuffleCards()">Cambiar cartas aleatoriamente</button>
 
@@ -151,9 +162,9 @@
       loadPage();  // Recargar la página para mostrar los cambios
     }
 
-    function toggleTable(carta) {
-      const table = document.getElementById(`table-${carta}`);
-      table.classList.toggle("hidden");
+    function toggleTable() {
+      const table = document.getElementById('userTable');
+      table.classList.toggle('hidden');
     }
 
     async function loadPage() {
@@ -161,18 +172,15 @@
 
       const playerTableBody = document.querySelector("#playerTable tbody");
       players.sort((a, b) => b.contador - a.contador);  // Ordenar por puntuación
-      for (let i = 0; i < players.length; i += 2) {
-        const player1 = players[i];
-        const player2 = players[i + 1] || { nombre: "Sin pareja", contador: "-" };
+      players.forEach(player => {
         const row = `
           <tr>
-            <td>${player1.nombre}</td>
-            <td>${player1.contador}</td>
-            <td>${player2.nombre}</td>
+            <td>${player.nombre}</td>
+            <td>${player.contador}</td>
           </tr>
         `;
         playerTableBody.innerHTML += row;
-      }
+      });
 
       const testTableBody = document.querySelector("#testTable tbody");
       tests.forEach(test => {
@@ -191,37 +199,18 @@
         testTableBody.appendChild(row);
       });
 
-      // Agrupar usuarios por carta
-      const usersContainer = document.getElementById("users-container");
-      const groupedUsers = groupConfig.users.reduce((acc, user) => {
-        if (!acc[user.carta]) acc[user.carta] = [];
-        acc[user.carta].push(user);
-        return acc;
-      }, {});
-
-      for (let carta in groupedUsers) {
-        const users = groupedUsers[carta];
-        const tableHTML = `
-          <h2 class="toggle-table" onclick="toggleTable('${carta}')">${carta}</h2>
-          <table id="table-${carta}" class="hidden">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Puntuación</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${users.map(user => `
-                <tr>
-                  <td>${user.name}</td>
-                  <td>${user.puntuacion}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
+      const userTableBody = document.querySelector("#userTable tbody");
+      groupConfig.users.sort((a, b) => b.puntuacion - a.puntuacion);  // Ordenar por puntuación
+      groupConfig.users.forEach(user => {
+        const row = `
+          <tr>
+            <td>${user.name}</td>
+            <td>${user.puntuacion}</td>
+            <td>${user.carta}</td>
+          </tr>
         `;
-        usersContainer.innerHTML += tableHTML;
-      }
+        userTableBody.innerHTML += row;
+      });
     }
 
     loadPage();
