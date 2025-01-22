@@ -95,7 +95,6 @@
   </div>
 <script src="config.js"></script> <!-- Cargar config.js -->
   <script>
-
     // Usuarios simulados (pueden venir de const.conf)
     const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
 
@@ -119,7 +118,7 @@
 
     // Función para asignar cartas por parejas o equipos de tres
     function asignarCartas() {
-      const cartasDuplicadas = baraja.flatMap(carta => [carta, carta]); // Duplicar cada carta
+      const cartasDuplicadas = groupConfig.baraja.flatMap(carta => [carta, carta]); // Usar groupConfig.baraja
       const totalUsuarios = usuarios.length;
 
       if (totalUsuarios === 0) {
@@ -131,49 +130,34 @@
       const cartasAsignadas = [];
       let cartaIndex = 0;
 
-     // Función para asignar cartas por parejas o equipos de tres
-function asignarCartas() {
-  const cartasDuplicadas = groupConfig.baraja.flatMap(carta => [carta, carta]); // Usar groupConfig.baraja
-  const totalUsuarios = usuarios.length;
+      // Asignar cartas a cada usuario
+      for (let i = 0; i < totalUsuarios; i++) {
+        if (i % 2 === 0 && totalUsuarios - i === 3) {
+          // Caso especial: equipo de tres
+          const equipoCartas = cartasDuplicadas.slice(cartaIndex, cartaIndex + 3);
+          cartasAsignadas.push(...equipoCartas);
+          cartaIndex += 3;
+          break;
+        } else {
+          const parejaCartas = cartasDuplicadas.slice(cartaIndex, cartaIndex + 2);
+          cartasAsignadas.push(...parejaCartas);
+          cartaIndex += 2;
+        }
+      }
 
-  if (totalUsuarios === 0) {
-    alert("No hay usuarios registrados. Redirigiendo al login...");
-    window.location.href = 'index.html';
-    return;
-  }
+      // Mostrar la carta del usuario logueado
+      const userName = localStorage.getItem('userName');
+      const userIndex = usuarios.findIndex(u => u.name === userName);
+      const cartaUsuario = cartasAsignadas[userIndex];
 
-  const cartasAsignadas = [];
-  let cartaIndex = 0;
-
-  // Asignar cartas a cada usuario
-  for (let i = 0; i < totalUsuarios; i++) {
-    if (i % 2 === 0 && totalUsuarios - i === 3) {
-      // Caso especial: equipo de tres
-      const equipoCartas = cartasDuplicadas.slice(cartaIndex, cartaIndex + 3);
-      cartasAsignadas.push(...equipoCartas);
-      cartaIndex += 3;
-      break;
-    } else {
-      const parejaCartas = cartasDuplicadas.slice(cartaIndex, cartaIndex + 2);
-      cartasAsignadas.push(...parejaCartas);
-      cartaIndex += 2;
+      if (cartaUsuario) {
+        document.getElementById('card-title').textContent = cartaUsuario;
+        document.getElementById('card-description').textContent = "Descripción de la carta"; // Puedes modificar este valor con una descripción más detallada si lo deseas
+      } else {
+        alert("Error al asignar carta al usuario.");
+        window.location.href = 'index.html';
+      }
     }
-  }
-
-  // Mostrar la carta del usuario logueado
-  const userName = localStorage.getItem('userName');
-  const userIndex = usuarios.findIndex(u => u.name === userName);
-  const cartaUsuario = cartasAsignadas[userIndex];
-
-  if (cartaUsuario) {
-    document.getElementById('card-title').textContent = cartaUsuario;
-    document.getElementById('card-description').textContent = "Descripción de la carta"; // Puedes modificar este valor con una descripción más detallada si lo deseas
-  } else {
-    alert("Error al asignar carta al usuario.");
-    window.location.href = 'index.html';
-  }
-}
-
 
     // Logout
     function logout() {
