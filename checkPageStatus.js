@@ -12,7 +12,7 @@ async function checkPageStatus() {
     const pageConfig = pages.find(page => page.nombre === currentPage);
 
     // Si no se encuentra la configuración o el estado es 0, redirigir
-    if (!pageConfig || pageConfig.estado === 0) {
+    if (!pageConfig || pageConfig.estado == 0) {
       alert(`La página "${currentPage}" no está activa.`);
       window.location.href = "index.html"; // Redirigir a la página principal
     }
