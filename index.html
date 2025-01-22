@@ -100,7 +100,14 @@
           body: JSON.stringify({ nombre: username, dateLogin })
         });
 
-        alert(`¡Hola, ${username}! Has iniciado sesión.`);
+        // Asignar la carta del usuario al loguearse
+        const userIndex = groupConfig.users.findIndex(u => u.name === username);
+        const assignedCard = groupConfig.users[userIndex].carta;  // Carta asignada en el config.js
+
+        // Guardar la carta asignada en localStorage
+        localStorage.setItem("assignedCard", assignedCard);
+
+        alert(`¡Hola, ${username}! Has iniciado sesión. Tu carta asignada es: ${assignedCard}`);
         window.location.href = 'asignacion_cartas.html';
       } else {
         errorDiv.textContent = "Contraseña incorrecta. Inténtalo de nuevo.";
