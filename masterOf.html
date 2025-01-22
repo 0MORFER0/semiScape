@@ -98,9 +98,29 @@
     <tbody></tbody>
   </table>
 
+  <h1>Usuarios del Juego</h1>
+  <table id="userTable">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Puntuación</th>
+        <th>Carta</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
   <script>
     const playerAPI = "https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/respuestas";
     const testAPI = "https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/pruebas";
+    const groupConfig = {
+      users: [
+        { name: "Richland", puntuacion: 500, carta: "Dragón de Fuego" },
+        { name: "Gerard", puntuacion: 450, carta: "Caballero Oscuro" },
+        { name: "Maryann", puntuacion: 300, carta: "Sirena Mística" },
+        { name: "Ana", puntuacion: 350, carta: "Rey de la Jungla" }
+      ]
+    };
 
     async function fetchPlayers() {
       const response = await fetch(playerAPI);
@@ -112,12 +132,15 @@
       return response.json();
     }
 
-    async function updateTestStatus(id, estado) {
+    async function updateTestStatus(id, estado, row) {
       await fetch(`${testAPI}/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ estado })
       });
+
+      // Actualizar la columna de estado en la tabla
+      row.cells[1].textContent = estado === 1 ? "Activo" : "Inactivo";
       alert(`El estado de la prueba con ID ${id} ha sido actualizado a ${estado}.`);
     }
 
@@ -143,20 +166,33 @@
       // Mostrar pruebas y sus estados
       const testTableBody = document.querySelector("#testTable tbody");
       tests.forEach(test => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${test.nombre}</td>
+          <td>${test.estado === 1 ? "Activo" : "Inactivo"}</td>
+          <td>
+            <label class="switch">
+              <input type="checkbox" ${test.estado === 1 ? "checked" : ""} 
+                onchange="updateTestStatus(${test.id}, this.checked ? 1 : 0, this.closest('tr'))">
+              <span class="slider"></span>
+            </label>
+          </td>
+        `;
+        testTableBody.appendChild(row);
+      });
+
+      // Mostrar usuarios del juego
+      const userTableBody = document.querySelector("#userTable tbody");
+      groupConfig.users.sort((a, b) => b.puntuacion - a.puntuacion); // Ordenar por puntuación
+      groupConfig.users.forEach(user => {
         const row = `
           <tr>
-            <td>${test.nombre}</td>
-            <td>${test.estado === 1 ? "Activo" : "Inactivo"}</td>
-            <td>
-              <label class="switch">
-                <input type="checkbox" ${test.estado === 1 ? "checked" : ""} 
-                  onchange="updateTestStatus(${test.id}, this.checked ? 1 : 0)">
-                <span class="slider"></span>
-              </label>
-            </td>
+            <td>${user.name}</td>
+            <td>${user.puntuacion}</td>
+            <td>${user.carta}</td>
           </tr>
         `;
-        testTableBody.innerHTML += row;
+        userTableBody.innerHTML += row;
       });
     }
 
