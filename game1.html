@@ -4,26 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Juego 1 - Escape Room</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(120deg, #1abc9c, #2c3e50);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      position: relative;
-    }
-    /* Estilos aquí... */
-  </style>
-  <link rel="icon" type="image/x-icon" href="ruta/a/favicon.ico">
-  
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
-  <script src="checkPageStatus.js" defer></script>
+<script src="checkPageStatus.js" defer></script>
 <body>
   <div class="user-info" id="user-info"></div>
   <div class="container">
@@ -53,78 +37,10 @@
       <input type="text" id="iniciales" placeholder="Ej. RHK">
 
       <button onclick="verificarRespuesta()">Enviar</button>
-      <p id="feedback" style="color: yellow; margin-top: 10px;"></p>
+      <p id="feedback"></p>
     </div>
   </div>
 
-  <script src="config.js"></script> <!-- Cargar config.js -->
-  <script>
-    // Función para mezclar aleatoriamente la tabla
-    function mezclarTabla() {
-      const tabla = document.getElementById('tabla-trenes').getElementsByTagName('tbody')[0];
-      let trenesMezclados = [...groupConfig.trenes];
-      trenesMezclados.sort(() => Math.random() - 0.5); // Mezcla aleatoriamente
-
-      // Vaciar la tabla antes de agregar las filas
-      tabla.innerHTML = '';
-
-      // Agregar las filas mezcladas a la tabla
-      trenesMezclados.forEach(tren => {
-        const fila = document.createElement('tr');
-        fila.innerHTML = `
-          <td>${tren.nombre}</td>
-          <td>${tren.distancia}</td>
-        `;
-        tabla.appendChild(fila);
-      });
-    }
-
-    // Ejecutar la mezcla de la tabla al cargar la página
-    window.onload = () => {
-      mezclarTabla();
-      mostrarUsuario();
-    };
-
-    // Mostrar el usuario logueado
-    function mostrarUsuario() {
-      const userName = localStorage.getItem('userName');
-      const userInfoDiv = document.getElementById('user-info');
-
-      if (!userName) {
-        alert("No has iniciado sesión. Redirigiendo al login...");
-        window.location.href = 'index.html'; // Redirigir al login si no hay usuario
-      } else {
-        userInfoDiv.innerHTML = `
-          Usuario: <strong>${userName}</strong>
-          <button onclick="logout()">Cerrar sesión</button>
-        `;
-      }
-    }
-
-    function logout() {
-      localStorage.removeItem('userName');
-      window.location.href = 'index.html'; // Redirigir al login al cerrar sesión
-    }
-
-    // Función para verificar la respuesta
-    function verificarRespuesta() {
-      const distancia = parseInt(document.getElementById('distancia').value);
-      const iniciales = document.getElementById('iniciales').value.toUpperCase().trim(); // Normaliza las iniciales
-
-      const feedback = document.getElementById('feedback');
-
-      if (distancia === groupConfig.sumaDistanciasCorrectas && iniciales === groupConfig.inicialesCorrectas) {
-        feedback.textContent = '¡Correcto! Has descifrado el misterio del viaje.';
-        feedback.style.color = 'lime';
-        // Redirigir a game2.html tras 2 segundos de éxito
-        setTimeout(() => {
-          window.location.href = 'game2.html';
-        }, 2000);  // Espera 2 segundos antes de redirigir
-      } else {
-        feedback.textContent = 'Respuesta incorrecta. Intenta de nuevo.';
-        feedback.style.color = 'red';
-      }
-    }
-  </script>
+  <script src="config.js"></script>
 </body>
 </html>
