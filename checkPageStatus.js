@@ -17,6 +17,7 @@ async function checkPageStatus() {
     console.log(`Configuración de la página actual:`, pageConfig); // Depuración
 
     // Si no se encuentra la configuración o el estado es 0, redirigir
+alert(""+pageConfig.estado);
     if (!pageConfig || pageConfig.estado == 0) {
       alert(`La página "${currentPage}" no está activa.`);
       window.location.href = "index.html"; // Redirigir a la página principal
