@@ -1,118 +1,32 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Escape Room</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: linear-gradient(120deg, #8e44ad, #3498db);
-      color: white;
-    }
-    .login-container {
-      text-align: center;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
-    }
-    select, input {
-      display: block;
-      margin: 10px auto;
-      padding: 10px;
-      width: 80%;
-      max-width: 300px;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #27ae60;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #2ecc71;
-    }
-    .error {
-      color: #e74c3c;
-      margin-top: 10px;
-    }
-  </style>
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-</head>
-<body>
-  <div class="login-container">
-    <h1>Login Escape Room</h1>
-    <p>Selecciona tu nombre de usuario y escribe la contraseña para comenzar.</p>
-    <select id="username">
-      <option value="" disabled selected>Selecciona tu nombre</option>
-    </select>
-    <input type="password" id="password" placeholder="Contraseña">
-    <button onclick="login()">Iniciar Sesión</button>
-    <p class="error" id="error"></p>
-  </div>
-
-  <script src="config.js"></script>
-  <script>
-    // Llenar el select con los nombres de usuario del config.js
-    const usernameSelect = document.getElementById('username');
-    groupConfig.users.forEach(user => {
-      const option = document.createElement('option');
-      option.value = user.name;
-      option.textContent = user.name;
-      usernameSelect.appendChild(option);
-    });
-
-    async function login() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value.trim();
-      const errorDiv = document.getElementById('error');
-
-      if (!username) {
-        errorDiv.textContent = "Por favor, selecciona tu nombre.";
-        return;
-      }
-
-      const user = groupConfig.users.find(u => u.name === username);
-
-      if (user && user.password === password) {
-        // Guardar usuario en localStorage
-        localStorage.setItem("userName", username);
-
-        // Registrar inicio de sesión en la API
-        const dateLogin = new Date().toISOString();
-        await fetch("https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/logins", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ nombre: username, dateLogin })
-        });
-
-        // Asignar la carta del usuario al loguearse
-        const userIndex = groupConfig.users.findIndex(u => u.name === username);
-        const assignedCard = groupConfig.users[userIndex].carta;  // Carta asignada en el config.js
-
-        // Guardar la carta asignada en localStorage
-        localStorage.setItem("assignedCard", assignedCard);
-
-        alert(`¡Hola, ${username}! Has iniciado sesión. Tu carta asignada es: ${assignedCard}`);
-        window.location.href = 'asignacion_cartas.html';
-      } else {
-        errorDiv.textContent = "Contraseña incorrecta. Inténtalo de nuevo.";
-      }
-    }
-  </script>
-</body>
-</html>
+const groupConfig = {
+  users: [
+    { name: "Richland", password: "12345", carta: "Dragón de Fuego", puntuacion: 0 },
+    { name: "Gerard", password: "12345", carta: "Caballero Oscuro", puntuacion: 0 },
+    { name: "Maryann", password: "12345", carta: "Sirena Mística", puntuacion: 0 },
+    { name: "Amigos1", password: "12345", carta: "Fénix Dorado", puntuacion: 0 },
+    { name: "Amigos2", password: "12345", carta: "Guerrero de Hielo", puntuacion: 0 },
+    { name: "Lucas", password: "12345", carta: "Mago Arcano", puntuacion: 0 },
+    { name: "Carlos", password: "12345", carta: "Titán de la Tormenta", puntuacion: 0 },
+    { name: "Sofia", password: "12345", carta: "Ladrona Fantasma", puntuacion: 0 },
+    { name: "Ana", password: "12345", carta: "Rey de la Jungla", puntuacion: 0 },
+    { name: "David", password: "12345", carta: "Vidente del Abismo", puntuacion: 0 },
+    { name: "Pedro", password: "12345", carta: "Cazador Sombrío", puntuacion: 0 },
+    { name: "Eva", password: "12345", carta: "Hechicera Lunar", puntuacion: 0 },
+    { name: "Juan", password: "12345", carta: "Espía Enmascarado", puntuacion: 0 },
+    { name: "Isabel", password: "12345", carta: "Guardian Celestial", puntuacion: 0 },
+    { name: "Maria", password: "12345", carta: "Arquero Sagrado", puntuacion: 0 },
+    { name: "Ricardo", password: "12345", carta: "Bestia Salvaje", puntuacion: 0 },
+    { name: "Laura", password: "12345", carta: "Nómade del Viento", puntuacion: 0 },
+    { name: "Javier", password: "12345", carta: "Sombra Veloz", puntuacion: 0 },
+    { name: "Sergio", password: "12345", carta: "Monje Elemental", puntuacion: 0 },
+    { name: "Alba", password: "12345", carta: "Forjador de Estrellas", puntuacion: 0 }
+  ],
+  baraja: [
+    "Dragón de Fuego", "Caballero Oscuro", "Sirena Mística", "Fénix Dorado", "Guerrero de Hielo",
+    "Mago Arcano", "Titán de la Tormenta", "Ladrona Fantasma", "Rey de la Jungla", "Vidente del Abismo",
+    "Cazador Sombrío", "Hechicera Lunar", "Espía Enmascarado", "Guardian Celestial", "Arquero Sagrado",
+    "Bestia Salvaje", "Nómade del Viento", "Sombra Veloz", "Monje Elemental", "Forjador de Estrellas"
+  ],
+  sumaDistanciasCorrectas: 361, // Suma correcta de las distancias
+  inicialesCorrectas: "RRR" // Iniciales correctas
+};
