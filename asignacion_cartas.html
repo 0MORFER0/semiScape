@@ -147,7 +147,7 @@
 
       // Mostrar la carta del usuario logueado
       const userName = localStorage.getItem('userName');
-      const userIndex = usuarios.findIndex(u => u.name === userName);
+      const userIndex = groupConfig.users.findIndex(u => u.name === userName);
       const cartaUsuario = cartasAsignadas[userIndex];
 
       if (cartaUsuario) {
