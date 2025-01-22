@@ -71,6 +71,14 @@
         font-size: 14px;
       }
     }
+    .toggle-table {
+      cursor: pointer;
+      font-weight: bold;
+      color: #3498db;
+    }
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -99,16 +107,9 @@
   </table>
 
   <h1>Usuarios del Juego</h1>
-  <table id="userTable">
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Puntuación</th>
-        <th>Carta</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div id="users-container"></div>
+
+  <button onclick="shuffleCards()">Cambiar cartas aleatoriamente</button>
 
   <script src="config.js"></script>
   <script src="checkPageStatus.js" defer></script>
@@ -133,17 +134,33 @@
         body: JSON.stringify({ estado })
       });
 
-      // Actualizar la columna de estado en la tabla
       row.cells[1].textContent = estado === 1 ? "Activo" : "Inactivo";
       alert(`El estado de la prueba con ID ${id} ha sido actualizado a ${estado}.`);
+    }
+
+    function shuffleCards() {
+      // Cambiar las cartas y usuarios de lugar aleatoriamente
+      let shuffledUsers = [...groupConfig.users];
+      shuffledUsers.sort(() => Math.random() - 0.5);
+
+      shuffledUsers.forEach((user, index) => {
+        const randomCardIndex = Math.floor(Math.random() * groupConfig.baraja.length);
+        user.carta = groupConfig.baraja[randomCardIndex];
+      });
+
+      loadPage();  // Recargar la página para mostrar los cambios
+    }
+
+    function toggleTable(carta) {
+      const table = document.getElementById(`table-${carta}`);
+      table.classList.toggle("hidden");
     }
 
     async function loadPage() {
       const [players, tests] = await Promise.all([fetchPlayers(), fetchTests()]);
 
-      // Clasificar jugadores por puntuación y asociar parejas
       const playerTableBody = document.querySelector("#playerTable tbody");
-      players.sort((a, b) => b.contador - a.contador); // Ordenar por puntuación
+      players.sort((a, b) => b.contador - a.contador);  // Ordenar por puntuación
       for (let i = 0; i < players.length; i += 2) {
         const player1 = players[i];
         const player2 = players[i + 1] || { nombre: "Sin pareja", contador: "-" };
@@ -157,7 +174,6 @@
         playerTableBody.innerHTML += row;
       }
 
-      // Mostrar pruebas y sus estados
       const testTableBody = document.querySelector("#testTable tbody");
       tests.forEach(test => {
         const row = document.createElement("tr");
@@ -175,19 +191,37 @@
         testTableBody.appendChild(row);
       });
 
-      // Mostrar usuarios del juego
-      const userTableBody = document.querySelector("#userTable tbody");
-      groupConfig.users.sort((a, b) => b.puntuacion - a.puntuacion); // Ordenar por puntuación
-      groupConfig.users.forEach(user => {
-        const row = `
-          <tr>
-            <td>${user.name}</td>
-            <td>${user.puntuacion}</td>
-            <td>${user.carta}</td>
-          </tr>
+      // Agrupar usuarios por carta
+      const usersContainer = document.getElementById("users-container");
+      const groupedUsers = groupConfig.users.reduce((acc, user) => {
+        if (!acc[user.carta]) acc[user.carta] = [];
+        acc[user.carta].push(user);
+        return acc;
+      }, {});
+
+      for (let carta in groupedUsers) {
+        const users = groupedUsers[carta];
+        const tableHTML = `
+          <h2 class="toggle-table" onclick="toggleTable('${carta}')">${carta}</h2>
+          <table id="table-${carta}" class="hidden">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Puntuación</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${users.map(user => `
+                <tr>
+                  <td>${user.name}</td>
+                  <td>${user.puntuacion}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
         `;
-        userTableBody.innerHTML += row;
-      });
+        usersContainer.innerHTML += tableHTML;
+      }
     }
 
     loadPage();
