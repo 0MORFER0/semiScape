@@ -7,7 +7,7 @@ const groupConfig = {
     { name: "Amigos1", password: "12345" },
     { name: "Amigos2", password: "12345" }
   ],
-  cards: [
+  baraja: [
     "Dragón de Fuego", "Caballero Oscuro", "Sirena Mística", "Fénix Dorado", "Guerrero de Hielo",
     "Mago Arcano", "Titán de la Tormenta", "Ladrona Fantasma", "Rey de la Jungla", "Vidente del Abismo",
     "Cazador Sombrío", "Hechicera Lunar", "Espía Enmascarado", "Guardian Celestial", "Arquero Sagrado",
