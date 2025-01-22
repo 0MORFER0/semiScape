@@ -62,7 +62,7 @@
     // Función para mezclar aleatoriamente la tabla
     function mezclarTabla() {
       const tabla = document.getElementById('tabla-trenes').getElementsByTagName('tbody')[0];
-      let trenesMezclados = [...CONFIG.trenes];
+      let trenesMezclados = [groupConfig.trenes];
       trenesMezclados.sort(() => Math.random() - 0.5); // Mezcla aleatoriamente
 
       // Vaciar la tabla antes de agregar las filas
