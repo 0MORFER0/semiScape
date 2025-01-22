@@ -18,80 +18,7 @@
       min-height: 100vh;
       position: relative;
     }
-    .user-info {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-size: 16px;
-    }
-    .user-info button {
-      margin-left: 10px;
-      background-color: #e74c3c;
-      border: none;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    .user-info button:hover {
-      background-color: #c0392b;
-    }
-    .container {
-      text-align: center;
-      width: 90%;
-      max-width: 600px;
-    }
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 20px;
-    }
-    .enigma {
-      margin-top: 30px;
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.5);
-      border-radius: 10px;
-      text-align: left;
-    }
-    .enigma h2 {
-      font-size: 1.5em;
-      margin-bottom: 10px;
-    }
-    .enigma table {
-      width: 100%;
-      margin-bottom: 15px;
-      border-collapse: collapse;
-    }
-    .enigma th, .enigma td {
-      border: 1px solid white;
-      padding: 10px;
-      text-align: center;
-    }
-    .enigma th {
-      background-color: #3498db;
-    }
-    .enigma input {
-      width: calc(100% - 20px);
-      padding: 10px;
-      font-size: 1em;
-      margin-bottom: 10px;
-    }
-    .enigma button {
-      padding: 10px 20px;
-      background-color: #3498db;
-      border: none;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 1em;
-      transition: background-color 0.3s ease;
-    }
-    .enigma button:hover {
-      background-color: #2980b9;
-    }
+    /* Estilos aquí... */
   </style>
 </head>
 <body>
@@ -127,35 +54,12 @@
     </div>
   </div>
 
+  <script src="config.js"></script> <!-- Cargar config.js -->
   <script>
-    // Lista de trenes con sus distancias y nombres (ahora con distancias impares)
-    const trenes = [
-      { nombre: "Regidor", distancia: 121 },
-      { nombre: "Ribera", distancia: 83 },
-      { nombre: "Rabano", distancia: 157 },
-      { nombre: "Sierra", distancia: 203 },
-      { nombre: "Valle", distancia: 191 },
-      { nombre: "Cima", distancia: 137 },
-      { nombre: "Lago", distancia: 97 },
-      { nombre: "Costa", distancia: 113 },
-      { nombre: "Monte", distancia: 251 },
-      { nombre: "Sol", distancia: 161 },
-      { nombre: "Río", distancia: 103 },
-      { nombre: "Luna", distancia: 141 },
-      { nombre: "Norte", distancia: 221 },
-      { nombre: "Este", distancia: 53 },
-      { nombre: "Oeste", distancia: 61 },
-      { nombre: "Sur", distancia: 173 },
-      { nombre: "Puente", distancia: 139 },
-      { nombre: "Cielo", distancia: 163 },
-      { nombre: "Bosque", distancia: 131 },
-      { nombre: "Fuego", distancia: 199 }
-    ];
-
     // Función para mezclar aleatoriamente la tabla
     function mezclarTabla() {
       const tabla = document.getElementById('tabla-trenes').getElementsByTagName('tbody')[0];
-      let trenesMezclados = [...trenes];
+      let trenesMezclados = [...CONFIG.trenes];
       trenesMezclados.sort(() => Math.random() - 0.5); // Mezcla aleatoriamente
 
       // Vaciar la tabla antes de agregar las filas
@@ -201,15 +105,12 @@
 
     // Función para verificar la respuesta
     function verificarRespuesta() {
-      const sumaDistancias = 361; // Suma de las distancias correctas de los trenes: Regidor, Ribera y Rabano
-      const inicialesCorrectas = "RRR";
-
       const distancia = parseInt(document.getElementById('distancia').value);
       const iniciales = document.getElementById('iniciales').value.toUpperCase().trim(); // Normaliza las iniciales
 
       const feedback = document.getElementById('feedback');
 
-      if (distancia === sumaDistancias && iniciales === inicialesCorrectas) {
+      if (distancia === CONFIG.sumaDistanciasCorrectas && iniciales === CONFIG.inicialesCorrectas) {
         feedback.textContent = '¡Correcto! Has descifrado el misterio del viaje.';
         feedback.style.color = 'lime';
         // Redirigir a game2.html tras 2 segundos de éxito
@@ -221,7 +122,6 @@
         feedback.style.color = 'red';
       }
     }
-
   </script>
 </body>
 </html>
