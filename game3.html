@@ -23,6 +23,23 @@
   <script src="config.js"></script>
 
 <script>
+      // Mostrar el usuario logueado
+    function mostrarUsuario() {
+      const userName = localStorage.getItem('userName');
+      const userInfoDiv = document.getElementById('user-info');
+
+      if (!userName) {
+        alert("No has iniciado sesión. Redirigiendo al login...");
+        window.location.href = 'index.html'; // Redirigir al login si no hay usuario
+      } else {
+        userInfoDiv.innerHTML = `
+          Usuario: <strong>${userName}</strong>
+        `;
+
+        asignarCartas(); // Asignar cartas a los usuarios logueados
+      }
+    }
+
     // Enviar la respuesta
     function enviarRespuesta(idPregunta, respuesta, index) {
         const usuario = localStorage.getItem('userName'); // Usuario logueado
