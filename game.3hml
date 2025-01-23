@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juego 3 - Cuestionario</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <div class="user-info" id="user-info"></div>
+  <div class="container">
+    <h1>Juego 3: Cuestionario de Conexiones</h1>
+
+    <!-- Cuestionario -->
+    <div class="cuestionario" id="cuestionario">
+      <h2>Responde las siguientes preguntas:</h2>
+      <form id="quiz-form">
+        <!-- Las preguntas se llenan mediante JS -->
+      </form>
+      <button onclick="enviarRespuestas()">Enviar Respuestas</button>
+      <p id="feedback"></p>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    const preguntas = [
+      { id: 1, pregunta: "¿Cuál es el planeta más cercano al sol?", opciones: ["Marte", "Mercurio", "Venus", "Júpiter"], correcta: 1 },
+      { id: 2, pregunta: "¿Cuántos continentes hay en la Tierra?", opciones: ["5", "6", "7", "8"], correcta: 2 },
+      { id: 3, pregunta: "¿Cuál es el océano más grande del mundo?", opciones: ["Atlántico", "Pacífico", "Índico", "Ártico"], correcta: 1 },
+      { id: 4, pregunta: "¿Quién escribió 'Don Quijote de la Mancha'?", opciones: ["Miguel de Cervantes", "Gabriel García Márquez", "Pablo Neruda", "Lope de Vega"], correcta: 0 },
+      { id: 5, pregunta: "¿Cuál es el animal terrestre más rápido?", opciones: ["Guepardo", "León", "Antílope", "Tigre"], correcta: 0 },
+      { id: 6, pregunta: "¿Qué instrumento mide la presión atmosférica?", opciones: ["Barómetro", "Termómetro", "Higrómetro", "Anemómetro"], correcta: 0 },
+      { id: 7, pregunta: "¿Qué país tiene la torre Eiffel?", opciones: ["Italia", "España", "Francia", "Alemania"], correcta: 2 },
+      { id: 8, pregunta: "¿Cuál es el metal más abundante en la corteza terrestre?", opciones: ["Hierro", "Aluminio", "Oro", "Plata"], correcta: 1 },
+      { id: 9, pregunta: "¿Qué gas necesitamos para respirar?", opciones: ["Hidrógeno", "Oxígeno", "Nitrógeno", "Helio"], correcta: 1 },
+      { id: 10, pregunta: "¿Cuál es el río más largo del mundo?", opciones: ["Amazonas", "Nilo", "Yangtsé", "Misisipi"], correcta: 0 }
+    ];
+
+    // Mostrar el usuario logueado
+    function mostrarUsuario() {
+      const userName = localStorage.getItem('userName');
+      const userInfoDiv = document.getElementById('user-info');
+
+      if (!userName) {
+        alert("No has iniciado sesión. Redirigiendo al login...");
+        window.location.href = 'index.html';
+      } else {
+        userInfoDiv.innerHTML = `Usuario: <strong>${userName}</strong> <button onclick="logout()">Cerrar sesión</button>`;
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('userName');
+      window.location.href = 'index.html';
+    }
+
+    // Cargar preguntas en el formulario
+    function cargarPreguntas() {
+      const form = document.getElementById('quiz-form');
+      preguntas.forEach((q, index) => {
+        const div = document.createElement('div');
+        div.classList.add('pregunta');
+        div.innerHTML = `
+          <p><strong>${index + 1}. ${q.pregunta}</strong></p>
+          ${q.opciones.map((opcion, i) => `
+            <label>
+              <input type="radio" name="pregunta-${q.id}" value="${i}"> ${opcion}
+            </label>
+          `).join('<br>')}
+        `;
+        form.appendChild(div);
+      });
+    }
+
+    // Enviar respuestas
+    async function enviarRespuestas() {
+      const respuestas = [];
+      const userName = localStorage.getItem('userName');
+      const user = groupConfig.users.find(u => u.name === userName);
+
+      if (!user) {
+        alert("No se encontró información del usuario. Intenta iniciar sesión nuevamente.");
+        return;
+      }
+
+      const formData = new FormData(document.getElementById('quiz-form'));
+
+      preguntas.forEach(q => {
+        const respuestaSeleccionada = formData.get(`pregunta-${q.id}`);
+        if (respuestaSeleccionada !== null) {
+          respuestas.push({
+            preguntaId: q.id,
+            respuesta: parseInt(respuestaSeleccionada),
+            carta: user.carta
+          });
+        }
+      });
+
+      try {
+        for (const respuesta of respuestas) {
+          await fetch('https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/respuestas', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(respuesta)
+          });
+        }
+        document.getElementById('feedback').textContent = '¡Respuestas enviadas con éxito!';
+        document.getElementById('feedback').style.color = 'lime';
+      } catch (error) {
+        console.error('Error al enviar respuestas:', error);
+        document.getElementById('feedback').textContent = 'Hubo un error al enviar las respuestas. Intenta de nuevo.';
+        document.getElementById('feedback').style.color = 'red';
+      }
+    }
+
+    window.onload = () => {
+      mostrarUsuario();
+      cargarPreguntas();
+    };
+  </script>
+</body>
+</html>
