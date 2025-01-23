@@ -1,3 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juego 3 - Cuestionario</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<script src="checkPageStatus.js" defer></script>
+<body>
+  <div class="user-info" id="user-info"></div>
+  <div class="container">
+    <h1>Juego 3: Cuestionario por Parejas</h1>
+    
+    <div id="cuestionario">
+      <!-- Preguntas dinámicas aquí -->
+    </div>
+    
+    <div id="feedback" style="margin-top: 20px;"></div>
+  </div>
+
+  <script src="config.js"></script>
+
 <script>
     // Enviar la respuesta
     function enviarRespuesta(idPregunta, respuesta, index) {
@@ -42,3 +66,28 @@
         });
     }
 </script>
+
+  <style>
+    .pregunta { margin: 20px 0; }
+    .respuesta-btn {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 15px;
+      font-size: 1.2rem;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: left;
+    }
+    .respuesta-btn:hover {
+      background-color: #0056b3;
+    }
+    .respuesta-btn:active {
+      background-color: #003d7a;
+    }
+  </style>
+</body>
+</html>
