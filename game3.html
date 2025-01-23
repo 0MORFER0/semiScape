@@ -1,138 +1,44 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Juego 3 - Cuestionario</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-</head>
-<script src="checkPageStatus.js" defer></script>
-<body>
-  <div class="user-info" id="user-info"></div>
-  <div class="container">
-    <h1>Juego 3: Cuestionario por Parejas</h1>
-    
-    <div id="cuestionario">
-      <!-- Preguntas dinámicas aquí -->
-    </div>
-    
-    <div id="feedback" style="margin-top: 20px;"></div>
-  </div>
-
-  <script src="config.js"></script>
-  <script>
-    // Preguntas
-    const preguntas = [
-      { id: 1, texto: "¿Qué tipo de helado os gusta más a los dos?", respuestas: ["Chocolate", "Vainilla", "Fresa", "Menta"] },
-      { id: 2, texto: "¿Cuál es vuestra película favorita conjunta?", respuestas: ["Comedia", "Drama", "Acción", "Ciencia ficción"] },
-      { id: 3, texto: "¿Qué destino turístico preferiríais?", respuestas: ["Playa", "Montaña", "Ciudad", "Campo"] }
-    ];
-
-    // Mostrar el usuario logueado
-    function mostrarUsuario() {
-      const userName = localStorage.getItem('userName');
-      const userInfoDiv = document.getElementById('user-info');
-
-      if (!userName) {
-        alert("No has iniciado sesión. Redirigiendo al login...");
-        window.location.href = 'index.html'; // Redirigir al login si no hay usuario
-      } else {
-        userInfoDiv.innerHTML = `Usuario: <strong>${userName}</strong> <button onclick="logout()">Cerrar sesión</button>`;
-      }
-    }
-
-    function logout() {
-      localStorage.removeItem('userName');
-      window.location.href = 'index.html'; // Redirigir al login al cerrar sesión
-    }
-
-    // Cargar el cuestionario con desbloqueo progresivo
-    function cargarCuestionario() {
-      const cuestionarioDiv = document.getElementById('cuestionario');
-
-      preguntas.forEach((pregunta, index) => {
-        const preguntaDiv = document.createElement('div');
-        preguntaDiv.id = `pregunta-${pregunta.id}`;
-        preguntaDiv.classList.add('pregunta');
-        preguntaDiv.style.display = index === 0 ? 'block' : 'none'; // Solo mostrar la primera pregunta inicialmente
-
-        preguntaDiv.innerHTML = `
-          <h2>Pregunta ${pregunta.id}</h2>
-          <p>${pregunta.texto}</p>
-          <div class="respuestas">
-            ${pregunta.respuestas.map((respuesta, i) => `
-              <button 
-                class="respuesta-btn" 
-                onclick="enviarRespuesta(${pregunta.id}, '${respuesta}', ${index})">
-                ${respuesta}
-              </button>
-            `).join('')}
-          </div>
-        `;
-
-        cuestionarioDiv.appendChild(preguntaDiv);
-      });
-    }
-
+<script>
     // Enviar la respuesta
     function enviarRespuesta(idPregunta, respuesta, index) {
-      const usuario = localStorage.getItem('userName');
-      const carta = groupConfig.users.find(u => u.name === usuario)?.carta || "Sin carta";
+        const usuario = localStorage.getItem('userName'); // Usuario logueado
+        const carta = groupConfig.users.find(u => u.name === usuario)?.carta || "Sin carta"; // Carta asignada al usuario
 
-      if (!usuario) {
-        alert("No has iniciado sesión. Redirigiendo al login...");
-        window.location.href = 'index.html';
-        return;
-      }
+        if (!usuario) {
+            alert("No has iniciado sesión. Redirigiendo al login...");
+            window.location.href = 'index.html';
+            return;
+        }
 
-      // Enviar datos al API
-      fetch('https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/respuestas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          usuario,
-          carta,
-          idPregunta,
-          respuesta
+        // Construir el objeto con los 7 campos requeridos
+        const datos = {
+            nombre: usuario,                // Nombre del usuario (igual al logueado)
+            respuesta: respuesta,           // Respuesta seleccionada
+            contador: Math.floor(Math.random() * 100000), // Número aleatorio para "contador"
+            numeroPrueba: 1,                // Número de prueba fijo en 1
+            nombrePrueba: "cuestionario",   // Nombre de la prueba fijo en "cuestionario"
+            carta: carta,                   // Carta asignada al usuario
+            idPregunta: idPregunta          // ID de la pregunta
+        };
+
+        // Enviar datos a la API
+        fetch('https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/respuestas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos) // Solo se envía el objeto "datos"
         })
-      }).then(() => {
-        // Desbloquear la siguiente pregunta
-        const preguntaActual = document.getElementById(`pregunta-${idPregunta}`);
-        const siguientePregunta = document.getElementById(`pregunta-${idPregunta + 1}`);
-        if (preguntaActual) preguntaActual.style.display = 'none';
-        if (siguientePregunta) siguientePregunta.style.display = 'block';
-      });
-    }
+        .then(response => response.json())
+        .then(data => {
+            console.log('Respuesta enviada:', data);
 
-    // Iniciar la página
-    window.onload = () => {
-      mostrarUsuario();
-      cargarCuestionario();
-    };
-  </script>
-
-  <style>
-    .pregunta { margin: 20px 0; }
-    .respuesta-btn {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 15px;
-      font-size: 1.2rem;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      text-align: left;
+            // Desbloquear la siguiente pregunta
+            const preguntaActual = document.getElementById(`pregunta-${idPregunta}`);
+            const siguientePregunta = document.getElementById(`pregunta-${idPregunta + 1}`);
+            if (preguntaActual) preguntaActual.style.display = 'none';
+            if (siguientePregunta) siguientePregunta.style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error al enviar los datos:', error);
+        });
     }
-    .respuesta-btn:hover {
-      background-color: #0056b3;
-    }
-    .respuesta-btn:active {
-      background-color: #003d7a;
-    }
-  </style>
-</body>
-</html>
+</script>
