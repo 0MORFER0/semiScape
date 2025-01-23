@@ -29,13 +29,47 @@
     tr:nth-child(even) {
       background-color: #f9f9f9;
     }
-    .hidden {
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 34px;
+      height: 20px;
+    }
+    .switch input {
       display: none;
     }
-    .toggle-details {
+    .slider {
+      position: absolute;
       cursor: pointer;
-      color: #3498db;
-      font-weight: bold;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 20px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #27ae60;
+    }
+    input:checked + .slider:before {
+      transform: translateX(14px);
+    }
+    @media (max-width: 600px) {
+      table, th, td {
+        font-size: 14px;
+      }
     }
   </style>
 </head>
@@ -63,23 +97,6 @@
     <tbody></tbody>
   </table>
 
-  <h1>Usuarios del Juego</h1>
-  <div id="users-container">
-    <h2 class="toggle-table" onclick="toggleTable()">Usuarios</h2>
-    <table id="userTable" class="hidden">
-      <thead>
-        <tr>
-          <th>Jugador 1</th>
-          <th>Jugador 2</th>
-          <th>Carta Común</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <button onclick="shuffleCards()">Cambiar cartas aleatoriamente</button>
-
   <h1>Respuestas de Usuarios Emparejados por Carta</h1>
   <table id="pairedTable">
     <thead>
@@ -87,14 +104,11 @@
         <th>Jugador 1</th>
         <th>Jugador 2</th>
         <th>Carta</th>
-        <th>Preguntas Respondidas</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 
-  <script src="config.js"></script>
-  <script src="checkPageStatus.js" defer></script>
   <script>
     const playerAPI = "https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/respuestas";
     const testAPI = "https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/pruebas";
@@ -120,29 +134,12 @@
       alert(`El estado de la prueba con ID ${id} ha sido actualizado a ${estado}.`);
     }
 
-    function shuffleCards() {
-      // Cambiar las cartas y usuarios de lugar aleatoriamente
-      let shuffledUsers = [...groupConfig.users];
-      shuffledUsers.sort(() => Math.random() - 0.5);
-
-      shuffledUsers.forEach((user, index) => {
-        const randomCardIndex = Math.floor(Math.random() * groupConfig.baraja.length);
-        user.carta = groupConfig.baraja[randomCardIndex];
-      });
-
-      loadPage();  // Recargar la página para mostrar los cambios
-    }
-
-    function toggleTable() {
-      const table = document.getElementById('userTable');
-      table.classList.toggle('hidden');
-    }
-
     async function loadPage() {
       const [players, tests] = await Promise.all([fetchPlayers(), fetchTests()]);
 
+      // Ordenar y renderizar la tabla de jugadores
       const playerTableBody = document.querySelector("#playerTable tbody");
-      players.sort((a, b) => b.contador - a.contador);  // Ordenar por puntuación
+      players.sort((a, b) => b.contador - a.contador);
       players.forEach(player => {
         const row = `
           <tr>
@@ -153,6 +150,7 @@
         playerTableBody.innerHTML += row;
       });
 
+      // Renderizar la tabla de pruebas
       const testTableBody = document.querySelector("#testTable tbody");
       tests.forEach(test => {
         const row = document.createElement("tr");
@@ -170,32 +168,40 @@
         testTableBody.appendChild(row);
       });
 
-      // Obtener respuestas y mostrar parejas
+      // Obtener respuestas y mostrar parejas en la tabla emparejada
       const playerResponses = await fetchPlayers();
       const pairedTableBody = document.querySelector("#pairedTable tbody");
+
+      // Agrupar respuestas por carta, pero solo emparejar nombres distintos
       const groupedByCard = {};
 
       playerResponses.forEach(response => {
-        const { carta, nombre, idPregunta } = response;
+        const { carta, nombre } = response;
         if (!groupedByCard[carta]) groupedByCard[carta] = [];
-        groupedByCard[carta].push({ nombre, idPregunta });
+        groupedByCard[carta].push(nombre);
       });
 
+      // Crear filas para cada pareja
       for (const [card, users] of Object.entries(groupedByCard)) {
-        for (let i = 0; i < users.length; i += 2) {
-          const user1 = users[i];
-          const user2 = users[i + 1] || { nombre: "Sin jugador", idPregunta: "-" };
-          const preguntasRespondidas = `${user1.idPregunta}, ${user2.idPregunta || "-"}`;
-          const row = `
+        const usedNames = new Set();
+
+        users.forEach((user1, i) => {
+          if (usedNames.has(user1)) return;
+
+          // Buscar una pareja con un nombre diferente
+          const user2 = users.find((user2, j) => i !== j && !usedNames.has(user2));
+
+          pairedTableBody.innerHTML += `
             <tr>
-              <td>${user1.nombre}</td>
-              <td>${user2.nombre}</td>
+              <td>${user1}</td>
+              <td>${user2 || ""}</td>
               <td>${card}</td>
-              <td>${preguntasRespondidas}</td>
             </tr>
           `;
-          pairedTableBody.innerHTML += row;
-        }
+
+          usedNames.add(user1);
+          if (user2) usedNames.add(user2);
+        });
       }
     }
 
