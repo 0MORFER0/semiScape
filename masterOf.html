@@ -29,195 +29,97 @@
     tr:nth-child(even) {
       background-color: #f9f9f9;
     }
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 34px;
-      height: 20px;
-    }
-    .switch input {
-      display: none;
-    }
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: 0.4s;
-      border-radius: 20px;
-    }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 14px;
-      width: 14px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: 0.4s;
-      border-radius: 50%;
-    }
-    input:checked + .slider {
-      background-color: #27ae60;
-    }
-    input:checked + .slider:before {
-      transform: translateX(14px);
-    }
     @media (max-width: 600px) {
       table, th, td {
         font-size: 14px;
       }
     }
-    .toggle-table {
-      cursor: pointer;
-      font-weight: bold;
-      color: #3498db;
-    }
-    .hidden {
-      display: none;
-    }
   </style>
 </head>
 <body>
   <h1>Clasificación de Jugadores</h1>
-  <table id="playerTable">
+  <table id="userResultsTable">
     <thead>
       <tr>
-        <th>Nombre</th>
-        <th>Puntuación</th>
+        <th>Jugador 1</th>
+        <th>Jugador 2</th>
+        <th>Carta Común</th>
+        <th>Preguntas en Común</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 
-  <h1>Gestión de Pruebas</h1>
-  <table id="testTable">
-    <thead>
-      <tr>
-        <th>Prueba</th>
-        <th>Estado</th>
-        <th>Modificar</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <h1>Usuarios del Juego</h1>
-  <div id="users-container">
-    <h2 class="toggle-table" onclick="toggleTable()">Usuarios</h2>
-    <table id="userTable" class="hidden">
-      <thead>
-        <tr>
-          <th>Jugador 1</th>
-          <th>Jugador 2</th>
-          <th>Carta Común</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <button onclick="shuffleCards()">Cambiar cartas aleatoriamente</button>
-
-  <script src="config.js"></script>
-  <script src="checkPageStatus.js" defer></script>
   <script>
     const playerAPI = "https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/respuestas";
-    const testAPI = "https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/pruebas";
 
-    async function fetchPlayers() {
+    async function fetchPlayerResponses() {
       const response = await fetch(playerAPI);
       return response.json();
     }
 
-    async function fetchTests() {
-      const response = await fetch(testAPI);
-      return response.json();
-    }
+    async function loadResults() {
+      const playerResponses = await fetchPlayerResponses();
 
-    async function updateTestStatus(id, estado, row) {
-      await fetch(`${testAPI}/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ estado })
+      // Agrupar respuestas por carta y jugadores
+      const groupedByCard = {};
+      playerResponses.forEach((response) => {
+        const { carta, nombre, idPregunta } = response;
+
+        if (!groupedByCard[carta]) {
+          groupedByCard[carta] = {};
+        }
+
+        if (!groupedByCard[carta][nombre]) {
+          groupedByCard[carta][nombre] = new Set();
+        }
+
+        groupedByCard[carta][nombre].add(idPregunta);
       });
 
-      row.cells[1].textContent = estado === 1 ? "Activo" : "Inactivo";
-      alert(`El estado de la prueba con ID ${id} ha sido actualizado a ${estado}.`);
-    }
+      // Crear filas para la tabla
+      const results = [];
+      for (const carta in groupedByCard) {
+        const players = Object.keys(groupedByCard[carta]);
 
-    function shuffleCards() {
-      // Cambiar las cartas y usuarios de lugar aleatoriamente
-      let shuffledUsers = [...groupConfig.users];
-      shuffledUsers.sort(() => Math.random() - 0.5);
+        for (let i = 0; i < players.length; i++) {
+          for (let j = i + 1; j < players.length; j++) {
+            const player1 = players[i];
+            const player2 = players[j];
 
-      shuffledUsers.forEach((user, index) => {
-        const randomCardIndex = Math.floor(Math.random() * groupConfig.baraja.length);
-        user.carta = groupConfig.baraja[randomCardIndex];
-      });
+            const commonQuestions = Array.from(groupedByCard[carta][player1])
+              .filter((id) => groupedByCard[carta][player2].has(id));
 
-      loadPage();  // Recargar la página para mostrar los cambios
-    }
-
-    function toggleTable() {
-      const table = document.getElementById('userTable');
-      table.classList.toggle('hidden');
-    }
-
-    async function loadPage() {
-      const [players, tests] = await Promise.all([fetchPlayers(), fetchTests()]);
-
-      const playerTableBody = document.querySelector("#playerTable tbody");
-      players.sort((a, b) => b.contador - a.contador);  // Ordenar por puntuación
-      players.forEach(player => {
-        const row = `
-          <tr>
-            <td>${player.nombre}</td>
-            <td>${player.contador}</td>
-          </tr>
-        `;
-        playerTableBody.innerHTML += row;
-      });
-
-      const testTableBody = document.querySelector("#testTable tbody");
-      tests.forEach(test => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${test.nombre}</td>
-          <td>${test.estado === 1 ? "Activo" : "Inactivo"}</td>
-          <td>
-            <label class="switch">
-              <input type="checkbox" ${test.estado === 1 ? "checked" : ""} 
-                onchange="updateTestStatus(${test.id}, this.checked ? 1 : 0, this.closest('tr'))">
-              <span class="slider"></span>
-            </label>
-          </td>
-        `;
-        testTableBody.appendChild(row);
-      });
-
-      const userTableBody = document.querySelector("#userTable tbody");
-      groupConfig.users.sort((a, b) => b.puntuacion - a.puntuacion);  // Ordenar por puntuación
-      for (let i = 0; i < groupConfig.users.length; i += 2) {
-        const user1 = groupConfig.users[i];
-        const user2 = groupConfig.users[i + 1] || { name: "Sin jugador", puntuacion: "-", carta: "-" };
-        const commonCard = user1.carta === user2.carta ? user1.carta : "No coinciden";
-
-        const row = `
-          <tr>
-            <td>${user1.name}</td>
-            <td>${user2.name}</td>
-            <td>${commonCard}</td>
-          </tr>
-        `;
-        userTableBody.innerHTML += row;
+            results.push({
+              player1,
+              player2,
+              carta,
+              commonCount: commonQuestions.length,
+            });
+          }
+        }
       }
+
+      // Ordenar resultados por mayor cantidad de preguntas en común
+      results.sort((a, b) => b.commonCount - a.commonCount);
+
+      // Insertar resultados en la tabla
+      const tableBody = document.querySelector("#userResultsTable tbody");
+      tableBody.innerHTML = results
+        .map(
+          (result) => `
+        <tr>
+          <td>${result.player1}</td>
+          <td>${result.player2}</td>
+          <td>${result.carta}</td>
+          <td>${result.commonCount}</td>
+        </tr>
+      `
+        )
+        .join("");
     }
 
-    loadPage();
+    loadResults();
   </script>
 </body>
 </html>
