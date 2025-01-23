@@ -29,6 +29,14 @@
     tr:nth-child(even) {
       background-color: #f9f9f9;
     }
+    .toggle-details {
+      cursor: pointer;
+      color: #3498db;
+      text-decoration: underline;
+    }
+    .hidden {
+      display: none;
+    }
     @media (max-width: 600px) {
       table, th, td {
         font-size: 14px;
@@ -37,14 +45,14 @@
   </style>
 </head>
 <body>
-  <h1>Clasificación de Jugadores</h1>
-  <table id="userResultsTable">
+  <h1>Usuarios del Juego</h1>
+  <table id="userTable">
     <thead>
       <tr>
         <th>Jugador 1</th>
         <th>Jugador 2</th>
         <th>Carta Común</th>
-        <th>Preguntas en Común</th>
+        <th>Detalles de Respuestas</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -58,7 +66,7 @@
       return response.json();
     }
 
-    async function loadResults() {
+    async function loadPage() {
       const playerResponses = await fetchPlayerResponses();
 
       // Agrupar respuestas por carta y jugadores
@@ -94,32 +102,38 @@
               player1,
               player2,
               carta,
-              commonCount: commonQuestions.length,
+              commonQuestions,
             });
           }
         }
       }
 
-      // Ordenar resultados por mayor cantidad de preguntas en común
-      results.sort((a, b) => b.commonCount - a.commonCount);
-
       // Insertar resultados en la tabla
-      const tableBody = document.querySelector("#userResultsTable tbody");
-      tableBody.innerHTML = results
-        .map(
-          (result) => `
-        <tr>
+      const tableBody = document.querySelector("#userTable tbody");
+      results.forEach((result, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
           <td>${result.player1}</td>
           <td>${result.player2}</td>
           <td>${result.carta}</td>
-          <td>${result.commonCount}</td>
-        </tr>
-      `
-        )
-        .join("");
+          <td>
+            <span class="toggle-details" onclick="toggleDetails(${index})">Ver detalles</span>
+            <div id="details-${index}" class="hidden">
+              Preguntas en común: ${result.commonQuestions.length}<br>
+              IDs de Preguntas: ${result.commonQuestions.join(", ")}
+            </div>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
     }
 
-    loadResults();
+    function toggleDetails(index) {
+      const details = document.getElementById(`details-${index}`);
+      details.classList.toggle("hidden");
+    }
+
+    loadPage();
   </script>
 </body>
 </html>
