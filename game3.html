@@ -16,24 +16,17 @@
     <div id="cuestionario">
       <!-- Preguntas dinámicas aquí -->
     </div>
-
+    
     <div id="feedback" style="margin-top: 20px;"></div>
   </div>
 
   <script src="config.js"></script>
   <script>
-    // Preguntas y respuestas
+    // Preguntas
     const preguntas = [
-      { id: 1, texto: "¿Cuál es la capital de Francia?", respuestas: ["Berlín", "Madrid", "París", "Roma"], correcta: 2 },
-      { id: 2, texto: "¿Cuántos planetas hay en el sistema solar?", respuestas: ["8", "9", "7", "10"], correcta: 0 },
-      { id: 3, texto: "¿Quién escribió 'Don Quijote'?", respuestas: ["García Márquez", "Cervantes", "Borges", "Lorca"], correcta: 1 },
-      { id: 4, texto: "¿Cuál es el río más largo del mundo?", respuestas: ["Amazonas", "Nilo", "Yangtsé", "Misisipi"], correcta: 0 },
-      { id: 5, texto: "¿Qué país inventó la pasta?", respuestas: ["Italia", "China", "Japón", "India"], correcta: 1 },
-      { id: 6, texto: "¿Cuál es el idioma más hablado en el mundo?", respuestas: ["Inglés", "Mandarín", "Español", "Hindú"], correcta: 1 },
-      { id: 7, texto: "¿Qué animal es conocido como 'el rey de la selva'?", respuestas: ["Tigre", "Elefante", "León", "Jirafa"], correcta: 2 },
-      { id: 8, texto: "¿En qué año llegó el hombre a la luna?", respuestas: ["1969", "1972", "1965", "1970"], correcta: 0 },
-      { id: 9, texto: "¿Qué gas respiramos los seres humanos?", respuestas: ["Hidrógeno", "Oxígeno", "Dióxido de carbono", "Nitrógeno"], correcta: 1 },
-      { id: 10, texto: "¿Cuál es el océano más grande del mundo?", respuestas: ["Atlántico", "Pacífico", "Índico", "Ártico"], correcta: 1 }
+      { id: 1, texto: "¿Qué tipo de helado os gusta más a los dos?", respuestas: ["Chocolate", "Vainilla", "Fresa", "Menta"] },
+      { id: 2, texto: "¿Cuál es vuestra película favorita conjunta?", respuestas: ["Comedia", "Drama", "Acción", "Ciencia ficción"] },
+      { id: 3, texto: "¿Qué destino turístico preferiríais?", respuestas: ["Playa", "Montaña", "Ciudad", "Campo"] }
     ];
 
     // Mostrar el usuario logueado
@@ -71,7 +64,7 @@
             ${pregunta.respuestas.map((respuesta, i) => `
               <button 
                 class="respuesta-btn" 
-                onclick="enviarRespuesta(${pregunta.id}, ${i}, ${index})">
+                onclick="enviarRespuesta(${pregunta.id}, '${respuesta}', ${index})">
                 ${respuesta}
               </button>
             `).join('')}
@@ -83,7 +76,7 @@
     }
 
     // Enviar la respuesta
-    function enviarRespuesta(idPregunta, idRespuesta, index) {
+    function enviarRespuesta(idPregunta, respuesta, index) {
       const usuario = localStorage.getItem('userName');
       const carta = groupConfig.users.find(u => u.name === usuario)?.carta || "Sin carta";
 
@@ -93,12 +86,6 @@
         return;
       }
 
-      const correcta = preguntas[index].correcta === idRespuesta;
-      const feedbackDiv = document.getElementById('feedback');
-      feedbackDiv.innerHTML = correcta 
-        ? `<p style="color: lime;">¡Correcto!</p>` 
-        : `<p style="color: red;">Respuesta incorrecta.</p>`;
-
       // Enviar datos al API
       fetch('https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/respuestas', {
         method: 'POST',
@@ -107,18 +94,15 @@
           usuario,
           carta,
           idPregunta,
-          idRespuesta,
-          correcta
+          respuesta
         })
-      });
-
-      // Desbloquear la siguiente pregunta
-      if (correcta) {
+      }).then(() => {
+        // Desbloquear la siguiente pregunta
         const preguntaActual = document.getElementById(`pregunta-${idPregunta}`);
         const siguientePregunta = document.getElementById(`pregunta-${idPregunta + 1}`);
         if (preguntaActual) preguntaActual.style.display = 'none';
         if (siguientePregunta) siguientePregunta.style.display = 'block';
-      }
+      });
     }
 
     // Iniciar la página
