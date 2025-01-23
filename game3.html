@@ -77,10 +77,10 @@
 
     // Enviar la respuesta
     function enviarRespuesta(idPregunta, respuesta, index) {
-      const usuario = localStorage.getItem('userName');
-      const carta = groupConfig.users.find(u => u.name === usuario)?.carta || "Sin carta";
+      const nombre = localStorage.getItem('userName');
+      const carta = groupConfig.users.find(u => u.name === nombre)?.carta || "Sin carta";
 
-      if (!usuario) {
+      if (!nombre) {
         alert("No has iniciado sesión. Redirigiendo al login...");
         window.location.href = 'index.html';
         return;
