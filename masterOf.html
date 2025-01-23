@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clasificación y Gestión de Pruebas</title>
   <style>
-    /* Manteniendo el mismo estilo del código original */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -30,13 +29,13 @@
     tr:nth-child(even) {
       background-color: #f9f9f9;
     }
+    .hidden {
+      display: none;
+    }
     .toggle-details {
       cursor: pointer;
       color: #3498db;
-      text-decoration: underline;
-    }
-    .hidden {
-      display: none;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -65,96 +64,139 @@
   </table>
 
   <h1>Usuarios del Juego</h1>
-  <table id="userTable">
+  <div id="users-container">
+    <h2 class="toggle-table" onclick="toggleTable()">Usuarios</h2>
+    <table id="userTable" class="hidden">
+      <thead>
+        <tr>
+          <th>Jugador 1</th>
+          <th>Jugador 2</th>
+          <th>Carta Común</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <button onclick="shuffleCards()">Cambiar cartas aleatoriamente</button>
+
+  <h1>Respuestas de Usuarios Emparejados por Carta</h1>
+  <table id="pairedTable">
     <thead>
       <tr>
         <th>Jugador 1</th>
         <th>Jugador 2</th>
-        <th>Carta Común</th>
-        <th>Resultados por Pregunta</th>
+        <th>Carta</th>
+        <th>Preguntas Respondidas</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 
+  <script src="config.js"></script>
+  <script src="checkPageStatus.js" defer></script>
   <script>
     const playerAPI = "https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/respuestas";
+    const testAPI = "https://678aba6fdd587da7ac2b3c2b.mockapi.io/api/pruebas";
 
-    async function fetchPlayerResponses() {
+    async function fetchPlayers() {
       const response = await fetch(playerAPI);
       return response.json();
     }
 
-    async function loadPage() {
-      const playerResponses = await fetchPlayerResponses();
-
-      // Agrupar respuestas por carta y jugadores
-      const groupedByCard = {};
-      playerResponses.forEach((response) => {
-        const { carta, nombre, idPregunta } = response;
-
-        if (!groupedByCard[carta]) {
-          groupedByCard[carta] = {};
-        }
-
-        if (!groupedByCard[carta][nombre]) {
-          groupedByCard[carta][nombre] = new Set();
-        }
-
-        groupedByCard[carta][nombre].add(idPregunta);
-      });
-
-      // Crear filas para la tabla
-      const results = [];
-      for (const carta in groupedByCard) {
-        const players = Object.keys(groupedByCard[carta]);
-
-        for (let i = 0; i < players.length; i++) {
-          for (let j = i + 1; j < players.length; j++) {
-            const player1 = players[i];
-            const player2 = players[j];
-
-            const commonQuestions = Array.from(groupedByCard[carta][player1])
-              .filter((id) => groupedByCard[carta][player2].has(id));
-
-            results.push({
-              player1,
-              player2,
-              carta,
-              commonQuestions,
-            });
-          }
-        }
-      }
-
-      // Ordenar los resultados por número de preguntas en común (descendente)
-      results.sort((a, b) => b.commonQuestions.length - a.commonQuestions.length);
-
-      // Insertar resultados en la tabla
-      const tableBody = document.querySelector("#userTable tbody");
-      results.forEach((result, index) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${result.player1}</td>
-          <td>${result.player2}</td>
-          <td>${result.carta}</td>
-          <td>
-            <span class="toggle-details" onclick="toggleDetails(${index})">Ver detalles</span>
-            <div id="details-${index}" class="hidden">
-              <strong>Preguntas en común (${result.commonQuestions.length}):</strong>
-              <ul>
-                ${result.commonQuestions.map((q) => `<li>ID Pregunta: ${q}</li>`).join("")}
-              </ul>
-            </div>
-          </td>
-        `;
-        tableBody.appendChild(row);
-      });
+    async function fetchTests() {
+      const response = await fetch(testAPI);
+      return response.json();
     }
 
-    function toggleDetails(index) {
-      const details = document.getElementById(`details-${index}`);
-      details.classList.toggle("hidden");
+    async function updateTestStatus(id, estado, row) {
+      await fetch(`${testAPI}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ estado })
+      });
+
+      row.cells[1].textContent = estado === 1 ? "Activo" : "Inactivo";
+      alert(`El estado de la prueba con ID ${id} ha sido actualizado a ${estado}.`);
+    }
+
+    function shuffleCards() {
+      // Cambiar las cartas y usuarios de lugar aleatoriamente
+      let shuffledUsers = [...groupConfig.users];
+      shuffledUsers.sort(() => Math.random() - 0.5);
+
+      shuffledUsers.forEach((user, index) => {
+        const randomCardIndex = Math.floor(Math.random() * groupConfig.baraja.length);
+        user.carta = groupConfig.baraja[randomCardIndex];
+      });
+
+      loadPage();  // Recargar la página para mostrar los cambios
+    }
+
+    function toggleTable() {
+      const table = document.getElementById('userTable');
+      table.classList.toggle('hidden');
+    }
+
+    async function loadPage() {
+      const [players, tests] = await Promise.all([fetchPlayers(), fetchTests()]);
+
+      const playerTableBody = document.querySelector("#playerTable tbody");
+      players.sort((a, b) => b.contador - a.contador);  // Ordenar por puntuación
+      players.forEach(player => {
+        const row = `
+          <tr>
+            <td>${player.nombre}</td>
+            <td>${player.contador}</td>
+          </tr>
+        `;
+        playerTableBody.innerHTML += row;
+      });
+
+      const testTableBody = document.querySelector("#testTable tbody");
+      tests.forEach(test => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${test.nombre}</td>
+          <td>${test.estado === 1 ? "Activo" : "Inactivo"}</td>
+          <td>
+            <label class="switch">
+              <input type="checkbox" ${test.estado === 1 ? "checked" : ""} 
+                onchange="updateTestStatus(${test.id}, this.checked ? 1 : 0, this.closest('tr'))">
+              <span class="slider"></span>
+            </label>
+          </td>
+        `;
+        testTableBody.appendChild(row);
+      });
+
+      // Obtener respuestas y mostrar parejas
+      const playerResponses = await fetchPlayers();
+      const pairedTableBody = document.querySelector("#pairedTable tbody");
+      const groupedByCard = {};
+
+      playerResponses.forEach(response => {
+        const { carta, nombre, idPregunta } = response;
+        if (!groupedByCard[carta]) groupedByCard[carta] = [];
+        groupedByCard[carta].push({ nombre, idPregunta });
+      });
+
+      for (const [card, users] of Object.entries(groupedByCard)) {
+        for (let i = 0; i < users.length; i += 2) {
+          const user1 = users[i];
+          const user2 = users[i + 1] || { nombre: "Sin jugador", idPregunta: "-" };
+          const preguntasRespondidas = `${user1.idPregunta}, ${user2.idPregunta || "-"}`;
+          const row = `
+            <tr>
+              <td>${user1.nombre}</td>
+              <td>${user2.nombre}</td>
+              <td>${card}</td>
+              <td>${preguntasRespondidas}</td>
+            </tr>
+          `;
+          pairedTableBody.innerHTML += row;
+        }
+      }
     }
 
     loadPage();
