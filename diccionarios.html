@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diccionarios..</title>
+  <link rel="stylesheet" href="css.css">
+  <script type="module" src="scripts.js"></script>
+  <script type="module" src="usuario.js"></script>
+ 
+		  <script type="module">
+ 	import { obtenerYMostrarUsuario } from "./usuario.js";
+		obtenerYMostrarUsuario();
+			
+   </script>
+</head>
+<body style="display:flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
+
+  <h2 id="mensaje-poesia">Las sombras bailan en la luz del viejo bosque</h2>
+  <p>Tu abecedario secreto:</p> 
+  <p id="abecedario"></p>
+  <input type="text" placeholder="Escribe aquí..." id="entrada-frase">
+  <button  id="verificar-frase">Verificar</button>
+  <script type="module">
+    import { usuarios } from './variables.js';
+   import { mostrarTelon } from './scripts.js';
+	import { mostrarAbecedarioUsuario } from './scripts.js';
+	import { transformarMensaje } from './scripts.js';
+
+	mostrarTelon("¡Bienvenido a la aventura!");	
+	mostrarAbecedarioUsuario();
+	transformarMensaje();
+	import { verificarFrase } from './scripts.js';	
+	document.getElementById('verificar-frase').addEventListener('click', verificarFrase);
+
+   </script>
+</body>
+</html>
