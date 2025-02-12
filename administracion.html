@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración</title>
+	<link rel="stylesheet" href="css.css">
+	  <script type="module" src="scripts.js"></script>
+  	<script type="module" src="usuario.js"></script>
+  	<script type="module" src="variables.js"></script>
+	
+</head>
+<body>
+    <h1>Panel de Administración</h1>
+    <div class="container administracion">
+	<div>
+        <button class="btn" onclick="mostrarResultados();">Puntuación General</button>
+        <button class="btn" onclick="activarContador()">Activar Contador Escondite</button>
+	</div>
+	<div>
+        <button class="btn generar" style="background-color:Red;" onclick="generateRandomMatchups();">Generar PAREJAS</button>
+        <button class="btn generar" style="background-color:Red;" onclick="assignTeamsToUsers();">Generar Equipos ESCONDITE</button>
+        <button class="btn generar" style="background-color:Red;" onclick="assignTeamsToUsers();">Generar Equipos ESCONDITE</button>
+	</div>
+    </div>
+	<div>
+		<table id="puntuacion">
+			
+		</table>
+		<table id="equipos">
+			
+		</table>
+		<table id="equiposEscondite">
+			
+		</table>
+	</div>
+	</div>
+	<script type="module">
+		import { usuarios } from "./variables.js";
+	</script>
+    <script>
+
+    </script>
+	 
+</body>
+</html>
