@@ -1,0 +1,792 @@
+/* Establecimiento de variables globales */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --accent-color: #f39c12;
+    --background-color: #f4f6f9;
+    --text-color: #333;
+    --border-radius: 8px;
+    --transition-speed: 0.3s;
+    --font-family: 'Roboto', sans-serif;
+}
+
+/* Estilos generales */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Animación básica de fade in */
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    animation: fadeIn var(--transition-speed) ease-out;
+}
+
+/* Cabecera */
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    animation: fadeIn var(--transition-speed) ease-out;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+header p {
+    font-size: 1.2rem;
+    font-weight: 300;
+}
+
+/* Navegación */
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px;
+    background-color: var(--secondary-color);
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    animation: fadeIn var(--transition-speed) ease-out;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    transition: color var(--transition-speed);
+}
+
+nav a:hover {
+    color: var(--accent-color);
+    transform: scale(1.1);
+}
+
+/* Contenido principal */
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: fadeIn var(--transition-speed) ease-out;
+}
+
+.card {
+    background-color: white;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: scale(0.98);
+    transition: transform var(--transition-speed);
+}
+
+.card:hover {
+    transform: scale(1);
+}
+
+.card img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius);
+}
+
+.card h2 {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+/* Botones */
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: background-color var(--transition-speed), transform var(--transition-speed);
+}
+
+button:hover {
+    background-color: var(--secondary-color);
+    transform: scale(1.1);
+}
+
+/* Formulario */
+form {
+    background-color: white;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    animation: fadeIn var(--transition-speed) ease-out;
+}
+
+input, textarea {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: border-color var(--transition-speed);
+}
+
+input:focus, textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+input[type="submit"] {
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Pie de página */
+footer {
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 20px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    border-radius: var(--border-radius);
+    animation: fadeIn var(--transition-speed) ease-out;
+}
+
+footer p {
+    margin: 0;
+}
+
+/* Responsivo para dispositivos móviles */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    header p {
+        font-size: 1rem;
+    }
+
+    nav {
+        flex-direction: column;
+    }
+
+    nav a {
+        font-size: 1rem;
+        margin: 5px 0;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .card h2 {
+        font-size: 1.5rem;
+    }
+
+    button {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+
+    form {
+        padding: 15px;
+    }
+
+    input, textarea {
+        font-size: 0.9rem;
+    }
+
+    footer {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .card h2 {
+        font-size: 1.3rem;
+    }
+
+    nav a {
+        font-size: 0.9rem;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+
+    form {
+        padding: 10px;
+    }
+
+    input, textarea {
+        font-size: 0.85rem;
+    }
+}
+/* Estilos generales para el cuerpo de la página */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Estilo para las tablas */
+table {
+    width: 80%;
+    border-collapse: collapse;
+    margin: 20px auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    border-radius: 8px;
+    transform: scale(0.95);
+    opacity: 0;
+    animation: fadeIn 1s forwards, slideInUp 1s ease-out forwards;
+}
+
+table:hover {
+    transform: scale(1);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInUp {
+    0% {
+        transform: translateY(20px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* Cabecera de la tabla */
+th {
+    padding: 15px;
+    background-color: #4CAF50;
+    color: white;
+    text-align: left;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 1px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    animation: slideInUp 1s ease-out forwards;
+}
+
+/* Celdas de la tabla */
+td {
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 1px solid #f1f1f1;
+    transition: background-color 0.3s ease;
+}
+
+/* Filas de la tabla */
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Efecto hover en celdas */
+td:hover {
+    background-color: #e1f5e1;
+    cursor: pointer;
+}
+
+/* Fila al pasar el mouse sobre ella */
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Estilos de la tabla cuando no hay datos */
+tr.no-data td {
+    text-align: center;
+    font-style: italic;
+    color: #bbb;
+}
+
+/* Estilos para dispositivos pequeños (Responsive) */
+@media screen and (max-width: 768px) {
+    table {
+        width: 100%;
+    }
+
+    th, td {
+        font-size: 12px;
+        padding: 10px;
+    }
+}
+
+/* Estilo para el contenedor del table */
+.administracion{	
+	display:flex;	
+}
+.administracion button{	
+		margin:10px;
+}
+.container {
+    width: 100%;
+    overflow-x: auto;
+    padding: 20px;
+}
+    .card {
+      font-size: 20px;
+      background: #fff;
+      color: #333;
+      padding: 10px;
+      border-radius: 10px;
+    }
+    #contador, #segundo-contador {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #f1c40f;
+    }
+    #user-info {
+      margin-top: 20px;
+      font-size: 18px;
+      color: white;
+	  font-weight:bolder;
+      position: fixed;
+      top: 0;
+      right: 0;
+      border-radius: 20px;
+      box-shadow: 0px 0px 10px gray;
+      padding: 10px;
+    }
+    .password-input {
+      margin-top: 20px;
+      display: none;
+    }
+    .password-input input {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+      margin-right: 10px;
+    }
+    .password-input button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #2ecc71;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+    .password-input button:hover {
+      background-color: #27ae60;
+    }
+    #mensaje-espera {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #f1c40f;
+      display: none;
+    }
+	
+	/* Estilos generales */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: url('https://source.unsplash.com/1600x900/?technology,nature') no-repeat center center/cover;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+/* Contenedor del formulario */
+.login-container {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 30px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 350px;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Título */
+.login-container h2 {
+  color: white;
+  margin-bottom: 15px;
+}
+
+/* Campos de entrada */
+.input-box {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.input-box input {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.input-box input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Botón de login */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(45deg, #ff416c, #ff4b2b);
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-btn:hover {
+  background: linear-gradient(45deg, #ff4b2b, #ff416c);
+  transform: scale(1.05);
+}
+
+/* Link de recuperar contraseña */
+.forgot-password {
+  display: block;
+  margin-top: 12px;
+  font-size: 14px;
+  color: white;
+  text-decoration: none;
+  opacity: 0.8;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+  opacity: 1;
+}
+/* Contenedor del selector */
+.selector-container {
+  position: relative;
+  width: 250px;
+}
+
+/* Estilo del <select> */
+select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  
+}
+input{
+	margin-bottom:10px;
+	margin-top:10px;
+}
+/* Estilos generales */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-image: url('/IMAGEN/KITDEBIENVENIDA.png'); /* Cambia esto por la URL de tu imagen */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: white;
+}
+
+.card-container {
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 60%;
+  max-width: 600px;
+  backdrop-filter: blur(10px);
+}
+
+.card {
+    width: 250px;
+    height: 180px;
+    background: #ffcc80; /* Color base del sobre */
+    display: flex;
+	margin-left: auto;
+	margin-right:auto;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    color: white;
+    border-radius: 5px;
+    transition: transform 0.5s ease, background 0.5s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Pseudo-elemento para la solapa superior */
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: #ffb74d; /* Color de la solapa */
+    clip-path: polygon(0% 0%, 50% 100%, 100% 0%); /* Forma triangular */
+    transition: transform 0.5s ease;
+}
+
+/* Pseudo-elemento para las esquinas inferiores simulando el cierre */
+
+/* Efecto de "abrir" el sobre al hacer hover */
+.card:hover::before {
+    transform: translateY(-100%);
+}
+
+.hidden {
+    display: none;
+}
+
+.card.revealed::before {
+    display: none;
+}
+
+
+
+.card.revealed {
+  transform: scale(1.1); /* Expande la carta cuando se revela */
+  opacity: 1;
+  transition: transform 1s ease, opacity 1s ease;
+  background: linear-gradient(135deg, #32cd32, #228b22); /* Fondo verde cuando se revela */
+}
+#carta{
+	  background: linear-gradient(135deg, #f5c518, #d88f1a); /* Gradiente dorado */
+
+}
+.card p {
+  margin: 0;
+  transition: opacity 1s ease;
+}
+
+/* Estilo para el texto de la carta cuando está oculta */
+.card p.hidden {
+  opacity: 0;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+#username {
+  margin-bottom: 20px;
+}
+
+#loginButton {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1.2em;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+#loginButton:hover {
+  background-color: #45a049;
+}
+
+#password-input {
+  margin-top: 20px;
+}
+
+/* Estilo para los mensajes */
+#mensaje-espera {
+  display: none;
+  color: #f44336;
+  font-size: 1.2em;
+  margin-top: 20px;
+}
+
+#puntuacion{
+	color:black;
+}
+
+/* Telón de teatro */
+#telon {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    font-size: 2rem;
+    font-family: Arial, sans-serif;
+    z-index: 9999;
+}
+
+.telon-izquierda, .telon-derecha {
+    position: fixed;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, #8B0000, #B22222);
+    transition: transform 1s ease-in-out;
+}
+
+.telon-izquierda {
+    left: 0;
+    transform: translateX(0);
+}
+
+.telon-derecha {
+    right: 0;
+    transform: translateX(0);
+}
+
+.telon-contenido {
+    position: relative;
+    color: white;
+    text-shadow: 2px 2px 4px black;
+    z-index: 10;
+    max-width: 80%;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* Ocultar telón */
+.telon-abierto .telon-izquierda {
+    transform: translateX(-100%);
+}
+
+.telon-abierto .telon-derecha {
+    transform: translateX(100%);
+}
+
+#abecedario {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); /* Se adapta automáticamente */
+  gap: 5px; /* Espaciado entre celdas */
+  max-width: 300px; /* Ajusta el tamaño según necesites */
+  margin: 20px auto; /* Centrar en la página */
+  text-align: center;
+}
+
+.abecedario-celda {
+	color: black;
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid black;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+}
+
+.abecedario-celda span {
+  font-size: 12px;
+  color: black;
+}
+#mensaje-poesia{
+	display:block;
+	width:80%;
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+	margin-bottom:15px;
+	background-color:black;
+	border:white solid;
+}
