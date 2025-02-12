@@ -572,7 +572,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url('/IMAGEN/KITDEBIENVENIDA.png'); /* Cambia esto por la URL de tu imagen */
+  background-image: url('/KITDEBIENVENIDA.png'); /* Cambia esto por la URL de tu imagen */
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
