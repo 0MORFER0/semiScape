@@ -646,7 +646,7 @@ export function mostrarTelon(mensaje) {
     contenido.innerHTML = `
         <p>${mensaje}</p>
         <p class="contador">...</p>
-		<img style="border-radius:100%;" src="imagen/huella2.png" alt="huella de alguien..">
+		<img style="border-radius:100%;" src="huella2.png" alt="huella de alguien..">
     `;
 
     telon.appendChild(telonIzq);
