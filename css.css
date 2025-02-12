@@ -19,6 +19,7 @@ body {
     color: var(--text-color);
     line-height: 1.6;
     overflow-x: hidden;
+	color:black;
 }
 
 /* Animación básica de fade in */
