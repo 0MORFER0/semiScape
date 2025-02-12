@@ -3,171 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Asignación de Cartas</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(120deg, #f39c12, #d35400);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      position: relative;
-    }
-    .user-info {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-size: 16px;
-    }
-    .user-info button {
-      margin-left: 10px;
-      background-color: #e74c3c;
-      border: none;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    .user-info button:hover {
-      background-color: #c0392b;
-    }
-    .container {
-      text-align: center;
-      width: 90%;
-      max-width: 600px;
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.5);
-      border-radius: 10px;
-    }
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 20px;
-    }
-    .card {
-      margin-top: 30px;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 10px;
-    }
-    .card h2 {
-      font-size: 1.8em;
-      margin-bottom: 10px;
-    }
-    .card p {
-      font-size: 1.2em;
-      margin: 5px 0;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #27ae60;
-      border: none;
-      color: white;
-      border-radius: 5px;
-      font-size: 1em;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #2ecc71;
-    }
-    <link rel="icon" type="image/x-icon" href="ruta/a/favicon.ico">
-  </style>
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <title>Asignación de Carta</title>
+  <link rel="stylesheet" href="css.css">
+  <script type="module" src="scripts.js"></script>
+  	<script type="module" src="usuario.js"></script>
 </head>
-<body>
-  <div class="user-info" id="user-info"></div>
-  <div class="container">
-    <h1>Asignación de Cartas</h1>
-    <div class="card" id="card">
-      <h2 id="card-title">Carta asignada:</h2>
-      <p id="card-description">Cargando...</p>
+<body style="display:flex">
+  <div class="card-container">
+    <h1>Tu Carta Asignada</h1>
+    <div id="carta" class="card">
+      <p class="hidden">Cargando...</p> <!-- Texto oculto que aparece al revelar la carta -->
     </div>
-    <button onclick="continuarJuego()">Continuar al Juego</button>
+    <div id="session-info" class="session-info"></div>
+    <div id="password-input" class="password-input">
+      <p>Busca en la pantalla de tu pareja la contraseña..</p>
+      <input type="text" id="partner-password" placeholder="...">
+		<button id="verificar-btn">Verificar</button>
+    </div>
+    <div id="mensaje-espera">Esperando a la siguiente ronda...</div>
   </div>
-<script src="config.js"></script> <!-- Cargar config.js -->
-  <script src="checkPageStatus.js" defer></script>
+
+
+
   <script>
-    // Usuarios simulados (pueden venir de const.conf)
-    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+  
 
-    // Mostrar el usuario logueado
-    function mostrarUsuario() {
-      const userName = localStorage.getItem('userName');
-      const userInfoDiv = document.getElementById('user-info');
-
-      if (!userName) {
-        alert("No has iniciado sesión. Redirigiendo al login...");
-        window.location.href = 'index.html'; // Redirigir al login si no hay usuario
-      } else {
-        userInfoDiv.innerHTML = `
-          Usuario: <strong>${userName}</strong>
-        `;
-
-        asignarCartas(); // Asignar cartas a los usuarios logueados
-      }
-    }
-
-    // Función para asignar cartas por parejas o equipos de tres
-    function asignarCartas() {
-      const cartasDuplicadas = groupConfig.baraja.flatMap(carta => [carta, carta]); // Usar groupConfig.baraja
-      const totalUsuarios = groupConfig.users.length;
-
-      if (totalUsuarios === 0) {
-        alert("No hay usuarios registrados. Redirigiendo al login...");
-        window.location.href = 'index.html';
-        return;
-      }
-
-      const cartasAsignadas = [];
-      let cartaIndex = 0;
-
-      // Asignar cartas a cada usuario
-      for (let i = 0; i < totalUsuarios; i++) {
-        if (i % 2 === 0 && totalUsuarios - i === 3) {
-          // Caso especial: equipo de tres
-          const equipoCartas = cartasDuplicadas.slice(cartaIndex, cartaIndex + 3);
-          cartasAsignadas.push(...equipoCartas);
-          cartaIndex += 3;
-          break;
-        } else {
-          const parejaCartas = cartasDuplicadas.slice(cartaIndex, cartaIndex + 2);
-          cartasAsignadas.push(...parejaCartas);
-          cartaIndex += 2;
-        }
-      }
-
-      // Mostrar la carta del usuario logueado
-      const userName = localStorage.getItem('userName');
-      const userIndex = groupConfig.users.findIndex(u => u.name === userName);
-      const cartaUsuario = cartasAsignadas[userIndex];
-
-      if (cartaUsuario) {
-        document.getElementById('card-title').textContent = cartaUsuario;
-        document.getElementById('card-description').textContent = "Descripción de la carta"; // Puedes modificar este valor con una descripción más detallada si lo deseas
-      } else {
-        alert("Error al asignar carta al usuario.");
-        window.location.href = 'index.html';
-      }
-    }
-
-
-    // Continuar al siguiente juego
-    function continuarJuego() {
-      window.location.href = 'game3.html';
-    }
-
-    // Ejecutar al cargar la página
-    window.onload = mostrarUsuario;
   </script>
+   <script type="module">
+   import { mostrarTelon } from './scripts.js';
+
+	mostrarTelon("¡Bienvenido a la aventura!");	
+   </script>
 </body>
 </html>
