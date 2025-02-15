@@ -553,7 +553,6 @@ select {
   padding: 12px;
   border: 2px solid rgba(0, 0, 0, 0.5);
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.1);
   font-size: 16px;
   outline: none;
   cursor: pointer;
@@ -574,7 +573,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url('/IMAGEN/KITDEBIENVENIDA.png'); /* Cambia esto por la URL de tu imagen */
+  background-image: url('/KITDEBIENVENIDA.png'); /* Cambia esto por la URL de tu imagen */
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -800,9 +799,7 @@ body {
 	text-shadow:0px 1px black;
 }
 
-input{
-	min-width:400px;
-}
+
 .rol-container {
     padding: 20px;
     margin: 20px;
