@@ -575,6 +575,7 @@ body {
   height: 100vh;
   background-image: url('/KITDEBIENVENIDA.png'); /* Cambia esto por la URL de tu imagen */
   background-size: cover;
+  background-color:grey;
   background-position: center;
   background-attachment: fixed;
   color: white;
