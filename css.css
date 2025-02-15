@@ -19,7 +19,6 @@ body {
     color: var(--text-color);
     line-height: 1.6;
     overflow-x: hidden;
-	color:black;
 }
 
 /* Animación básica de fade in */
@@ -559,6 +558,8 @@ select {
   outline: none;
   cursor: pointer;
   transition: 0.3s ease-in-out;
+  background: white;
+  margin-bottom:10px;
   
 }
 input{
@@ -573,7 +574,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url('KITDEBIENVENIDA.png'); /* Cambia esto por la URL de tu imagen */
+  background-image: url('/IMAGEN/KITDEBIENVENIDA.png'); /* Cambia esto por la URL de tu imagen */
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -586,7 +587,7 @@ body {
   padding: 30px;
   border-radius: 15px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  width: 60%;
+  width: 95%;
   max-width: 600px;
   backdrop-filter: blur(10px);
 }
@@ -791,4 +792,49 @@ body {
 	background-color:black;
 	border:white solid;
 }
-h1{color:black;}
+#username{
+	background-color:white;
+}
+.login-container h1{
+	color:white;
+	text-shadow:0px 1px black;
+}
+
+input{
+	min-width:400px;
+}
+.rol-container {
+    padding: 20px;
+    margin: 20px;
+    color: white;
+    font-size: 20px;
+    text-align: center;
+    border-radius: 10px;
+	display:flex;
+	    flex-direction: column;
+    align-items: center;
+	}
+
+.lobo {
+    background-color: red;
+}
+
+.oveja {
+    background-color: green;
+}
+#tablaTrenes{
+	margin-top:50px;
+	width:100%;
+	max-width:400px;
+}
+#tablaTrenes table{
+	margin-top:50px;
+	width:100%;
+	max-width:400px;
+}
+#tablaTrenes table{
+	background:rgba(255,255,255,0.9);
+}
+#tablaTrenes table tr{
+	color:black;
+}
