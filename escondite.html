@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diccionarios..</title>
+  <link rel="stylesheet" href="css.css">
+  <script type="module" src="scripts.js"></script>
+  <script type="module" src="usuario.js"></script>
+ 
+		  <script type="module">
+ 	import { obtenerYMostrarUsuario } from "./usuario.js";
+		obtenerYMostrarUsuario();
+			
+   </script>
+</head>
+<body style="display:flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
+<div id="rolEscondite">
+</div>
+  <script type="module">
+    import { usuarios } from './variables.js';
+	import { mostrarRolEscondite } from './scripts.js';
+	
+	mostrarTelon("ESPERA ORDENES<br>ECONDITE");	
+	mostrarRolEscondite();	
+
+   </script>
+</body>
+</html>
