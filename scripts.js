@@ -476,6 +476,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Función para verificar la pareja mediante la contraseña
 async function verificarPareja() {
+  const verificarBtn = document.getElementById("verificar-btn");
+  const partnerPasswordInput = document.getElementById("partner-password");
+  const parejaInput = partnerPasswordInput.value.trim().toLowerCase(); // Convertir a minúsculas para comparar sin distinción
+  const username = localStorage.getItem("userName"); // Obtener el nombre del usuario actual
+  
+  if (!parejaInput) {
+    alert("Por favor, introduce una contraseña válida.");
+    return;
+  }
+
+  // Buscar al usuario actual en la lista
+  const usuario = usuarios.find(user => user.nombre === username);
+  if (!usuario) {
+    alert("Usuario no encontrado.");
+    return;
+  }
+
+  // Encontrar la pareja (usuario con la misma carta pero diferente nombre)
+  const parejaUsuario = usuarios.find(user => user.cartaAsignada === usuario.cartaAsignada && user.nombre !== usuario.nombre);
+
+  if (!parejaUsuario) {
+    alert("No se encontró una pareja válida.");
+    return;
+  }
+
+  // Verificar si la contraseña ingresada es el nombre de la pareja
+  if (parejaInput === parejaUsuario.nombre.toLowerCase()) {
+    alert("¡Correcto! La contraseña es válida.");
+
+    // Registrar resultado en la tabla 'resultados' de Airtable
+    await registrarResultado("buscarParejas", username, parejaUsuario.nombre);
+
+    partnerPasswordInput.disabled = true;
+    verificarBtn.disabled = true;
+
+    setTimeout(() => {
+      window.location.href = 'diccionarios.html';
+    }, 1000);
+  } else {
+    alert("Contraseña incorrecta. Inténtalo de nuevo.");
+  }
+}
+
+/* Función para verificar la pareja mediante la contraseña
+async function verificarPareja() {
 	  const verificarBtn = document.getElementById("verificar-btn");
   const pareja = document.getElementById("partner-password").value.trim();
   const mensajeEspera = document.getElementById("mensaje-espera");
@@ -516,7 +561,7 @@ async function verificarPareja() {
     alert("Contraseña incorrecta. Inténtalo de nuevo.");
   }
 }
-
+*/
 // Función para registrar el resultado en la tabla "resultados" de Airtable
 async function registrarResultado(nombrePrueba, nombreUsuario, respuesta) {
 	 const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3"; // Reemplaza con tu token
@@ -646,7 +691,7 @@ export function mostrarTelon(mensaje) {
     contenido.innerHTML = `
         <p>${mensaje}</p>
         <p class="contador">...</p>
-		<img style="border-radius:100%;" src="huella2.png" alt="huella de alguien..">
+		<img style="border-radius:100%;" src="imagen/huella2.png" alt="huella de alguien..">
     `;
 
     telon.appendChild(telonIzq);
@@ -750,11 +795,278 @@ export function verificarFrase() {
 
   // Comprobar si la frase ingresada es igual a la frase original
   if (fraseIngresada.toUpperCase().trim() === mensajeOriginal.toUpperCase().trim()) {
-    alert("¡Frase correcta!");
 
+    alert("¡Frase correcta!");
+	document.getElementById('verificar-frase').disabled = true;
     // Registrar el resultado en Airtable
     registrarResultado("diccionarios", username, "Correcta");
+	 setTimeout(() => {
+      window.location.href = 'escondite.html';
+    }, 1000);
   } else {
     alert("Frase incorrecta. Inténtalo de nuevo.");
   }
+}
+
+
+/*
+export function mostrarRolEscondite() {
+    const username = localStorage.getItem("userName");
+    const usuario = usuarios.find(u => u.nombre === username);
+    
+    if (!usuario) {
+        console.error('Usuario no encontrado');
+        return;
+    }
+
+    // Obtener el contenedor principal
+    const contenedor = document.getElementById("rolEscondite");
+    if (!contenedor) {
+        console.error('No se encontró el div con id "rolEscondite"');
+        return;
+    }
+
+    // Limpiar contenido previo
+    contenedor.innerHTML = "";
+    contenedor.classList.add("rol-container");
+
+    // Crear contenido según el rol
+    if (usuario.rol === "LOBO") {
+        contenedor.classList.add("lobo");
+        contenedor.innerHTML = `
+            <strong>LOBO</strong><br>
+            <label for="ovejas">Selecciona una oveja:</label>
+            <select id="ovejas">
+                ${usuarios
+                    .filter(u => u.rol !== "LOBO") // Filtrar los que no son LOBO
+                    .map(u => `<option value="${u.nombre}">${u.nombre}</option>`)
+                    .join("")
+                }
+            </select>
+            <br>
+            <input type='text' id="claveEsconditeInput" placeholder='Ingresa una clave'>
+            <button id="inputLobo">PILLAR</button>
+        `;
+
+        // Agregar evento al botón después de que se haya renderizado en el DOM
+        document.getElementById("inputLobo").addEventListener("click", comprobarClaveLobo);
+    } else if (usuario.rol === "OVEJA") {
+        contenedor.classList.add("oveja");
+        contenedor.innerHTML = `
+            <strong>OVEJA</strong><br>
+			<p>El LOBO solo podrá usar su flash para buscaros..</p>
+            <p>Clave Escondite: ${usuario.claveEscondite}</p>
+        `;
+    } else {
+        console.error("Rol no reconocido");
+    }
+}
+*/
+export function mostrarRolEscondite() {
+    const username = localStorage.getItem("userName");
+    const usuario = usuarios.find(u => u.nombre === username);
+    
+    if (!usuario) {
+        console.error('Usuario no encontrado');
+        return;
+    }
+
+    // Obtener el contenedor principal
+    const contenedor = document.getElementById("rolEscondite");
+    if (!contenedor) {
+        console.error('No se encontró el div con id "rolEscondite"');
+        return;
+    }
+
+    // Limpiar contenido previo
+    contenedor.innerHTML = "";
+    contenedor.classList.add("rol-container");
+
+    // Crear contenido según el rol
+    if (usuario.rol === "LOBO") {
+        contenedor.classList.add("lobo");
+        contenedor.innerHTML = `
+            <strong>LOBO</strong><br>
+            <label for="ovejas">Selecciona una oveja:</label>
+            <select id="ovejas">
+                ${usuarios
+                    .filter(u => u.rol !== "LOBO") // Filtrar los que no son LOBO
+                    .map(u => `<option value="${u.nombre}">${u.nombre}</option>`)
+                    .join("")
+                }
+            </select>
+            <br>
+            <input type='text' id="claveEsconditeInput" placeholder='Ingresa una clave'>
+            <button id="inputLobo">PILLAR</button>
+            <button id="caceriaTerminada">¿Cacería terminada?</button>
+        `;
+
+        // Agregar eventos a los botones
+        document.getElementById("inputLobo").addEventListener("click", comprobarClaveLobo);
+        document.getElementById("caceriaTerminada").addEventListener("click", () => {
+            if (confirm("¿Estás seguro de que la cacería ha terminado?")) {
+                window.location.href = "candado.html";
+            }
+        });
+    } else if (usuario.rol === "OVEJA") {
+        contenedor.classList.add("oveja");
+        contenedor.innerHTML = `
+            <strong>OVEJA</strong><br>
+            <p>El LOBO solo podrá usar su flash para buscaros..</p>
+            <p>Clave Escondite: ${usuario.claveEscondite}</p>
+            <button id="cazado">¿CAZADO?</button>
+        `;
+
+        // Agregar evento al botón de "¿CAZADO?"
+        document.getElementById("cazado").addEventListener("click", () => {
+            if (confirm("¿Estás seguro?")) {
+                window.location.href = "candado.html";
+            }
+        });
+    } else {
+        console.error("Rol no reconocido");
+    }
+}
+
+
+async function comprobarClaveLobo() {
+    const selectOvejas = document.getElementById("ovejas");
+    const nombreLobo = selectOvejas.value; // El usuario seleccionado en el <select>
+    const claveIngresada = document.getElementById("claveEsconditeInput").value;
+    const username = localStorage.getItem("userName"); // Usuario logueado
+
+    // Buscar la oveja seleccionada en la lista de usuarios
+    const oveja = usuarios.find(u => u.nombre === nombreLobo);
+
+    if (oveja && claveIngresada === oveja.claveEscondite) {
+        alert("Correcto, sigue cazando");
+
+        // Guardar el resultado en la base de datos de Airtable
+        await registrarResultadoEnAirtable(username, nombreLobo);
+
+        // Eliminar la oveja del select
+        selectOvejas.removeChild(selectOvejas.querySelector(`option[value="${nombreLobo}"]`));
+    } else {
+        alert("Incorrecta");
+    }
+}
+
+async function registrarResultadoEnAirtable(usuarioLogueado, nombreLobo) {
+const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3"; // Token de Airtable
+const baseId = "appDePnktLp2dzqNX"; // Base ID
+const tableName = "ResultadosEscondite"; // Nombre de la tabla
+const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+
+// Obtener la fecha y hora actual en formato 'YYYY-MM-DD HH:mm:ss.SSS'
+const now = new Date();
+const localDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)); // Ajustar a la hora local
+const date = localDate.toISOString().slice(0, 19).replace('T', ' ') + '.' + localDate.getMilliseconds().toString().padStart(3, '0');
+
+// Datos que se enviarán
+const data = {
+    records: [
+        {
+            fields: {
+                "NombrePrueba": "Escondite",
+                "NombreUsuario": usuarioLogueado,
+                "Respuesta": nombreLobo,
+                "Date": date // Nuevo campo con la fecha formateada
+            }
+        }
+    ]
+};
+
+  //  console.log("Enviando a Airtable:", JSON.stringify(data, null, 2)); // Depuración
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+     //   console.log("Respuesta de Airtable:", result);
+
+        if (!response.ok) {
+            throw new Error("Error al registrar en Airtable");
+        }
+    } catch (error) {
+        console.error("Error al enviar datos a Airtable:", error);
+    }
+}
+
+// TRENES
+export function generarTablaTrenes() {
+    const trenes = [
+        { nombre: "Regidor", distancia: 121 },
+        { nombre: "Ribera", distancia: 83 },
+        { nombre: "Rabano", distancia: 157 },
+        { nombre: "Sierra", distancia: 203 },
+        { nombre: "Valle", distancia: 191 },
+        { nombre: "Cima", distancia: 137 },
+        { nombre: "Lago", distancia: 97 },
+        { nombre: "Costa", distancia: 113 },
+        { nombre: "Monte", distancia: 251 },
+        { nombre: "Sol", distancia: 161 },
+        { nombre: "Río", distancia: 103 },
+        { nombre: "Luna", distancia: 141 },
+        { nombre: "Norte", distancia: 221 },
+        { nombre: "Este", distancia: 53 },
+        { nombre: "Oeste", distancia: 61 },
+        { nombre: "Sur", distancia: 173 },
+        { nombre: "Puente", distancia: 139 },
+        { nombre: "Cielo", distancia: 163 },
+        { nombre: "Bosque", distancia: 131 },
+        { nombre: "Fuego", distancia: 199 }
+    ];
+
+    // Mezclar aleatoriamente los trenes usando el algoritmo de Fisher-Yates
+    for (let i = trenes.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [trenes[i], trenes[j]] = [trenes[j], trenes[i]];
+    }
+
+    // Dividir en dos listas
+    const mitad = Math.ceil(trenes.length / 2);
+    const trenes1 = trenes.slice(0, mitad);
+    const trenes2 = trenes.slice(mitad);
+
+    // Obtener el contenedor donde se insertarán las tablas
+    const contenedor = document.getElementById("tablaTrenes");
+    if (!contenedor) {
+        console.error('No se encontró el div con id "tablaTrenes"');
+        return;
+    }
+
+    // Función para generar una tabla
+    const generarTablaHTML = (trenes) => `
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Distancia (km)</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${trenes.map(tren => `
+                    <tr>
+                        <td>${tren.nombre}</td>
+                        <td>${tren.distancia}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+
+    // Insertar las dos tablas en el div
+    contenedor.innerHTML = `
+        <div style="display: flex; flex-direction: row; gap: 10px;">
+            ${generarTablaHTML(trenes1)}
+            ${generarTablaHTML(trenes2)}
+        </div>
+    `;
 }
