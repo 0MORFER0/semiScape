@@ -573,9 +573,8 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url('/KITDEBIENVENIDA.png'); /* Cambia esto por la URL de tu imagen */
+  background: url('KITDEBIENVENIDA.png') grey; /* Cambia esto por la URL de tu imagen */
   background-size: cover;
-  background-color:grey;
   background-position: center;
   background-attachment: fixed;
   color: white;
@@ -835,4 +834,8 @@ body {
 }
 #tablaTrenes table tr{
 	color:black;
+}
+#cazado,#caceriaTerminada{
+	margin-top:25px;
+	
 }
