@@ -10,18 +10,41 @@
  
 		  <script type="module">
  	import { obtenerYMostrarUsuario } from "./usuario.js";
+ 	
 		obtenerYMostrarUsuario();
-			
    </script>
 </head>
-<body style="display:flex; align-items: center; justify-content: center; height: 100vh;">
-<div id="tablaTrenes">
+<body style="display:flex; align-items: center;    flex-direction:column; justify-content: center">
+
+<p style="width:120px">NECESITAS DESBLOQUEAR TODAS LAS CONTRASEÑAS PARA ABRIR EL CANDADO</p>
+<p>ESTE JUEGO ES INDIVIDUAL</p>
+<div id="primerCandadoDiv">
+	<h1 style="margin-top:50px;">3 trenes son especiales</h1>
+	<div id="tablaTrenes">
+
+	</div>
+	<div style="width:100%;    display: flex;    justify-content: space-evenly;">
+		<div style="display:flex; align-items: center;    flex-direction:column; justify-content: center">
+			<label>SUMA DISTANCIAS</label>
+			<input id="sumaDistancias" type="number"></input>
+		</div>
+
+		<div style="display:flex; align-items: center;    flex-direction:column; justify-content: center">
+			<label>INICIALES TRENES</label>
+			<input id="inicialesTrenes"></input>
+		</div>
+	</div>
+			<div style="display:flex; align-items: center;    flex-direction:column; justify-content: center">
+			<button id="primerCandado-btn">ENVIAR</button>
+		</div>
 </div>
   <script type="module">
     import { usuarios } from './variables.js';	
     import { generarTablaTrenes } from './scripts.js';	
 	mostrarTelon("ESPERA ORDENES<br>CANDADO");	
 	generarTablaTrenes();
+	import { comprobarPrimerCandado } from "./scripts.js";
+	document.getElementById("primerCandado-btn").addEventListener("click", comprobarPrimerCandado);
    </script>
 </body>
 </html>
