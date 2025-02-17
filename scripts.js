@@ -376,6 +376,8 @@ async function login() {
 }
 */
 import { usuarios } from "./variables.js";
+import { trenes } from "./variables.js";
+import { respuestasTrenes } from "./variables.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const selectElement = document.getElementById("username");
@@ -691,7 +693,7 @@ export function mostrarTelon(mensaje) {
     contenido.innerHTML = `
         <p>${mensaje}</p>
         <p class="contador">...</p>
-		<img style="border-radius:100%;" src="imagen/huella2.png" alt="huella de alguien..">
+		<img style="border-radius:100%;" src="huella2.png" alt="huella de alguien..">
     `;
 
     telon.appendChild(telonIzq);
@@ -788,7 +790,7 @@ export function verificarFrase() {
     return;
   }
 
-  const mensajeOriginal = "Las sombras bailan en la luz del viejo bosque";  // Frase original
+  const mensajeOriginal = "El bosque y sus enanos";  // Frase original
 
   // Función para verificar la frase introducida
   const fraseIngresada = inputElemento.value.trim();
@@ -1001,39 +1003,18 @@ const data = {
 
 // TRENES
 export function generarTablaTrenes() {
-    const trenes = [
-        { nombre: "Regidor", distancia: 121 },
-        { nombre: "Ribera", distancia: 83 },
-        { nombre: "Rabano", distancia: 157 },
-        { nombre: "Sierra", distancia: 203 },
-        { nombre: "Valle", distancia: 191 },
-        { nombre: "Cima", distancia: 137 },
-        { nombre: "Lago", distancia: 97 },
-        { nombre: "Costa", distancia: 113 },
-        { nombre: "Monte", distancia: 251 },
-        { nombre: "Sol", distancia: 161 },
-        { nombre: "Río", distancia: 103 },
-        { nombre: "Luna", distancia: 141 },
-        { nombre: "Norte", distancia: 221 },
-        { nombre: "Este", distancia: 53 },
-        { nombre: "Oeste", distancia: 61 },
-        { nombre: "Sur", distancia: 173 },
-        { nombre: "Puente", distancia: 139 },
-        { nombre: "Cielo", distancia: 163 },
-        { nombre: "Bosque", distancia: 131 },
-        { nombre: "Fuego", distancia: 199 }
-    ];
+    const treness = trenes;
 
     // Mezclar aleatoriamente los trenes usando el algoritmo de Fisher-Yates
-    for (let i = trenes.length - 1; i > 0; i--) {
+    for (let i = treness.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [trenes[i], trenes[j]] = [trenes[j], trenes[i]];
+        [treness[i], treness[j]] = [treness[j], treness[i]];
     }
 
     // Dividir en dos listas
-    const mitad = Math.ceil(trenes.length / 2);
-    const trenes1 = trenes.slice(0, mitad);
-    const trenes2 = trenes.slice(mitad);
+    const mitad = Math.ceil(treness.length / 2);
+    const trenes1 = treness.slice(0, mitad);
+    const trenes2 = treness.slice(mitad);
 
     // Obtener el contenedor donde se insertarán las tablas
     const contenedor = document.getElementById("tablaTrenes");
@@ -1043,8 +1024,8 @@ export function generarTablaTrenes() {
     }
 
     // Función para generar una tabla
-    const generarTablaHTML = (trenes) => `
-        <table border="1">
+    const generarTablaHTML = (treness) => `
+        <table style="width:50%;" border="1">
             <thead>
                 <tr>
                     <th>Nombre</th>
@@ -1052,7 +1033,7 @@ export function generarTablaTrenes() {
                 </tr>
             </thead>
             <tbody>
-                ${trenes.map(tren => `
+                ${treness.map(tren => `
                     <tr>
                         <td>${tren.nombre}</td>
                         <td>${tren.distancia}</td>
@@ -1064,9 +1045,34 @@ export function generarTablaTrenes() {
 
     // Insertar las dos tablas en el div
     contenedor.innerHTML = `
-        <div style="display: flex; flex-direction: row; gap: 10px;">
+        <div style="display: flex; flex-direction: row; gap: 10px;width:100%;    justify-content: center;">
             ${generarTablaHTML(trenes1)}
             ${generarTablaHTML(trenes2)}
         </div>
     `;
 }
+
+// Función para comprobar respuestas
+export function comprobarPrimerCandado() {
+    // Array de respuestas
+    
+
+    // Obtener los valores de los inputs
+    const inputSuma = document.getElementById("sumaDistancias").value;
+    const inputIniciales = document.getElementById("inicialesTrenes").value.toUpperCase(); // Convertir a mayúsculas
+
+    // Obtener la primera respuesta esperada
+    const primeraRespuesta = respuestasTrenes[0];
+	
+    // Comprobar si los valores coinciden
+	console.log(inputSuma);
+	console.log(primeraRespuesta.sumaDistancias);
+	console.log(inputIniciales);
+	console.log(primeraRespuesta.inicialesTrenes);
+    if (parseInt(inputSuma) === primeraRespuesta.sumaDistancias && inputIniciales.trim() === primeraRespuesta.inicialesTrenes.trim()) {
+        alert("¡Acertaste!");
+    } else {
+        alert("No es correcto, intenta de nuevo.");
+    }
+}
+
