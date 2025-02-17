@@ -26,3 +26,28 @@ export const usuarios = [
   { nombre: "ALBA PERIODISTA", contraseña: "12345", cartaAsignada: "El Mago de Hierro", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "ZXCVBNMASDFGHJKLQWERTYUIOP", abecedarioDesordenadoPareja: "POIUYTREWQLKJHGFDSAMNBVCXZ", claveEscondite: "sTuVwX" },
   { nombre: "RURU", contraseña: "12345", cartaAsignada: "El Mago de Hierro", equipoEscondite: "2", rol: "LOBO", abecedarioDesordenado: "POIUYTREWQLKJHGFDSAMNBVCXZ", abecedarioDesordenadoPareja: "ZXCVBNMASDFGHJKLQWERTYUIOP", claveEscondite: "yZaBcD" }
 ];
+ export const trenes = [
+        { nombre: "Regidor", distancia: 121 },
+        { nombre: "Ribera", distancia: 83 },
+        { nombre: "Rabano", distancia: 157 },
+        { nombre: "Sierra", distancia: 203 },
+        { nombre: "Valle", distancia: 191 },
+        { nombre: "Cima", distancia: 137 },
+        { nombre: "Lago", distancia: 97 },
+        { nombre: "Costa", distancia: 113 },
+        { nombre: "Monte", distancia: 251 },
+        { nombre: "Tiedra", distancia: 161 },
+        { nombre: "Río", distancia: 103 },
+        { nombre: "Luna", distancia: 141 },
+        { nombre: "Boecillo", distancia: 221 },
+        { nombre: "Este", distancia: 53 },
+        { nombre: "Mojados", distancia: 61 },
+        { nombre: "Sur", distancia: 173 },
+        { nombre: "Puente", distancia: 139 },
+        { nombre: "Cielo", distancia: 163 },
+        { nombre: "Castrobol", distancia: 131 },
+        { nombre: "Adalia", distancia: 199 }
+    ];
+ export const respuestasTrenes = [
+        { sumaDistancias: "361", inicialesTrenes: "RRR" }
+    ];
