@@ -269,6 +269,7 @@ footer p {
 }
 /* Estilos generales para el cuerpo de la página */
 body {
+	
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
@@ -399,7 +400,6 @@ tr.no-data td {
       color: #f1c40f;
     }
     #user-info {
-      margin-top: 20px;
       font-size: 18px;
       color: white;
 	  font-weight:bolder;
@@ -819,6 +819,7 @@ body {
 .oveja {
     background-color: green;
 }
+/*
 #tablaTrenes{
 	margin-top:50px;
 	width:100%;
@@ -833,9 +834,111 @@ body {
 	background:rgba(255,255,255,0.9);
 }
 #tablaTrenes table tr{
-	color:black;
+	color:black;	
+	border-radius:0;
+}
+#tablaTrenes table th{
+	border-radius:0;
 }
 #cazado,#caceriaTerminada{
-	margin-top:25px;
-	
+	margin-top:25px;	
 }
+*/
+#tablaTrenes {
+    margin-top: 5px;
+    width: calc(100% - 20px);
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    animation: fadeIn 1s ease-out forwards;
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Diseño de la tabla */
+#tablaTrenes table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Encabezado de la tabla */
+#tablaTrenes table thead {
+    background: linear-gradient(135deg, #ff6b6b, #ffcc5c);
+    color: black;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Celdas de la tabla */
+#tablaTrenes table th,
+#tablaTrenes table td {
+    padding: 14px;
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    color: black;
+}
+
+/* Filas de la tabla */
+#tablaTrenes table tbody tr {
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+/* Alternar colores en filas */
+#tablaTrenes table tbody tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+#tablaTrenes table tbody tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+/* Efecto hover en filas */
+#tablaTrenes table tbody tr:hover {
+    background: rgba(255, 204, 92, 0.3);
+    transform: scale(1.02);
+}
+
+/* Botones */
+#cazado, #caceriaTerminada {
+    margin-top: 25px;
+    background: #ff4b5c;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#cazado:hover, #caceriaTerminada:hover {
+    background: #d63040;
+    transform: scale(1.1);
+}
+
+#primerCandadoDiv{
+    display: flex;
+    width: 95%;
+    flex-direction: column;
+    align-items: center;
+
+	box-shadow:0px 0px 10px white;
+}
+
