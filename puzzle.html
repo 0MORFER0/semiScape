@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzle Deslizante 3x4</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .puzzle-container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            background-color: #333;
+            padding: 5px;
+            border-radius: 10px;
+        }
+        .tile {
+            width: 100px;
+            height: 100px;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 5px;
+			background-size: contain;
+        }
+        .empty {
+            background-color: #333;
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+   <div class="puzzle-container" id="puzzle"></div>
+   <div class="puzzle-container"id="puzzle2"></div>
+<script>
+    const puzzleContainer = document.getElementById("puzzle");
+    const puzzleContainer2 = document.getElementById("puzzle2");
+    let tiles = [];
+    const rows = 3;
+    const cols = 3;
+    let emptyTile = { row: rows - 1, col: cols - 1 };
+
+    function createPuzzle() {
+        let numbers;
+        do {
+            numbers = shuffle(Array.from({ length: rows * cols - 1 }, (_, i) => i + 1).concat(null));
+        } while (!isSolvable(numbers));
+
+        puzzleContainer.innerHTML = "";
+        tiles = [];
+
+        numbers.forEach((num, index) => {
+            const tile = document.createElement("div");
+            const row = Math.floor(index / cols);
+            const col = index % cols;
+
+            tile.classList.add("tile");
+            if (num === null) {
+                tile.classList.add("empty");
+                emptyTile = { row, col };
+            } else {
+                //tile.textContent = num;
+                tile.addEventListener("click", () => moveTile(row, col));
+            }
+
+            tiles.push({ element: tile, row, col, number: num });
+            puzzleContainer.appendChild(tile);
+        });
+		// Asignar imágenes de fondo al crear las piezas
+		tiles.forEach(t => {
+			 if (!t.element.classList.contains("empty")) {
+				t.element.style.backgroundImage = `url('IMAGEN/house${t.number}.png')`;
+			} else {
+				t.element.style.backgroundImage = ''; // Si tiene la clase 'empty', no se pone imagen
+			}
+		});
+    }
+
+function createOrderedPuzzle() {
+    puzzleContainer2.innerHTML = "";
+    tiles = [];
+
+    let numbers = Array.from({ length: rows * cols - 1 }, (_, i) => i + 1).concat(null); // Orden fijo
+
+    numbers.forEach((num, index) => {
+        const tile = document.createElement("div");
+        const row = Math.floor(index / cols);
+        const col = index % cols;
+
+        tile.classList.add("tile");
+        if (num === null) {
+            tile.classList.add("empty");
+            emptyTile = { row, col };
+        } else {
+            tile.addEventListener("click", () => moveTile(row, col));
+            tile.style.backgroundImage = `url('IMAGEN/house${num}.png')`;
+        }
+
+        tiles.push({ element: tile, row, col, number: num });
+        puzzleContainer2.appendChild(tile);
+    });
+}
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function isSolvable(numbers) {
+        let inversions = 0;
+        const flatNumbers = numbers.filter(n => n !== null);
+
+        for (let i = 0; i < flatNumbers.length - 1; i++) {
+            for (let j = i + 1; j < flatNumbers.length; j++) {
+                if (flatNumbers[i] > flatNumbers[j]) {
+                    inversions++;
+                }
+            }
+        }
+
+        const emptyRowFromBottom = rows - Math.floor(numbers.indexOf(null) / cols);
+        return (inversions % 2 === 0) === (emptyRowFromBottom % 2 !== 0);
+    }
+
+function moveTile(row, col) {
+
+    const dx = Math.abs(row - emptyTile.row);
+    const dy = Math.abs(col - emptyTile.col);
+
+    // Verificar si el movimiento es hacia una celda adyacente
+    if ((dx === 1 && dy === 0) || (dx === 0 && dy === 1)) {
+        const movingTile = tiles.find(t => t.row === row && t.col === col);
+        const emptyDiv = tiles.find(t => t.row === emptyTile.row && t.col === emptyTile.col);
+
+        if (movingTile && emptyDiv) {
+
+            // SOLO actualizar la clase 'empty' y contenido
+
+            // Eliminar la clase 'empty' de la pieza en el espacio vacío
+            emptyDiv.element.classList.remove("empty");
+
+            // Añadir la clase 'empty' a la nueva pieza (espacio vacío)
+            movingTile.element.classList.add("empty");
+
+            // Intercambiar el contenido de las piezas
+            const tempContent = emptyDiv.element.textContent;
+            emptyDiv.element.textContent = movingTile.element.textContent;
+            movingTile.element.textContent = tempContent;
+
+            // Intercambiar las imágenes de fondo
+            const tempImage = emptyDiv.element.style.backgroundImage;
+            emptyDiv.element.style.backgroundImage = movingTile.element.style.backgroundImage;
+            movingTile.element.style.backgroundImage = tempImage;
+
+            // Actualizar los eventos de clic
+            console.log(`Actualizando eventos de clic...`);
+            tiles.forEach(t => {
+                if (t.row === emptyTile.row && t.col === emptyTile.col) {
+                    // Asegurémonos de añadir la clase 'empty' solo a la celda vacía
+                    if (t.element.textContent.trim() === "") { // Comprobamos si el div está vacío
+                        if (!t.element.classList.contains("empty")) {
+                            t.element.classList.add("empty"); // Añadir clase 'empty' si está vacío
+                        }
+                    }
+                } else {
+                    // Solo quitamos la clase 'empty' si la celda tiene la clase y tiene contenido
+                    if (t.element.classList.contains("empty") && t.element.textContent.trim() !== "") {
+                        t.element.classList.remove("empty");
+                    }
+                    t.element.addEventListener("click", () => moveTile(t.row, t.col)); // Asignar evento de clic a las demás piezas
+                }
+            });
+
+            // Actualizar la posición del espacio vacío
+            emptyTile = { row: row, col: col };
+            console.log(`Nuevo espacio vacío en la fila ${emptyTile.row + 1} y la columna ${emptyTile.col + 1}.`);
+        } else {
+           // console.log("No se mueve");
+        }
+    } else {
+       // console.log("Movimiento no válido");
+    }
+}
+
+
+    function checkWin() {
+        let correct = true;
+        for (let i = 0; i < tiles.length - 1; i++) {
+            if (tiles[i].number !== null && tiles[i].number !== i + 1) {
+                correct = false;
+                break;
+            }
+        }
+        if (correct) {
+            setTimeout(() => alert("¡Puzzle completado!"), 200);
+        }
+    }
+
+    createPuzzle();
+	createOrderedPuzzle()
+</script>
+
+</body>
+</html>
