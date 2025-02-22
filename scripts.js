@@ -811,59 +811,6 @@ export function verificarFrase() {
 }
 
 
-/*
-export function mostrarRolEscondite() {
-    const username = localStorage.getItem("userName");
-    const usuario = usuarios.find(u => u.nombre === username);
-    
-    if (!usuario) {
-        console.error('Usuario no encontrado');
-        return;
-    }
-
-    // Obtener el contenedor principal
-    const contenedor = document.getElementById("rolEscondite");
-    if (!contenedor) {
-        console.error('No se encontró el div con id "rolEscondite"');
-        return;
-    }
-
-    // Limpiar contenido previo
-    contenedor.innerHTML = "";
-    contenedor.classList.add("rol-container");
-
-    // Crear contenido según el rol
-    if (usuario.rol === "LOBO") {
-        contenedor.classList.add("lobo");
-        contenedor.innerHTML = `
-            <strong>LOBO</strong><br>
-            <label for="ovejas">Selecciona una oveja:</label>
-            <select id="ovejas">
-                ${usuarios
-                    .filter(u => u.rol !== "LOBO") // Filtrar los que no son LOBO
-                    .map(u => `<option value="${u.nombre}">${u.nombre}</option>`)
-                    .join("")
-                }
-            </select>
-            <br>
-            <input type='text' id="claveEsconditeInput" placeholder='Ingresa una clave'>
-            <button id="inputLobo">PILLAR</button>
-        `;
-
-        // Agregar evento al botón después de que se haya renderizado en el DOM
-        document.getElementById("inputLobo").addEventListener("click", comprobarClaveLobo);
-    } else if (usuario.rol === "OVEJA") {
-        contenedor.classList.add("oveja");
-        contenedor.innerHTML = `
-            <strong>OVEJA</strong><br>
-			<p>El LOBO solo podrá usar su flash para buscaros..</p>
-            <p>Clave Escondite: ${usuario.claveEscondite}</p>
-        `;
-    } else {
-        console.error("Rol no reconocido");
-    }
-}
-*/
 export function mostrarRolEscondite() {
     const username = localStorage.getItem("userName");
     const usuario = usuarios.find(u => u.nombre === username);
@@ -1025,7 +972,7 @@ export function generarTablaTrenes() {
 
     // Función para generar una tabla
     const generarTablaHTML = (treness) => `
-        <table style="width:50%;" border="1">
+        <table border="1">
             <thead>
                 <tr>
                     <th>Nombre</th>
@@ -1045,7 +992,7 @@ export function generarTablaTrenes() {
 
     // Insertar las dos tablas en el div
     contenedor.innerHTML = `
-        <div style="display: flex; flex-direction: row; gap: 10px;width:100%;    justify-content: center;">
+        <div style="display: flex; flex-direction: row; gap: 10px;width:90%;    justify-content: center;flex-wrap: wrap;">
             ${generarTablaHTML(trenes1)}
             ${generarTablaHTML(trenes2)}
         </div>
@@ -1054,23 +1001,20 @@ export function generarTablaTrenes() {
 
 // Función para comprobar respuestas
 export function comprobarPrimerCandado() {
-    // Array de respuestas
-    
+    // Array de respuestas  
 
     // Obtener los valores de los inputs
     const inputSuma = document.getElementById("sumaDistancias").value;
+	console.log(inputSuma);
     const inputIniciales = document.getElementById("inicialesTrenes").value.toUpperCase(); // Convertir a mayúsculas
-
+	console.log(inputIniciales);
     // Obtener la primera respuesta esperada
     const primeraRespuesta = respuestasTrenes[0];
-	
+	console.log(primeraRespuesta.sumaDistancias+"-"+"-"+primeraRespuesta.inicialesTrenes.trim());
     // Comprobar si los valores coinciden
-	console.log(inputSuma);
-	console.log(primeraRespuesta.sumaDistancias);
-	console.log(inputIniciales);
-	console.log(primeraRespuesta.inicialesTrenes);
-    if (parseInt(inputSuma) === primeraRespuesta.sumaDistancias && inputIniciales.trim() === primeraRespuesta.inicialesTrenes.trim()) {
+    if (parseInt(inputSuma) == primeraRespuesta.sumaDistancias && inputIniciales.trim() == primeraRespuesta.inicialesTrenes.trim()) {
         alert("¡Acertaste!");
+		window.location.href ="puzzle.html";
     } else {
         alert("No es correcto, intenta de nuevo.");
     }
