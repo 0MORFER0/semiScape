@@ -8,28 +8,27 @@
   <script type="module" src="scripts.js"></script>
   <script type="module" src="usuario.js"></script>
  
-		  <script type="module">
+  <script type="module">
  	import { obtenerYMostrarUsuario } from "./usuario.js";
  	
 		obtenerYMostrarUsuario();
    </script>
 </head>
-<body style="display:flex; align-items: center;    flex-direction:column; justify-content: center">
+<body style="display:flex; align-items: center;    flex-direction:column; padding-top:100px;justify-content: flex-start;">
 
-<p style="width:120px">NECESITAS DESBLOQUEAR TODAS LAS CONTRASEÑAS PARA ABRIR EL CANDADO</p>
-<p>ESTE JUEGO ES INDIVIDUAL</p>
+
 <div id="primerCandadoDiv">
-	<h1 style="margin-top:50px;">3 trenes son especiales</h1>
+	<p style="width:90%;text-align:center">Esto es una carrera, desbloquea todas las pruebas.</p>
+	<h1 style="text-align:center">3 trenes son especiales</h1>
 	<div id="tablaTrenes">
-
 	</div>
-	<div style="width:100%;    display: flex;    justify-content: space-evenly;">
-		<div style="display:flex; align-items: center;    flex-direction:column; justify-content: center">
+	<div style="width:100%;    display: flex;    justify-content: space-evenly;flex-wrap: wrap;">
+		<div style="display:flex; align-items: center;    flex-direction:column; justify-content: center;flex-wrap: wrap;">
 			<label>SUMA DISTANCIAS</label>
 			<input id="sumaDistancias" type="number"></input>
 		</div>
 
-		<div style="display:flex; align-items: center;    flex-direction:column; justify-content: center">
+		<div style="display:flex; align-items: center; flex-direction:column; justify-content: center;flex-wrap: wrap;">
 			<label>INICIALES TRENES</label>
 			<input id="inicialesTrenes"></input>
 		</div>
