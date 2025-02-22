@@ -573,7 +573,7 @@ body {
   align-items: center;
   height: 100vh;
   background: url('KITDEBIENVENIDA.png') grey; /* Cambia esto por la URL de tu imagen */
-  background-size: cover;
+  background-size: auto;
   background-position: center;
   background-attachment: fixed;
   color: white;
