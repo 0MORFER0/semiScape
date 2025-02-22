@@ -713,6 +713,7 @@ body {
     font-size: 2rem;
     font-family: Arial, sans-serif;
     z-index: 9999;
+	flex-wrap: wrap;
 }
 
 .telon-izquierda, .telon-derecha {
@@ -847,12 +848,11 @@ body {
 #tablaTrenes {
     margin-top: 5px;
     width: calc(100% - 20px);
-    max-width: 400px;
     display: flex;
     flex-direction: column;
     align-items: center;
     opacity: 0;
-    animation: fadeIn 1s ease-out forwards;
+    animation: fadeIn 1s ease-out forwards;	
 }
 
 /* Animación de entrada */
@@ -865,12 +865,13 @@ body {
 
 /* Diseño de la tabla */
 #tablaTrenes table {
-    width: 100%;
+    width: calc(49% - 20px);
     border-collapse: collapse;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+	margin:inherit;
 }
 
 /* Encabezado de la tabla */
