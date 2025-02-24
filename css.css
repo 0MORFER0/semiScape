@@ -852,6 +852,7 @@ body {
     align-items: center;
     opacity: 0;
     animation: fadeIn 1s ease-out forwards;	
+	margin-bottom:30px;
 }
 
 /* Animación de entrada */
@@ -938,7 +939,7 @@ body {
     width: 95%;
     flex-direction: column;
     align-items: center;
-
+	    padding-bottom: 40px;
 	box-shadow:0px 0px 10px white;
 }
 
@@ -1039,3 +1040,62 @@ body {
             background-color: #333;
             cursor: default;
         }
+#ejemplo-pregunta {
+    width: 80%;
+    max-width: 600px;
+    background: linear-gradient(to bottom, #000066, #000033);
+    color: white;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(255, 255, 0, 0.7);
+    margin: 20px auto;
+	margin-top:80px;
+}
+
+#ejemplo-pregunta .instruccion {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: yellow;
+}
+
+#ejemplo-pregunta .pregunta {
+    font-size: 22px;
+    font-weight: bold;
+    padding: 15px;
+    background: #222288;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+#ejemplo-pregunta .respuestas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#ejemplo-pregunta .opcion {
+    font-size: 18px;
+    padding: 10px;
+    background: #4444cc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#ejemplo-pregunta .opcion:hover {
+    background: #6666ff;
+    box-shadow: 0px 0px 10px rgba(255, 255, 0, 0.5);
+}
+
+#ejemplo-pregunta .correcta {
+    background: #008000;
+}
+
+#ejemplo-pregunta .correcta:hover {
+    background: #00aa00;
+}
