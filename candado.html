@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chu chu..</title>
   <link rel="stylesheet" href="css.css">
-  <script type="module" src="scripts.js"></script>
+  <script type="module" defer src="scripts.js"></script>
   <script type="module" src="usuario.js"></script>
  
   <script type="module">
@@ -18,7 +18,8 @@
 
 
 <div id="primerCandadoDiv">
-
+			<p style="width:90%;text-align:center">Esto es una carrera, desbloquea todas las pruebas.</p>
+	<h1 style="text-align:center">3 trenes son especiales</h1>
 	<div id="tablaTrenes">
 	</div>
 	<div style="width:100%;    display: flex;    justify-content: space-evenly;flex-wrap: wrap;">
@@ -35,13 +36,12 @@
 			<div style="display:flex; align-items: center;    flex-direction:column; justify-content: center">
 			<button id="primerCandado-btn">ENVIAR</button>
 		</div>
-			<p style="width:90%;text-align:center">Esto es una carrera, desbloquea todas las pruebas.</p>
-	<h1 style="text-align:center">3 trenes son especiales</h1>
+
 </div>
   <script type="module">
     import { usuarios } from './variables.js';	
     import { generarTablaTrenes } from './scripts.js';	
-	mostrarTelon("ESPERA ORDENES<br>CANDADO");	
+	mostrarTelon("¿ESTAS PREPARADO?<br>ESPERA ORDENES");	
 	generarTablaTrenes();
 	import { comprobarPrimerCandado } from "./scripts.js";
 	document.getElementById("primerCandado-btn").addEventListener("click", comprobarPrimerCandado);
