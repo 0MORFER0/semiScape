@@ -51,3 +51,21 @@ export const usuarios = [
  export const respuestasTrenes = [
         { sumaDistancias: "361", inicialesTrenes: "RRR" }
     ];
+ export const parejasMemorion = [
+        { Nombre1: "HELENA", Nombre2: "AMBRINOS" },
+        { Nombre1: "TAMARA", Nombre2: "SOTO" },
+        { Nombre1: "SARA", Nombre2: "RUBEN" },
+        { Nombre1: "LORENA", Nombre2: "VICTOR" },
+        { Nombre1: "ALBA", Nombre2: "JOTA" },
+        { Nombre1: "TANIA", Nombre2: "RIAGUAS" },
+    ];
+	export const habitacionesMemorion = [
+    { habitacion: "Habitación 1", huespedes: ["HELENA", "AMBRINOS"] },
+    { habitacion: "Habitación 2", huespedes: ["CRIS", "ALBA ENFERMERA" ] },
+    { habitacion: "Habitación 3", huespedes: ["SARA", "RUBEN"] },
+    { habitacion: "Habitación 4", huespedes: ["LORENA", "VICTOR"] },
+    { habitacion: "Habitación 5", huespedes: ["ALBA PERIODISTA", "JOTA"] },
+    { habitacion: "Habitación 6", huespedes: ["MANRY", "RIAGUAS", "RURU"] },
+    { habitacion: "Habitación 7", huespedes: ["ALFONSO", "DANI", "GONZA"] },
+    { habitacion: "Habitación 8", huespedes: ["DAVID", "DANI MADRID", "FIRE", "FDEZ"] }
+];
