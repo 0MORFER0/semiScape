@@ -678,6 +678,9 @@ async function mostrarResultados() {
 document.addEventListener("DOMContentLoaded", mostrarResultados);
 
 export function mostrarTelon(mensaje) {
+    // Evitar el scroll
+    document.body.style.overflow = "hidden";
+
     // Crear los elementos del telón
     const telon = document.createElement("div");
     telon.id = "telon";
@@ -693,7 +696,7 @@ export function mostrarTelon(mensaje) {
     contenido.innerHTML = `
         <p>${mensaje}</p>
         <p class="contador">...</p>
-		<img style="border-radius:100%;" src="huella2.png" alt="huella de alguien..">
+		<img style="border-radius:100%;" src="/IMAGEN/huella2.png" alt="huella de alguien..">
     `;
 
     telon.appendChild(telonIzq);
@@ -706,13 +709,17 @@ export function mostrarTelon(mensaje) {
         clicks++;
         if (clicks >= 3) {
             telon.classList.add("telon-abierto"); // Aplica la animación
-            setTimeout(() => telon.remove(), 1000);
+            setTimeout(() => {
+                telon.remove();
+                document.body.style.overflow = ""; // Restaurar el scroll
+            }, 1000);
         }
     });
 }
 
 // Hacer la función accesible globalmente
 window.mostrarTelon = mostrarTelon;
+
 
 
 export function mostrarAbecedarioUsuario() {
@@ -803,7 +810,7 @@ export function verificarFrase() {
     // Registrar el resultado en Airtable
     registrarResultado("diccionarios", username, "Correcta");
 	 setTimeout(() => {
-      window.location.href = 'escondite.html';
+      window.location.href = 'candado.html';
     }, 1000);
   } else {
     alert("Frase incorrecta. Inténtalo de nuevo.");
@@ -992,7 +999,7 @@ export function generarTablaTrenes() {
 
     // Insertar las dos tablas en el div
     contenedor.innerHTML = `
-        <div style="display: flex; flex-direction: row; gap: 10px;width:90%;    justify-content: center;flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: row; gap: 5px;width:90%;    justify-content: center;flex-wrap: wrap;">
             ${generarTablaHTML(trenes1)}
             ${generarTablaHTML(trenes2)}
         </div>
@@ -1014,9 +1021,144 @@ export function comprobarPrimerCandado() {
     // Comprobar si los valores coinciden
     if (parseInt(inputSuma) == primeraRespuesta.sumaDistancias && inputIniciales.trim() == primeraRespuesta.inicialesTrenes.trim()) {
         alert("¡Acertaste!");
-		window.location.href ="puzzle.html";
+		window.location.href ="memorion.html";
     } else {
         alert("No es correcto, intenta de nuevo.");
     }
 }
 
+//MEMORION
+/*
+import { parejasMemorion } from "./variables.js";
+
+const memorionContainer = document.getElementById("memorion");
+let selectedCards = [];
+let totalPairs = parejasMemorion.length; // Número total de parejas
+let matchedPairs = 0; // Contador de parejas descubiertas
+
+export function createMemorion() {
+    // Duplicamos y mezclamos los nombres
+    let nombres = [];
+    parejasMemorion.forEach(par => {
+        nombres.push({ nombre: par.Nombre1, pareja: par.Nombre2 });
+        nombres.push({ nombre: par.Nombre2, pareja: par.Nombre1 });
+    });
+    nombres = nombres.sort(() => Math.random() - 0.5);
+
+    // Creamos las cartas
+    memorionContainer.innerHTML = "";
+    nombres.forEach((item) => {
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.dataset.nombre = item.nombre;
+        card.dataset.pareja = item.pareja;
+        card.innerHTML = "<div class='front'></div><div class='back'>" + item.nombre + "</div>";
+        card.addEventListener("click", () => flipCard(card));
+        memorionContainer.appendChild(card);
+    });
+
+    // Reiniciar el contador de parejas descubiertas
+    matchedPairs = 0;
+}
+
+function flipCard(card) {
+    if (selectedCards.length < 2 && !card.classList.contains("flipped")) {
+        card.classList.add("flipped");
+        selectedCards.push(card);
+    }
+    
+    if (selectedCards.length === 2) {
+        setTimeout(checkMatch, 500);
+    }
+}
+
+function checkMatch() {
+    const [card1, card2] = selectedCards;
+
+    if (card1.dataset.pareja === card2.dataset.nombre) {
+        card1.removeEventListener("click", () => flipCard(card1));
+        card2.removeEventListener("click", () => flipCard(card2));
+        matchedPairs++; // Aumentamos el contador de parejas descubiertas
+
+        if (matchedPairs === totalPairs) {
+            alert("🎉 ¡Felicidades! Has encontrado todas las parejas. 🎉");
+                window.location.href = 'esconditePrevia.html'; 
+        } else {
+            alert("¡Correcto!");
+        }
+    } else {
+        alert("No coinciden, intenta de nuevo.");
+        card1.classList.remove("flipped");
+        card2.classList.remove("flipped");
+    }
+    selectedCards = [];
+}
+
+
+*/
+//PUZZLE
+import { habitacionesMemorion } from "./variables.js";
+
+const memorionContainer = document.getElementById("memorion");
+let selectedCards = [];
+let discoveredRooms = [];
+
+export function createMemorion() {
+    let tarjetas = [];
+    habitacionesMemorion.forEach(hab => {
+        hab.huespedes.forEach(huesped => {
+            tarjetas.push({ nombre: huesped, habitacion: hab.habitacion });
+        });
+    });
+
+    // Barajar las tarjetas de manera aleatoria
+    tarjetas = tarjetas.sort(() => Math.random() - 0.5);
+
+    memorionContainer.innerHTML = "";
+    tarjetas.forEach((item) => {
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.dataset.nombre = item.nombre;
+        card.dataset.habitacion = item.habitacion;
+        card.innerHTML = "<div class='front'></div><div class='back'>" + item.nombre + "</div>";
+        card.addEventListener("click", () => flipCard(card));
+        memorionContainer.appendChild(card);
+    });
+}
+
+function flipCard(card) {
+    if (card.classList.contains("flipped") || discoveredRooms.includes(card.dataset.habitacion)) {
+        return;
+    }
+
+    card.classList.add("flipped");
+    selectedCards.push(card);
+
+    if (selectedCards.length > 1) {
+        setTimeout(checkRoom, 500);
+    }
+}
+
+function checkRoom() {
+    const habitacion = selectedCards[0].dataset.habitacion;
+    const allSameRoom = selectedCards.every(card => card.dataset.habitacion === habitacion);
+
+    if (allSameRoom) {
+        const totalHuespedes = habitacionesMemorion.find(hab => hab.habitacion === habitacion).huespedes.length;
+        if (selectedCards.length === totalHuespedes) {
+            alert("¡Has encontrado todos los huéspedes de la habitación " + habitacion + "!");
+            discoveredRooms.push(habitacion);
+            selectedCards = [];
+            
+            // Verificar si se han encontrado todas las habitaciones
+            if (discoveredRooms.length === habitacionesMemorion.length) {
+                window.location.href = "esconditePrevia.html";  // Redirige a esconditePrevia.html
+            }
+            return;
+        }
+    } else {
+        alert("¡Error! No pertenece a la misma habitación.");
+        selectedCards.forEach(card => card.classList.remove("flipped"));
+        selectedCards = [];
+    }
+}
