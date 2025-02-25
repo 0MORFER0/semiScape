@@ -4,43 +4,577 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración</title>
-	<link rel="stylesheet" href="css.css">
-	  <script type="module" src="scripts.js"></script>
-  	<script type="module" src="usuario.js"></script>
-  	<script type="module" src="variables.js"></script>
-	
+    <link rel="stylesheet" href="css.css">
+    <script type="module" src="usuario.js"></script>
+    <script type="module" src="variables.js"></script>
+    
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            width: 90%;
+            max-width: 300px;
+            padding: 15px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn.generar {
+            background-color: red;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        caption {
+            background-color: rgba(255,255,255,0.6)
+        }
+        td {
+            color: black;
+        }
+
+        /* Estilo para el mensaje de "Cargando..." */
+        #cargando {
+            font-size: 1.5rem;
+            color: #FFD700;
+            font-weight: bold;
+            display: none; /* Por defecto oculto */
+        }
+    </style>
+
 </head>
 <body>
-    <h1>Panel de Administración</h1>
-    <div class="container administracion">
-	<div>
-        <button class="btn" onclick="mostrarResultados();">Puntuación General</button>
-        <button class="btn" onclick="activarContador()">Activar Contador Escondite</button>
-	</div>
-	<div>
-        <button class="btn generar" style="background-color:Red;" onclick="generateRandomMatchups();">Generar PAREJAS</button>
-        <button class="btn generar" style="background-color:Red;" onclick="assignTeamsToUsers();">Generar Equipos ESCONDITE</button>
-        <button class="btn generar" style="background-color:Red;" onclick="assignTeamsToUsers();">Generar Equipos ESCONDITE</button>
-	</div>
+<h1>Panel de Administración</h1>
+    <div class="container">
+        <button class="btn" onclick="mostrarResultados()">Resultados Emparejamientos</button>
+        <button class="btn" onclick="mostrarResultadosDiccionarios()">Resultados Diccionarios</button>
+        <button class="btn" onclick="mostrarResultadosTrenes()">Resultados Trenes</button>
+        <button class="btn" onclick="mostrarResultadosMemorion();">Resultados Memorion</button>
+        <button class="btn" onclick="mostrarResultadosEscondite();">Resultados Escondite</button>
+        <button class="btn generar" onclick="otraFuncionMas();">Otro Más</button>
     </div>
-	<div>
-		<table id="puntuacion">
-			
-		</table>
-		<table id="equipos">
-			
-		</table>
-		<table id="equiposEscondite">
-			
-		</table>
-	</div>
-	</div>
-	<script type="module">
-		import { usuarios } from "./variables.js";
-	</script>
-    <script>
+    <div id="puntuacion"></div>
+    <div id="errores"></div>
 
-    </script>
-	 
+    <!-- Elemento de Cargando -->
+    <div id="cargando">Cargando...</div>
+
+<script type="module">
+    // Lista de usuarios importada desde variables.js
+    import { usuarios } from './variables.js';
+
+    // Función mostrarResultados en el contexto global
+    window.mostrarResultados = async function() {
+        // Obtener los contenedores de puntuación y errores
+        const puntuacion = document.getElementById("puntuacion");
+        const errores = document.getElementById("errores");
+        const cargando = document.getElementById("cargando");
+
+        // Mostrar el mensaje de "Cargando..."
+        cargando.style.display = "block";
+
+        // Limpiar los contenedores antes de mostrar los resultados
+        puntuacion.innerHTML = "";
+        errores.innerHTML = "";
+
+        // Mostrar el número de usuarios
+        console.log("Número de usuarios:", usuarios.length);
+
+        const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3";
+        const baseId = "appDePnktLp2dzqNX";
+        const tableName = "Resultados";
+        const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+
+        try {
+            const response = await fetch(url, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const data = await response.json();  // Usamos await aquí también
+            const registros = data.records.map(record => ({
+                NombreUsuario: record.fields.NombreUsuario,
+                Date: record.fields.Date
+            }));
+
+            // Ordenar los registros por fecha ascendente
+            registros.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+
+            // Detectar duplicados y mostrar solo el primer registro de cada usuario
+            const nombres = new Set();
+            const registrosUnicos = [];
+            const duplicados = new Map();
+
+            registros.forEach(registro => {
+                if (!nombres.has(registro.NombreUsuario)) {
+                    nombres.add(registro.NombreUsuario);
+                    registrosUnicos.push(registro);
+                } else {
+                    if (!duplicados.has(registro.NombreUsuario)) {
+                        duplicados.set(registro.NombreUsuario, registro.Date);
+                    }
+                }
+            });
+
+            // Mostrar tabla de puntuaciones
+            let tablaHtml = "<table>";
+            tablaHtml += "<caption>Resultados emparejamientos</caption>"; // Agregar el caption
+            tablaHtml += "<thead><tr><th>Puntuación</th><th>Nombre Usuario</th><th>Fecha</th></tr></thead>";
+            let cuerpo = "<tbody>";
+            
+            // Asegurémonos de que la puntuación empieza con el número total de registros
+            let puntuacionActual = usuarios.length; // Empezar con la puntuación máxima
+            registrosUnicos.forEach(registro => {
+                // Extraer solo la hora, minutos y segundos
+                const fecha = new Date(registro.Date);
+                const horaMinutosSegundos = fecha.toLocaleTimeString();
+
+                cuerpo += `<tr><td>${puntuacionActual}</td><td>${registro.NombreUsuario}</td><td>${horaMinutosSegundos}</td></tr>`;
+                
+                // Decrementamos la puntuación para el siguiente
+                puntuacionActual--;
+            });
+            cuerpo += "</tbody>";
+            tablaHtml += cuerpo + "</table>";
+            puntuacion.innerHTML = tablaHtml;
+
+            // Mostrar tabla de errores si hay duplicados
+            if (duplicados.size > 0) {
+                let erroresHtml = "<table>";
+                erroresHtml += "<caption>Errores - Usuarios Duplicados</caption>"; // Caption para errores
+                erroresHtml += "<thead><tr><th>ERROR - Usuarios Duplicados</th><th>Hora</th></tr></thead><tbody>";
+                duplicados.forEach((hora, nombre) => {
+                    const fecha = new Date(hora);
+                    const horaMinutosSegundos = fecha.toLocaleTimeString();
+                    erroresHtml += `<tr><td>${nombre}</td><td>${horaMinutosSegundos}</td></tr>`;
+                });
+                erroresHtml += "</tbody></table>";
+                errores.innerHTML = erroresHtml;
+            }
+        } catch (error) {
+            console.error("Error al obtener los resultados:", error);
+            alert("Hubo un error al obtener los resultados.");
+        } finally {
+            // Ocultar el mensaje de "Cargando..." después de que se haya procesado
+            cargando.style.display = "none";
+        }
+    }
+
+    // Función mostrarResultadosDiccionarios en el contexto global
+    window.mostrarResultadosDiccionarios = async function() {
+        // Obtener los contenedores de puntuación y errores
+        const puntuacion = document.getElementById("puntuacion");
+        const errores = document.getElementById("errores");
+        const cargando = document.getElementById("cargando");
+
+        // Mostrar el mensaje de "Cargando..."
+        cargando.style.display = "block";
+
+        // Limpiar los contenedores antes de mostrar los resultados
+        puntuacion.innerHTML = "";
+        errores.innerHTML = "";
+
+        // Mostrar el número de usuarios
+        console.log("Número de usuarios:", usuarios.length);
+
+        const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3";
+        const baseId = "appDePnktLp2dzqNX";
+        const tableName = "ResultadosDiccionarios";
+        const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+
+        try {
+            const response = await fetch(url, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const data = await response.json();  // Usamos await aquí también
+            const registros = data.records.map(record => ({
+                NombreUsuario: record.fields.NombreUsuario,
+                Date: record.fields.Date
+            }));
+
+            // Ordenar los registros por fecha ascendente
+            registros.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+
+            // Detectar duplicados y mostrar solo el primer registro de cada usuario
+            const nombres = new Set();
+            const registrosUnicos = [];
+            const duplicados = new Map();
+
+            registros.forEach(registro => {
+                if (!nombres.has(registro.NombreUsuario)) {
+                    nombres.add(registro.NombreUsuario);
+                    registrosUnicos.push(registro);
+                } else {
+                    if (!duplicados.has(registro.NombreUsuario)) {
+                        duplicados.set(registro.NombreUsuario, registro.Date);
+                    }
+                }
+            });
+
+            // Mostrar tabla de puntuaciones
+            let tablaHtml = "<table>";
+            tablaHtml += "<caption>Resultados diccionarios</caption>"; // Agregar el caption
+            tablaHtml += "<thead><tr><th>Puntuación</th><th>Nombre Usuario</th><th>Fecha</th></tr></thead>";
+            let cuerpo = "<tbody>";
+            
+            // Asegurémonos de que la puntuación empieza con el número total de registros
+            let puntuacionActual = usuarios.length; // Empezar con la puntuación máxima
+            registrosUnicos.forEach(registro => {
+                // Extraer solo la hora, minutos y segundos
+                const fecha = new Date(registro.Date);
+                const horaMinutosSegundos = fecha.toLocaleTimeString();
+
+                cuerpo += `<tr><td>${puntuacionActual}</td><td>${registro.NombreUsuario}</td><td>${horaMinutosSegundos}</td></tr>`;
+                
+                // Decrementamos la puntuación para el siguiente
+                puntuacionActual--;
+            });
+            cuerpo += "</tbody>";
+            tablaHtml += cuerpo + "</table>";
+            puntuacion.innerHTML = tablaHtml;
+
+            // Mostrar tabla de errores si hay duplicados
+            if (duplicados.size > 0) {
+                let erroresHtml = "<table>";
+                erroresHtml += "<caption>Errores - Usuarios Duplicados</caption>"; // Caption para errores
+                erroresHtml += "<thead><tr><th>ERROR - Usuarios Duplicados</th><th>Hora</th></tr></thead><tbody>";
+                duplicados.forEach((hora, nombre) => {
+                    const fecha = new Date(hora);
+                    const horaMinutosSegundos = fecha.toLocaleTimeString();
+                    erroresHtml += `<tr><td>${nombre}</td><td>${horaMinutosSegundos}</td></tr>`;
+                });
+                erroresHtml += "</tbody></table>";
+                errores.innerHTML = erroresHtml;
+            }
+        } catch (error) {
+            console.error("Error al obtener los resultados:", error);
+            alert("Hubo un error al obtener los resultados.");
+        } finally {
+            // Ocultar el mensaje de "Cargando..." después de que se haya procesado
+            cargando.style.display = "none";
+        }
+    }
+	    // Función mostrarResultadosDiccionarios en el contexto global
+    window.mostrarResultadosTrenes = async function() {
+        // Obtener los contenedores de puntuación y errores
+        const puntuacion = document.getElementById("puntuacion");
+        const errores = document.getElementById("errores");
+        const cargando = document.getElementById("cargando");
+
+        // Mostrar el mensaje de "Cargando..."
+        cargando.style.display = "block";
+
+        // Limpiar los contenedores antes de mostrar los resultados
+        puntuacion.innerHTML = "";
+        errores.innerHTML = "";
+
+        // Mostrar el número de usuarios
+        console.log("Número de usuarios:", usuarios.length);
+
+        const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3";
+        const baseId = "appDePnktLp2dzqNX";
+        const tableName = "ResultadosTrenes";
+        const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+
+        try {
+            const response = await fetch(url, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const data = await response.json();  // Usamos await aquí también
+            const registros = data.records.map(record => ({
+                NombreUsuario: record.fields.NombreUsuario,
+                Date: record.fields.Date
+            }));
+
+            // Ordenar los registros por fecha ascendente
+            registros.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+
+            // Detectar duplicados y mostrar solo el primer registro de cada usuario
+            const nombres = new Set();
+            const registrosUnicos = [];
+            const duplicados = new Map();
+
+            registros.forEach(registro => {
+                if (!nombres.has(registro.NombreUsuario)) {
+                    nombres.add(registro.NombreUsuario);
+                    registrosUnicos.push(registro);
+                } else {
+                    if (!duplicados.has(registro.NombreUsuario)) {
+                        duplicados.set(registro.NombreUsuario, registro.Date);
+                    }
+                }
+            });
+
+            // Mostrar tabla de puntuaciones
+            let tablaHtml = "<table>";
+            tablaHtml += "<caption>Resultados diccionarios</caption>"; // Agregar el caption
+            tablaHtml += "<thead><tr><th>Puntuación</th><th>Nombre Usuario</th><th>Fecha</th></tr></thead>";
+            let cuerpo = "<tbody>";
+            
+            // Asegurémonos de que la puntuación empieza con el número total de registros
+            let puntuacionActual = usuarios.length; // Empezar con la puntuación máxima
+            registrosUnicos.forEach(registro => {
+                // Extraer solo la hora, minutos y segundos
+                const fecha = new Date(registro.Date);
+                const horaMinutosSegundos = fecha.toLocaleTimeString();
+
+                cuerpo += `<tr><td>${puntuacionActual}</td><td>${registro.NombreUsuario}</td><td>${horaMinutosSegundos}</td></tr>`;
+                
+                // Decrementamos la puntuación para el siguiente
+                puntuacionActual--;
+            });
+            cuerpo += "</tbody>";
+            tablaHtml += cuerpo + "</table>";
+            puntuacion.innerHTML = tablaHtml;
+
+            // Mostrar tabla de errores si hay duplicados
+            if (duplicados.size > 0) {
+                let erroresHtml = "<table>";
+                erroresHtml += "<caption>Errores - Usuarios Duplicados</caption>"; // Caption para errores
+                erroresHtml += "<thead><tr><th>ERROR - Usuarios Duplicados</th><th>Hora</th></tr></thead><tbody>";
+                duplicados.forEach((hora, nombre) => {
+                    const fecha = new Date(hora);
+                    const horaMinutosSegundos = fecha.toLocaleTimeString();
+                    erroresHtml += `<tr><td>${nombre}</td><td>${horaMinutosSegundos}</td></tr>`;
+                });
+                erroresHtml += "</tbody></table>";
+                errores.innerHTML = erroresHtml;
+            }
+        } catch (error) {
+            console.error("Error al obtener los resultados:", error);
+            alert("Hubo un error al obtener los resultados.");
+        } finally {
+            // Ocultar el mensaje de "Cargando..." después de que se haya procesado
+            cargando.style.display = "none";
+        }
+    }
+		    // Función mostrarResultadosDiccionarios en el contexto global
+    window.mostrarResultadosMemorion = async function() {
+        // Obtener los contenedores de puntuación y errores
+        const puntuacion = document.getElementById("puntuacion");
+        const errores = document.getElementById("errores");
+        const cargando = document.getElementById("cargando");
+
+        // Mostrar el mensaje de "Cargando..."
+        cargando.style.display = "block";
+
+        // Limpiar los contenedores antes de mostrar los resultados
+        puntuacion.innerHTML = "";
+        errores.innerHTML = "";
+
+        // Mostrar el número de usuarios
+        console.log("Número de usuarios:", usuarios.length);
+
+        const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3";
+        const baseId = "appDePnktLp2dzqNX";
+        const tableName = "ResultadosMemorion";
+        const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+
+        try {
+            const response = await fetch(url, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const data = await response.json();  // Usamos await aquí también
+            const registros = data.records.map(record => ({
+                NombreUsuario: record.fields.NombreUsuario,
+                Date: record.fields.Date
+            }));
+
+            // Ordenar los registros por fecha ascendente
+            registros.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+
+            // Detectar duplicados y mostrar solo el primer registro de cada usuario
+            const nombres = new Set();
+            const registrosUnicos = [];
+            const duplicados = new Map();
+
+            registros.forEach(registro => {
+                if (!nombres.has(registro.NombreUsuario)) {
+                    nombres.add(registro.NombreUsuario);
+                    registrosUnicos.push(registro);
+                } else {
+                    if (!duplicados.has(registro.NombreUsuario)) {
+                        duplicados.set(registro.NombreUsuario, registro.Date);
+                    }
+                }
+            });
+
+            // Mostrar tabla de puntuaciones
+            let tablaHtml = "<table>";
+            tablaHtml += "<caption>Resultados diccionarios</caption>"; // Agregar el caption
+            tablaHtml += "<thead><tr><th>Puntuación</th><th>Nombre Usuario</th><th>Fecha</th></tr></thead>";
+            let cuerpo = "<tbody>";
+            
+            // Asegurémonos de que la puntuación empieza con el número total de registros
+            let puntuacionActual = usuarios.length; // Empezar con la puntuación máxima
+            registrosUnicos.forEach(registro => {
+                // Extraer solo la hora, minutos y segundos
+                const fecha = new Date(registro.Date);
+                const horaMinutosSegundos = fecha.toLocaleTimeString();
+
+                cuerpo += `<tr><td>${puntuacionActual}</td><td>${registro.NombreUsuario}</td><td>${horaMinutosSegundos}</td></tr>`;
+                
+                // Decrementamos la puntuación para el siguiente
+                puntuacionActual--;
+            });
+            cuerpo += "</tbody>";
+            tablaHtml += cuerpo + "</table>";
+            puntuacion.innerHTML = tablaHtml;
+
+            // Mostrar tabla de errores si hay duplicados
+            if (duplicados.size > 0) {
+                let erroresHtml = "<table>";
+                erroresHtml += "<caption>Errores - Usuarios Duplicados</caption>"; // Caption para errores
+                erroresHtml += "<thead><tr><th>ERROR - Usuarios Duplicados</th><th>Hora</th></tr></thead><tbody>";
+                duplicados.forEach((hora, nombre) => {
+                    const fecha = new Date(hora);
+                    const horaMinutosSegundos = fecha.toLocaleTimeString();
+                    erroresHtml += `<tr><td>${nombre}</td><td>${horaMinutosSegundos}</td></tr>`;
+                });
+                erroresHtml += "</tbody></table>";
+                errores.innerHTML = erroresHtml;
+            }
+        } catch (error) {
+            console.error("Error al obtener los resultados:", error);
+            alert("Hubo un error al obtener los resultados.");
+        } finally {
+            // Ocultar el mensaje de "Cargando..." después de que se haya procesado
+            cargando.style.display = "none";
+        }
+    }
+window.mostrarResultadosEscondite = async function() {
+    // Obtener los contenedores de puntuación y errores
+    const puntuacion = document.getElementById("puntuacion");
+    const errores = document.getElementById("errores");
+    const cargando = document.getElementById("cargando");
+
+    // Mostrar el mensaje de "Cargando..."
+    cargando.style.display = "block";
+
+    // Limpiar los contenedores antes de mostrar los resultados
+    puntuacion.innerHTML = "";
+    errores.innerHTML = "";
+
+    const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3";
+    const baseId = "appDePnktLp2dzqNX";
+    const tableName = "ResultadosEscondite";
+    const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+
+    try {
+        const response = await fetch(url, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const data = await response.json(); // Usamos await aquí también
+        const registros = data.records.map(record => ({
+            NombreUsuario: record.fields.NombreUsuario,
+            Respuesta: record.fields.Respuesta,
+            Date: record.fields.Date
+        }));
+
+        // Agrupar los registros por NombreUsuario
+        const agrupadosPorUsuario = registros.reduce((acc, registro) => {
+            if (!acc[registro.NombreUsuario]) {
+                acc[registro.NombreUsuario] = [];
+            }
+            acc[registro.NombreUsuario].push(registro);
+            return acc;
+        }, {});
+
+        // Mostrar tabla de puntuaciones
+        let tablaHtml = "<table>";
+        tablaHtml += "<caption>Resultados Escondite</caption>"; // Agregar el caption
+        tablaHtml += "<thead><tr><th>Puntuación</th><th>Nombre Usuario</th><th>Respuestas</th><th>Fecha</th></tr></thead>";
+        let cuerpo = "<tbody>";
+
+        let respuestaPrimeraVez = new Map(); // Para almacenar la primera vez que un usuario da una respuesta
+        let erroresHtml = ""; // Inicializamos la variable para los errores
+
+        // Recorremos los usuarios agrupados
+        Object.keys(agrupadosPorUsuario).forEach(usuario => {
+            const respuestas = agrupadosPorUsuario[usuario];
+
+            // Ordenamos las respuestas de cada usuario por fecha, de más antigua a más reciente
+            respuestas.sort((a, b) => new Date(a.Date) - new Date(b.Date));
+
+            // Inicializamos variables para mostrar la puntuación del usuario y las respuestas
+            let puntuacionUsuario = 0;
+            let respuestasUsuario = "";
+            let fechaUltimaRespuesta = null;
+
+            // Para identificar duplicados, vamos a guardar un registro de las respuestas ya vistas
+            let respuestasVistas = new Set();
+
+            respuestas.forEach(respuesta => {
+                const fecha = new Date(respuesta.Date);
+                const horaMinutosSegundos = fecha.toLocaleTimeString();
+                const respuestaTexto = respuesta.Respuesta;
+
+                // Comprobamos si esta respuesta ya ha sido dada por otro usuario
+                if (!respuestasVistas.has(respuestaTexto)) {
+                    // Si la respuesta es la primera vez que aparece, la marcamos como la original
+                    puntuacionUsuario += 2; // Cada respuesta suma 2 puntos
+                    respuestasVistas.add(respuestaTexto); // Añadimos esta respuesta como vista
+                    respuestasUsuario += respuestaTexto + " ";
+                } else {
+                    // Si ya se ha dado esta respuesta por otro usuario, se marca como duplicada
+                    respuestasUsuario += `<span style="text-decoration: line-through;">${respuestaTexto}</span> `;
+                }
+
+                fechaUltimaRespuesta = horaMinutosSegundos; // Guardamos la última hora para mostrarla en la fila
+            });
+
+            cuerpo += `<tr><td>${puntuacionUsuario}</td><td>${usuario}</td><td>${respuestasUsuario}</td><td>${fechaUltimaRespuesta}</td></tr>`;
+        });
+
+        cuerpo += "</tbody>";
+        tablaHtml += cuerpo + "</table>";
+        puntuacion.innerHTML = tablaHtml;
+
+        // Mostrar tabla de errores si hay duplicados
+        if (erroresHtml === "") {
+            erroresHtml = "<p>No hay errores de duplicados.</p>";
+        }
+        errores.innerHTML = erroresHtml;
+
+    } catch (error) {
+        console.error("Error al obtener los resultados:", error);
+        alert("Hubo un error al obtener los resultados.");
+    } finally {
+        // Ocultar el mensaje de "Cargando..." después de que se haya procesado
+        cargando.style.display = "none";
+    }
+}
+
+
+
+
+
+
+
+</script>
+
 </body>
 </html>
