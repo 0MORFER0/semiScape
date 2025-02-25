@@ -378,6 +378,7 @@ async function login() {
 import { usuarios } from "./variables.js";
 import { trenes } from "./variables.js";
 import { respuestasTrenes } from "./variables.js";
+import { fraseDiccionario } from "./variables.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const selectElement = document.getElementById("username");
@@ -417,7 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	  // Esperar 3 minutos para mostrar el div de la contraseña
       setTimeout(() => {
         passwordInputDiv.style.display = "block"; // Mostrar el div de la contraseña
-      }, 100); // 180000 ms = 3 minutos
+      }, 60000); // 180000 ms = 3 minutos
     });
 
   }
@@ -740,14 +741,14 @@ export function mostrarTelon(mensaje) {
     contenido.innerHTML = `
         <p>${mensaje}</p>
         <p class="contador">...</p>
-        <img style="border-radius:100%;" src="/semiScape/IMAGEN/huella2.png" alt="huella de alguien..">
+        <img style="border-radius:100%;" src="/IMAGEN/huella2.png" alt="huella de alguien..">
     `;
 
     telon.appendChild(telonIzq);
     telon.appendChild(telonDer);
     telon.appendChild(contenido);
     document.body.appendChild(telon);
-
+	document.body.style.display = "flex";
     let clicks = 0;
     telon.addEventListener("click", () => {
         clicks++;
@@ -795,7 +796,7 @@ export function transformarMensaje() {
     return;
   }
 
-  const mensajeOriginal = "Las sombras bailan en la luz del viejo bosque";  // Frase original
+  const mensajeOriginal = fraseDiccionario;  // Frase original
   const abecedarioNormal = "abcdefghijklmnopqrstuvwxyz".split("");  // Abecedario normal (orden alfabético)
   const abecedarioPareja = usuarioEncontrado.abecedarioDesordenadoPareja.split("");  // Abecedario desordenado de la pareja
 
@@ -842,7 +843,7 @@ export function verificarFrase() {
     return;
   }
 
-  const mensajeOriginal = "El bosque y sus enanos";  // Frase original
+  const mensajeOriginal = fraseDiccionario;  // Frase original
 
   // Función para verificar la frase introducida
   const fraseIngresada = inputElemento.value.trim();
@@ -1203,6 +1204,21 @@ let discoveredRooms = [];
 
 // Función para registrar el resultado en Airtable
 async function registrarResultadoEnAirtableMemorion(usuarioLogueado) {
+	  // Mostrar mensaje de espera
+    const mensajeEspera = document.createElement("div");
+    mensajeEspera.style.position = "fixed";
+    mensajeEspera.style.top = "50%";
+    mensajeEspera.style.left = "50%";
+    mensajeEspera.style.transform = "translate(-50%, -50%)";
+    mensajeEspera.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+    mensajeEspera.style.color = "white";
+    mensajeEspera.style.padding = "20px";
+    mensajeEspera.style.borderRadius = "10px";
+    mensajeEspera.style.fontSize = "18px";
+    mensajeEspera.style.zIndex = "9999";
+    mensajeEspera.innerText = "Su respuesta está siendo grabada, espere un momento...";
+    document.body.appendChild(mensajeEspera);
+
     const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3"; // Token de Airtable
     const baseId = "appDePnktLp2dzqNX"; // Base ID
     const tableName = "ResultadosMemorion"; // Nombre de la tabla
@@ -1341,8 +1357,13 @@ export function generarFormularioPregunta() {
         if (confirmacion) {
             const botonEnviar = document.getElementById("enviarPregunta");
             botonEnviar.disabled = true; // Deshabilitar el botón para evitar más envíos
-
-            await guardarPreguntaEnAirtable(); // Llamar a la función para guardar en Airtable
+			const pregunta = document.getElementById("pregunta").value;
+			const respuesta1 = document.getElementById("respuesta1").value;
+			const respuesta2 = document.getElementById("respuesta2").value;
+			const respuesta3 = document.getElementById("respuesta3").value;
+			const respuesta4 = document.getElementById("respuesta4").value;
+			const usuarioLogueado =  localStorage.getItem("userName");
+            await guardarPreguntaEnAirtable(pregunta,respuesta1,respuesta2,respuesta3,respuesta4,usuarioLogueado); // Llamar a la función para guardar en Airtable
 
             window.location.href = "final.html"; // Redirigir a final.html
         }
@@ -1352,8 +1373,8 @@ export function generarFormularioPregunta() {
 
 
 // Función para guardar la pregunta en Airtable
-async function guardarPreguntaEnAirtable(event) {
-    event.preventDefault(); // Evita que el formulario recargue la página
+async function guardarPreguntaEnAirtable(pregunta,respuesta1,respuesta2,respuesta3,respuesta4,usuarioLogueado) {
+  // Evita que el formulario recargue la página
 
     const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3"; // Token de Airtable
     const baseId = "appDePnktLp2dzqNX"; // Base ID
@@ -1361,11 +1382,7 @@ async function guardarPreguntaEnAirtable(event) {
     const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
 
     // Obtener valores del formulario
-    const pregunta = document.getElementById("pregunta").value;
-    const respuesta1 = document.getElementById("respuesta1").value;
-    const respuesta2 = document.getElementById("respuesta2").value;
-    const respuesta3 = document.getElementById("respuesta3").value;
-    const respuesta4 = document.getElementById("respuesta4").value;
+   
 
     // Obtener fecha y hora actual en formato 'YYYY-MM-DD HH:mm:ss.SSS'
     const now = new Date();
@@ -1377,11 +1394,12 @@ async function guardarPreguntaEnAirtable(event) {
         records: [
             {
                 fields: {
+					"Usuario": usuarioLogueado,
                     "Pregunta": pregunta,
                     "Respuesta Correcta": respuesta1,
-                    "Opción 2": respuesta2,
-                    "Opción 3": respuesta3,
-                    "Opción 4": respuesta4,
+                    "Opcion 2": respuesta2,
+                    "Opcion 3": respuesta3,
+                    "Opcion 4": respuesta4,
                     "Fecha": date
                 }
             }
@@ -1404,7 +1422,7 @@ async function guardarPreguntaEnAirtable(event) {
             console.error("Error en la respuesta de Airtable:", result);
             throw new Error("Error al guardar la pregunta en Airtable");
         }
-
+			// Deshabilitar el botón para evitar más envíos
         alert("Pregunta guardada con éxito");
         document.getElementById("preguntaForm").reset(); // Limpiar formulario después de guardar
 
@@ -1412,3 +1430,73 @@ async function guardarPreguntaEnAirtable(event) {
         console.error("Error al enviar datos a Airtable:", error);
     }
 }
+export function insertarEstilosYParticulas() {
+    // Insertar el CSS en el head
+    const style = document.createElement('style');
+    style.innerHTML = `
+    body {
+        overflow: hidden;
+    }
+
+    /* Contenedor de partículas */
+    .particles-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+    }
+    /* Estilos de las partículas */
+    .particle {
+        position: absolute;
+        background-color: white;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        opacity: 0.8;
+        animation: floatParticles linear infinite;
+    }
+
+    /* Animación de partículas */
+    @keyframes floatParticles {
+        0% {
+            transform: translateY(-10vh) scale(0.5);
+            opacity: 0;
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(100vh) scale(1);
+            opacity: 0;
+        }
+    }
+
+    /* Distribución de partículas con tiempos ajustados */
+    .particle:nth-child(1) { left: 5%; animation-duration: 4s; animation-delay: 0s; }
+    .particle:nth-child(2) { left: 15%; animation-duration: 6s; animation-delay: 0.5s; }
+    .particle:nth-child(3) { left: 25%; animation-duration: 5s; animation-delay: 1s; }
+    .particle:nth-child(4) { left: 35%; animation-duration: 7s; animation-delay: 1.5s; }
+    .particle:nth-child(5) { left: 45%; animation-duration: 6s; animation-delay: 2s; }
+    .particle:nth-child(6) { left: 55%; animation-duration: 5s; animation-delay: 2.5s; }
+    .particle:nth-child(7) { left: 65%; animation-duration: 8s; animation-delay: 3s; }
+    .particle:nth-child(8) { left: 75%; animation-duration: 6s; animation-delay: 3.5s; }
+    .particle:nth-child(9) { left: 85%; animation-duration: 7s; animation-delay: 4s; }
+    .particle:nth-child(10) { left: 95%; animation-duration: 5s; animation-delay: 4.5s; }
+    `;
+    document.head.appendChild(style);
+
+    // Crear y agregar el contenedor de partículas con las partículas
+    const particlesContainer = document.createElement('div');
+    particlesContainer.className = 'particles-container';
+
+    for (let i = 0; i < 10; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particlesContainer.appendChild(particle);
+    }
+
+    document.body.appendChild(particlesContainer);
+}
+
