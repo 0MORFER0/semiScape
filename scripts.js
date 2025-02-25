@@ -505,17 +505,18 @@ async function verificarPareja() {
 
   // Verificar si la contraseña ingresada es el nombre de la pareja
   if (parejaInput === parejaUsuario.nombre.toLowerCase()) {
+	   partnerPasswordInput.disabled = true;
+    verificarBtn.disabled = true;
     alert("¡Correcto! La contraseña es válida.");
 
     // Registrar resultado en la tabla 'resultados' de Airtable
     await registrarResultado("buscarParejas", username, parejaUsuario.nombre);
 
-    partnerPasswordInput.disabled = true;
-    verificarBtn.disabled = true;
+   
 
     setTimeout(() => {
       window.location.href = 'diccionarios.html';
-    }, 1000);
+    }, 200);
   } else {
     alert("Contraseña incorrecta. Inténtalo de nuevo.");
   }
@@ -608,7 +609,49 @@ console.log(date);
     console.error('Error al registrar el resultado:', error);
   }
 }
+async function registrarResultadoDiccionario(nombrePrueba, nombreUsuario, respuesta) {
+	 const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3"; // Reemplaza con tu token
+  const baseId = "appDePnktLp2dzqNX"; // Tu Base ID
+// Obtener la fecha y hora actual en formato 'YYYY-MM-DD HH:mm:ss'
+const now = new Date();
+const localDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)); // Ajustar a la hora local
+const date = localDate.toISOString().slice(0, 19).replace('T', ' ') + '.' + localDate.getMilliseconds().toString().padStart(3, '0'); // Formato: 'YYYY-MM-DD HH:mm:ss.SSS'
 
+console.log(date);
+
+
+
+  const url = `https://api.airtable.com/v0/${baseId}/ResultadosDiccionarios`;
+
+  const data = {
+    fields: {
+      NombrePrueba: nombrePrueba,
+      NombreUsuario: nombreUsuario,
+      Respuesta: respuesta,
+      Date: date
+    }
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log('Resultado registrado:', result);
+    } else {
+      throw new Error('Error al registrar el resultado');
+    }
+  } catch (error) {
+    console.error('Error al registrar el resultado:', error);
+  }
+}
 
 // Función para obtener los resultados de la tabla "Resultados" y mostrarlos ordenados
 async function mostrarResultados() {
@@ -678,8 +721,9 @@ async function mostrarResultados() {
 document.addEventListener("DOMContentLoaded", mostrarResultados);
 
 export function mostrarTelon(mensaje) {
-    // Evitar el scroll
+    // Deshabilitar scroll y colocar la vista en la parte superior
     document.body.style.overflow = "hidden";
+    window.scrollTo(0, 0);  
 
     // Crear los elementos del telón
     const telon = document.createElement("div");
@@ -696,7 +740,7 @@ export function mostrarTelon(mensaje) {
     contenido.innerHTML = `
         <p>${mensaje}</p>
         <p class="contador">...</p>
-		<img style="border-radius:100%;" src="IMAGEN/huella2.png" alt="huella de alguien..">
+        <img style="border-radius:100%;" src="/IMAGEN/huella2.png" alt="huella de alguien..">
     `;
 
     telon.appendChild(telonIzq);
@@ -719,6 +763,7 @@ export function mostrarTelon(mensaje) {
 
 // Hacer la función accesible globalmente
 window.mostrarTelon = mostrarTelon;
+
 
 
 
@@ -808,7 +853,7 @@ export function verificarFrase() {
     alert("¡Frase correcta!");
 	document.getElementById('verificar-frase').disabled = true;
     // Registrar el resultado en Airtable
-    registrarResultado("diccionarios", username, "Correcta");
+    registrarResultadoDiccionario("diccionarios", username, "Correcta");
 	 setTimeout(() => {
       window.location.href = 'candado.html';
     }, 1000);
@@ -861,7 +906,7 @@ export function mostrarRolEscondite() {
         document.getElementById("inputLobo").addEventListener("click", comprobarClaveLobo);
         document.getElementById("caceriaTerminada").addEventListener("click", () => {
             if (confirm("¿Estás seguro de que la cacería ha terminado?")) {
-                window.location.href = "candado.html";
+                window.location.href = "formularioPreguntas.html";
             }
         });
     } else if (usuario.rol === "OVEJA") {
@@ -876,7 +921,7 @@ export function mostrarRolEscondite() {
         // Agregar evento al botón de "¿CAZADO?"
         document.getElementById("cazado").addEventListener("click", () => {
             if (confirm("¿Estás seguro?")) {
-                window.location.href = "candado.html";
+                window.location.href = "formularioPreguntas.html";
             }
         });
     } else {
@@ -1006,26 +1051,79 @@ export function generarTablaTrenes() {
     `;
 }
 
+// Función para registrar el resultado en la tabla ResultadosTrenes de Airtable
+async function registrarResultadoEnAirtableTrenes(usuarioLogueado, sumaDistancias, inicialesTrenes) {
+    const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3"; // Token de Airtable
+    const baseId = "appDePnktLp2dzqNX"; // Base ID
+    const tableName = "ResultadosTrenes"; // Nombre de la tabla
+    const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+
+    // Obtener la fecha y hora actual en formato 'YYYY-MM-DD HH:mm:ss.SSS'
+    const now = new Date();
+    const localDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)); // Ajustar a la hora local
+    const date = localDate.toISOString().slice(0, 19).replace('T', ' ') + '.' + localDate.getMilliseconds().toString().padStart(3, '0');
+
+    // Datos que se enviarán
+    const data = {
+        records: [
+            {
+                fields: {
+                    "NombrePrueba": "trenes", // Nombre de la prueba
+                    "NombreUsuario": usuarioLogueado,
+                    "Respuesta": `Suma Distancias: ${sumaDistancias}, Iniciales Trenes: ${inicialesTrenes}`, // Respuesta combinada
+                    "Date": date // Fecha formateada
+                }
+            }
+        ]
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error("Error al registrar en Airtable");
+        }
+    } catch (error) {
+        console.error("Error al enviar datos a Airtable:", error);
+    }
+}
+
 // Función para comprobar respuestas
 export function comprobarPrimerCandado() {
-    // Array de respuestas  
-
     // Obtener los valores de los inputs
     const inputSuma = document.getElementById("sumaDistancias").value;
-	console.log(inputSuma);
+    console.log(inputSuma);
     const inputIniciales = document.getElementById("inicialesTrenes").value.toUpperCase(); // Convertir a mayúsculas
-	console.log(inputIniciales);
+    console.log(inputIniciales);
+
     // Obtener la primera respuesta esperada
     const primeraRespuesta = respuestasTrenes[0];
-	console.log(primeraRespuesta.sumaDistancias+"-"+"-"+primeraRespuesta.inicialesTrenes.trim());
+    console.log(primeraRespuesta.sumaDistancias + "-" + primeraRespuesta.inicialesTrenes.trim());
+
     // Comprobar si los valores coinciden
     if (parseInt(inputSuma) == primeraRespuesta.sumaDistancias && inputIniciales.trim() == primeraRespuesta.inicialesTrenes.trim()) {
+		const username = localStorage.getItem("userName");
+				const usuarioLogueado =  localStorage.getItem("userName"); // Aquí deberías obtener el nombre del usuario logueado
+				console.log("Usuario logueado:", usuarioLogueado);
+console.log("Suma Distancias:", inputSuma);
+console.log("Iniciales Trenes:", inputIniciales);
+        registrarResultadoEnAirtableTrenes(usuarioLogueado, inputSuma, inputIniciales); // Registrar el resultado en Airtable
         alert("¡Acertaste!");
-		window.location.href ="memorion.html";
+        
+        window.location.href = "memorion.html"; // Redirigir a memorion.html
     } else {
         alert("No es correcto, intenta de nuevo.");
     }
 }
+
 
 //MEMORION
 /*
@@ -1103,6 +1201,51 @@ const memorionContainer = document.getElementById("memorion");
 let selectedCards = [];
 let discoveredRooms = [];
 
+// Función para registrar el resultado en Airtable
+async function registrarResultadoEnAirtableMemorion(usuarioLogueado) {
+    const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3"; // Token de Airtable
+    const baseId = "appDePnktLp2dzqNX"; // Base ID
+    const tableName = "ResultadosMemorion"; // Nombre de la tabla
+    const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+
+    // Obtener la fecha y hora actual en formato 'YYYY-MM-DD HH:mm:ss.SSS'
+    const now = new Date();
+    const localDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)); // Ajustar a la hora local
+    const date = localDate.toISOString().slice(0, 19).replace('T', ' ') + '.' + localDate.getMilliseconds().toString().padStart(3, '0');
+
+    // Datos que se enviarán
+    const data = {
+        records: [
+            {
+                fields: {
+                    "NombrePrueba": "memorion", // El nombre de la prueba
+                    "NombreUsuario": usuarioLogueado,
+                    "Respuesta": "Todos los huéspedes encontrados", // El nombre de la respuesta
+                    "Date": date // Nuevo campo con la fecha formateada
+                }
+            }
+        ]
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error("Error al registrar en Airtable");
+        }
+    } catch (error) {
+        console.error("Error al enviar datos a Airtable:", error);
+    }
+}
+
 export function createMemorion() {
     let tarjetas = [];
     habitacionesMemorion.forEach(hab => {
@@ -1135,7 +1278,7 @@ function flipCard(card) {
     selectedCards.push(card);
 
     if (selectedCards.length > 1) {
-        setTimeout(checkRoom, 500);
+        setTimeout(checkRoom, 10);
     }
 }
 
@@ -1152,6 +1295,8 @@ function checkRoom() {
             
             // Verificar si se han encontrado todas las habitaciones
             if (discoveredRooms.length === habitacionesMemorion.length) {
+                const usuarioLogueado =  localStorage.getItem("userName"); // Aquí deberías obtener el nombre del usuario logueado
+                registrarResultadoEnAirtableMemorion(usuarioLogueado); // Registrar el resultado en Airtable
                 window.location.href = "esconditePrevia.html";  // Redirige a esconditePrevia.html
             }
             return;
@@ -1160,5 +1305,110 @@ function checkRoom() {
         alert("¡Error! No pertenece a la misma habitación.");
         selectedCards.forEach(card => card.classList.remove("flipped"));
         selectedCards = [];
+    }
+}
+
+// Función para generar el formulario dinámicamente en la página
+export function generarFormularioPregunta() {
+    const contenedor = document.getElementById("formulario-container");
+    contenedor.innerHTML = `
+        <form id="preguntaForm">
+            <label for="pregunta">Pregunta:</label>
+            <input type="text" id="pregunta" name="pregunta" required>
+
+            <label for="respuesta1">Respuesta 1 (esta es la correcta, después se colocará random):</label>
+            <input type="text" id="respuesta1" name="respuesta1" required>
+
+            <label for="respuesta2">Respuesta 2:</label>
+            <input type="text" id="respuesta2" name="respuesta2" required>
+
+            <label for="respuesta3">Respuesta 3:</label>
+            <input type="text" id="respuesta3" name="respuesta3" required>
+
+            <label for="respuesta4">Respuesta 4:</label>
+            <input type="text" id="respuesta4" name="respuesta4" required>
+
+            <button type="submit" id="enviarPregunta">Guardar Pregunta</button>
+        </form>
+    `;
+
+    // Agregar evento de envío del formulario
+    document.getElementById("preguntaForm").addEventListener("submit", async function (event) {
+        event.preventDefault(); // Evitar el envío automático del formulario
+
+        const confirmacion = confirm("¿Estás seguro/a? Solo tendrás una pregunta.");
+
+        if (confirmacion) {
+            const botonEnviar = document.getElementById("enviarPregunta");
+            botonEnviar.disabled = true; // Deshabilitar el botón para evitar más envíos
+
+            await guardarPreguntaEnAirtable(); // Llamar a la función para guardar en Airtable
+
+            window.location.href = "final.html"; // Redirigir a final.html
+        }
+    });
+}
+
+
+
+// Función para guardar la pregunta en Airtable
+async function guardarPreguntaEnAirtable(event) {
+    event.preventDefault(); // Evita que el formulario recargue la página
+
+    const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3"; // Token de Airtable
+    const baseId = "appDePnktLp2dzqNX"; // Base ID
+    const tableName = "Preguntas"; // Nombre de la tabla en Airtable
+    const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+
+    // Obtener valores del formulario
+    const pregunta = document.getElementById("pregunta").value;
+    const respuesta1 = document.getElementById("respuesta1").value;
+    const respuesta2 = document.getElementById("respuesta2").value;
+    const respuesta3 = document.getElementById("respuesta3").value;
+    const respuesta4 = document.getElementById("respuesta4").value;
+
+    // Obtener fecha y hora actual en formato 'YYYY-MM-DD HH:mm:ss.SSS'
+    const now = new Date();
+    const localDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
+    const date = localDate.toISOString().slice(0, 19).replace('T', ' ') + '.' + localDate.getMilliseconds().toString().padStart(3, '0');
+
+    // Datos a enviar
+    const data = {
+        records: [
+            {
+                fields: {
+                    "Pregunta": pregunta,
+                    "Respuesta Correcta": respuesta1,
+                    "Opción 2": respuesta2,
+                    "Opción 3": respuesta3,
+                    "Opción 4": respuesta4,
+                    "Fecha": date
+                }
+            }
+        ]
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            console.error("Error en la respuesta de Airtable:", result);
+            throw new Error("Error al guardar la pregunta en Airtable");
+        }
+
+        alert("Pregunta guardada con éxito");
+        document.getElementById("preguntaForm").reset(); // Limpiar formulario después de guardar
+
+    } catch (error) {
+        console.error("Error al enviar datos a Airtable:", error);
     }
 }
