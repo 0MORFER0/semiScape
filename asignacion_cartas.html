@@ -8,7 +8,7 @@
   <script type="module" src="scripts.js"></script>
   	<script type="module" src="usuario.js"></script>
 </head>
-<body style="display:flex">
+<body style="display:none">
   <div class="card-container">
     <h1>Tu Carta Asignada</h1>
     <div id="carta" class="card">
@@ -32,9 +32,11 @@
    <script type="module">
    import { mostrarTelon } from './scripts.js';
    import { obtenerYMostrarUsuario } from './usuario.js';
+     import { insertarEstilosYParticulas } from './scripts.js';
 
-	mostrarTelon("ESPERA ORDENES");	
-	obtenerYMostrarUsuario();
+		mostrarTelon("ESPERA ORDENES<br>ESTO EMPIEZA");
+		insertarEstilosYParticulas();
+		obtenerYMostrarUsuario();
    </script>
 </body>
 </html>
