@@ -12,6 +12,8 @@
 		  mostrarTelon("POR FAVOR<br>RESPONDE");
  	import { obtenerYMostrarUsuario } from "./usuario.js";
 	obtenerYMostrarUsuario();
+	     import { insertarEstilosYParticulas } from './scripts.js';
+insertarEstilosYParticulas();
    </script>
    <style>
 	#formulario-container label{
@@ -44,7 +46,7 @@
   <script type="module">	
   // Llamar a la función cuando cargue la página
   import { generarFormularioPregunta } from "./scripts.js";	
-document.addEventListener("DOMContentLoaded", generarFormularioPregunta);
+	generarFormularioPregunta();
 	
    </script>
 </body>
