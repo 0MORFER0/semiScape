@@ -8,24 +8,6 @@
   <script type="module" defer src="scripts.js"></script>
   <script type="module" src="usuario.js"></script>
  <style>
-body {
-    background-color: black;
-    overflow: hidden;
-    margin: 0;
-    height: 100vh;
-    position: relative;
-}
-
-/* Contenedor de partículas */
-.particles-container {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-}
-
 /* Centrar el h1 */
 h1 {
     position: absolute;
@@ -38,65 +20,16 @@ h1 {
     text-transform: uppercase;
     text-align: center;
 }
-
-/* Estilos de las partículas */
-.particle {
-    position: absolute;
-    background-color: white;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    opacity: 0.8;
-    animation: floatParticles linear infinite;
-}
-
-/* Animación de partículas */
-@keyframes floatParticles {
-    0% {
-        transform: translateY(-10vh) scale(0.5);
-        opacity: 0;
-    }
-    50% {
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(100vh) scale(1);
-        opacity: 0;
-    }
-}
-
-/* Distribución de partículas con tiempos ajustados */
-.particle:nth-child(1) { left: 5%; animation-duration: 4s; animation-delay: 0s; }
-.particle:nth-child(2) { left: 15%; animation-duration: 6s; animation-delay: 0.5s; }
-.particle:nth-child(3) { left: 25%; animation-duration: 5s; animation-delay: 1s; }
-.particle:nth-child(4) { left: 35%; animation-duration: 7s; animation-delay: 1.5s; }
-.particle:nth-child(5) { left: 45%; animation-duration: 6s; animation-delay: 2s; }
-.particle:nth-child(6) { left: 55%; animation-duration: 5s; animation-delay: 2.5s; }
-.particle:nth-child(7) { left: 65%; animation-duration: 8s; animation-delay: 3s; }
-.particle:nth-child(8) { left: 75%; animation-duration: 6s; animation-delay: 3.5s; }
-.particle:nth-child(9) { left: 85%; animation-duration: 7s; animation-delay: 4s; }
-.particle:nth-child(10) { left: 95%; animation-duration: 5s; animation-delay: 4.5s; }
-
  </style>
 <script type="module">
  	import { obtenerYMostrarUsuario } from "./usuario.js";
 	obtenerYMostrarUsuario();
+	     import { insertarEstilosYParticulas } from './scripts.js';
+insertarEstilosYParticulas();
 	  </script>
 </head>
 <body>
     <h1>GRACIAS POR PARTICIPAR</h1>
-    <div class="particles-container">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div> <!-- Nueva partícula -->
-    </div>
 </body>
 
 </html>
