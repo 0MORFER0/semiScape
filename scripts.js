@@ -418,7 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	  // Esperar 3 minutos para mostrar el div de la contraseña
       setTimeout(() => {
         passwordInputDiv.style.display = "block"; // Mostrar el div de la contraseña
-      }, 60000); // 180000 ms = 3 minutos
+      }, 10000); // 180000 ms = 3 minutos
     });
 
   }
@@ -756,7 +756,7 @@ export function mostrarTelon(mensaje) {
             telon.classList.add("telon-abierto"); // Aplica la animación
             setTimeout(() => {
                 telon.remove();
-                document.body.style.overflow = ""; // Restaurar el scroll
+                document.body.style.overflow = "auto"; // Restaurar el scroll
             }, 1000);
         }
     });
@@ -856,7 +856,7 @@ export function verificarFrase() {
     // Registrar el resultado en Airtable
     registrarResultadoDiccionario("diccionarios", username, "Correcta");
 	 setTimeout(() => {
-      window.location.href = 'candado.html';
+      window.location.href = 'BingoPrevioTrenes.html';
     }, 1000);
   } else {
     alert("Frase incorrecta. Inténtalo de nuevo.");
