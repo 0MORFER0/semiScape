@@ -160,7 +160,7 @@
        let chartInstance = null;
        let chartFullInstance = null;
        let actualizacionActiva = true;
-
+		
        async function obtenerDatos() {
            try {
                const response = await fetch(url, {
@@ -259,7 +259,31 @@
            actualizacionActiva = !actualizacionActiva;
            console.log(actualizacionActiva ? "▶ Reanudado" : "⏸ Pausado");
        }
+function mostrarPantallaCompleta() {
+       if (!chartInstance) {
+           alert("Primero debes generar el gráfico.");
+           return;
+       }
 
+       const ctx = document.getElementById("graficoFull").getContext("2d");
+
+       if (chartFullInstance) chartFullInstance.destroy();
+
+       chartFullInstance = new Chart(ctx, {
+           type: "bar",
+           data: chartInstance.data,
+           options: {
+               responsive: true,
+               maintainAspectRatio: false
+           }
+       });
+
+       document.getElementById("fullscreen-chart").style.display = "flex";
+   }
+
+   function cerrarPantallaCompleta() {
+       document.getElementById("fullscreen-chart").style.display = "none";
+   }
        iniciarActualizacion();
     </script>
 </body>
