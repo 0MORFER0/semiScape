@@ -741,7 +741,7 @@ export function mostrarTelon(mensaje) {
     contenido.innerHTML = `
         <p>${mensaje}</p>
         <p class="contador">...</p>
-        <img style="border-radius:100%;" src="/IMAGEN/huella2.png" alt="huella de alguien..">
+        <img style="border-radius:100%;" src="/semiScape/IMAGEN/huella2.png" alt="huella de alguien..">
     `;
 
     telon.appendChild(telonIzq);
@@ -1443,7 +1443,7 @@ export function insertarEstilosYParticulas() {
         position: absolute;
         width: 100%;
         height: 100%;
-        top: 0;
+        top: -8px;
         left: 0;
         pointer-events: none;
     }
