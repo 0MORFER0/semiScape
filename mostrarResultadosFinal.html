@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de Respuestas</title>
+	  <link rel="stylesheet" href="css.css">
+  <script type="module" defer src="scripts.js"></script>
+      <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            width: 90%;
+            max-width: 300px;
+            padding: 15px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn.generar {
+            background-color: red;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        caption {
+            background-color: rgba(255,255,255,0.6)
+        }
+        td {
+            color: black;
+        }
+
+        /* Estilo para el mensaje de "Cargando..." */
+        #cargando {
+            font-size: 1.5rem;
+            color: #FFD700;
+            font-weight: bold;
+            display: none; /* Por defecto oculto */
+        }
+    </style>
+</head>
+<body>
+
+      <button class="btn" onclick="window.location.href='administracion.html'">ADMINISTRACION</button>
+    <button class="btn" onclick="mostrarAgrupado()">Mostrar agrupado por Usuario</button>
+    <button class="btn" onclick="mostrarOrdenado()">Mostrar ordenado</button>
+    <table border="1" id="tablaResultados">
+        <thead>
+            <tr>
+                <th>Usuario Responde</th>
+                <th>Respuestas Correctas</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3";
+        const baseId = "appDePnktLp2dzqNX";
+        const tableName = "RespuestasFinal";
+        const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+
+        async function obtenerDatos() {
+            try {
+                const response = await fetch(url, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const data = await response.json();
+                return data.records.map(record => ({
+                    UsuarioResponde: record.fields.UsuarioResponde,
+                    RespuestaCorrecta: record.fields["Respuesta Correcta"],
+                    Fecha: record.fields.Fecha
+                }));
+            } catch (error) {
+                console.error("Error al obtener datos:", error);
+                return [];
+            }
+        }
+
+        async function mostrarAgrupado() {
+            const datos = await obtenerDatos();
+            const agrupados = {};
+            datos.forEach(({ UsuarioResponde }) => {
+                agrupados[UsuarioResponde] = (agrupados[UsuarioResponde] || 0) + 1;
+            });
+
+            actualizarTabla(Object.entries(agrupados).map(([usuario, cantidad]) => ({
+                UsuarioResponde: usuario,
+                RespuestaCorrecta: cantidad
+            })));
+        }
+
+        async function mostrarOrdenado() {
+            const datos = await obtenerDatos();
+            datos.sort((a, b) => a.UsuarioResponde.localeCompare(b.UsuarioResponde) || new Date(a.Fecha) - new Date(b.Fecha));
+            actualizarTabla(datos);
+        }
+
+        function actualizarTabla(datos) {
+            const tbody = document.querySelector("#tablaResultados tbody");
+            tbody.innerHTML = "";
+            datos.forEach(({ UsuarioResponde, RespuestaCorrecta }) => {
+                const fila = document.createElement("tr");
+                fila.innerHTML = `<td>${UsuarioResponde}</td><td>${RespuestaCorrecta}</td>`;
+                tbody.appendChild(fila);
+            });
+        }
+
+        setInterval(mostrarAgrupado, 15000); // Actualiza cada 15 segundos
+    </script>
+</body>
+</html>
