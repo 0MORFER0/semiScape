@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulario de Preguntas</title>
+  <link rel="stylesheet" href="css.css">
+  <script type="module" defer src="scripts.js"></script>
+  <script type="module" src="usuario.js"></script>
+
+  <style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: auto !important;
+    }
+
+    #formulario-container {
+        width: 90%;
+        max-width: 500px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+    }
+
+    .pregunta {
+        font-size: 20px;
+        font-weight: bold;
+        color: black;
+        margin-bottom: 15px;
+    }
+
+    .opciones {
+        display: grid;
+        gap: 10px;
+    }
+
+    .opcion-btn {
+        width: 100%;
+        padding: 15px;
+        font-size: 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background: #3498db;
+        color: white;
+        transition: background 0.3s;
+    }
+
+    .opcion-btn:hover {
+        background: #2980b9;
+    }
+
+    .opcion-seleccionada {
+        background: #27ae60 !important;
+    }
+
+    .btn-enviar {
+        margin-top: 15px;
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background: #2ecc71;
+        color: white;
+        transition: background 0.3s;
+        display: none;
+    }
+
+    .btn-enviar:hover {
+        background: #27ae60;
+    }
+
+    .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        font-size: 18px;
+        text-align: center;
+        z-index: 1000;
+        display: none;
+    }
+
+  </style>
+
+  <script type="module">
+    import { obtenerYMostrarUsuario } from "./usuario.js";
+    obtenerYMostrarUsuario();
+    import { insertarEstilosYParticulas } from './scripts.js';
+    insertarEstilosYParticulas();
+
+    async function generarFormularioPregunta() {
+        console.log("🔄 Generando formulario de preguntas...");
+
+        const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3";
+        const baseId = "appDePnktLp2dzqNX";
+        const tablePreguntas = "Preguntas";
+        const tableRespuestas = "RespuestasFinal";
+        const urlPreguntas = `https://api.airtable.com/v0/${baseId}/${tablePreguntas}`;
+        const urlRespuestas = `https://api.airtable.com/v0/${baseId}/${tableRespuestas}`;
+        
+        const usuarioLogueado = localStorage.getItem("userName");
+        console.log("👤 Usuario logueado:", usuarioLogueado);
+
+        try {
+            console.log("🌐 Realizando petición a Airtable para obtener preguntas:", urlPreguntas);
+
+            const response = await fetch(urlPreguntas, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (!response.ok) {
+                throw new Error(`🚨 Error en la respuesta: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const registros = data.records;
+            console.log("📊 Cantidad de registros obtenidos:", registros.length);
+
+            const formularioContainer = document.getElementById("formulario-container");
+
+            if (!formularioContainer) {
+                console.error("❌ Error: No se encontró el contenedor del formulario.");
+                return;
+            }
+
+            formularioContainer.innerHTML = "";
+            let indexPregunta = 0;
+            let respuestaSeleccionada = "";
+
+            function mostrarPopup() {
+                const popup = document.createElement("div");
+                popup.classList.add("popup");
+                popup.textContent = "Registrando respuesta...";
+                document.body.appendChild(popup);
+                popup.style.display = "block";
+                return popup;
+            }
+
+            function ocultarPopup(popup) {
+                setTimeout(() => {
+                    popup.style.display = "none";
+                    popup.remove();
+                }, 1500);
+            }
+
+            function mostrarSiguientePregunta() {
+                if (indexPregunta >= registros.length) {
+                    formularioContainer.innerHTML = "<p style='color:black; font-size: 20px; text-align:center;'>Gracias por jugar</p>";
+                    return;
+                }
+
+                const record = registros[indexPregunta];
+                console.log("📄 Mostrando pregunta:", record.fields.Pregunta);
+
+                const { Pregunta, Usuario, "Respuesta Correcta": respuestaCorrecta, "Opcion 2": opcion2, "Opcion 3": opcion3, "Opcion 4": opcion4 } = record.fields;
+
+                if (Usuario === usuarioLogueado) {
+                    indexPregunta++;
+                    mostrarSiguientePregunta();
+                    return;
+                }
+
+                let opciones = [
+                    { texto: respuestaCorrecta, correcta: true },
+                    { texto: opcion2, correcta: false },
+                    { texto: opcion3, correcta: false },
+                    { texto: opcion4, correcta: false }
+                ];
+
+                opciones = opciones.sort(() => Math.random() - 0.5);
+
+                const formulario = document.createElement("form");
+                formulario.classList.add("formulario-pregunta");
+
+                formulario.innerHTML = `
+                    <p class="pregunta"><strong>Pregunta de ${Usuario}:</strong> ${Pregunta}</p>
+                    <div class="opciones">
+                        ${opciones.map((opcion, index) => `
+                            <button type="button" class="opcion-btn" data-texto="${opcion.texto}">
+                                ${String.fromCharCode(65 + index)}) ${opcion.texto}
+                            </button>
+                        `).join("")}
+                    </div>
+                    <button type="submit" class="btn-enviar">Enviar respuesta</button>
+                `;
+
+                const botonesOpciones = formulario.querySelectorAll(".opcion-btn");
+                const botonEnviar = formulario.querySelector(".btn-enviar");
+
+                botonesOpciones.forEach(boton => {
+                    boton.addEventListener("click", () => {
+                        respuestaSeleccionada = boton.getAttribute("data-texto");
+
+                        botonesOpciones.forEach(b => b.classList.remove("opcion-seleccionada"));
+                        boton.classList.add("opcion-seleccionada");
+
+                        botonEnviar.style.display = "block";
+                    });
+                });
+
+                formulario.addEventListener("submit", async function(event) {
+                    event.preventDefault();
+
+                    if (!respuestaSeleccionada) {
+                        alert("Por favor, selecciona una respuesta.");
+                        return;
+                    }
+
+                    const fechaActual = new Date().toISOString();
+                    const nuevoRegistro = {
+                        fields: {
+                            "UsuarioPregunta": Usuario,
+                            "UsuarioResponde": usuarioLogueado,
+                            "Pregunta": Pregunta,
+                            "Respuesta Correcta": respuestaCorrecta,
+                            "Opcion 2": opcion2,
+                            "Opcion 3": opcion3,
+                            "Opcion 4": opcion4,
+                            "RespuestaUsuarioResponde": respuestaSeleccionada,
+                            "Fecha": fechaActual
+                        }
+                    };
+
+                    console.log("📩 Enviando datos a Airtable (tabla RespuestasFinal):", nuevoRegistro);
+
+                    const popup = mostrarPopup();
+
+                    await fetch(urlRespuestas, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ records: [nuevoRegistro] })
+                    });
+
+                    ocultarPopup(popup);
+                    formulario.remove(); // Elimina el formulario después de enviar la respuesta
+                    indexPregunta++;
+                    setTimeout(mostrarSiguientePregunta, 1000);
+                });
+
+                formularioContainer.appendChild(formulario);
+            }
+
+            mostrarSiguientePregunta();
+        } catch (error) {
+            console.error("❌ Error al obtener preguntas:", error);
+        }
+    }
+
+    generarFormularioPregunta();
+  </script>
+</head>
+<body>
+   <div id="formulario-container"></div>
+</body>
+</html>
