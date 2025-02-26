@@ -71,7 +71,7 @@
         <button class="btn" onclick="mostrarResultadosTrenes()">Resultados Trenes</button>
         <button class="btn" onclick="mostrarResultadosMemorion();">Resultados Memorion</button>
         <button class="btn" onclick="mostrarResultadosEscondite();">Resultados Escondite</button>
-        <button class="btn generar" onclick="otraFuncionMas();">Otro Más</button>
+        <button class="btn" onclick="otraFuncionMas();">Otro Más</button>
     </div>
     <div id="puntuacion"></div>
     <div id="errores"></div>
@@ -569,10 +569,137 @@ window.mostrarResultadosEscondite = async function() {
 }
 
 
+window.otraFuncionMas = async function() {
+    const puntuacion = document.getElementById("puntuacion");
+    const cargando = document.getElementById("cargando");
 
+    cargando.style.display = "block";
+    puntuacion.innerHTML = "";
 
+    const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3";
+    const baseId = "appDePnktLp2dzqNX";
 
+    const pruebas = [
+        { nombre: "Emparejamientos", tabla: "Resultados" },
+        { nombre: "Diccionarios", tabla: "ResultadosDiccionarios" },
+        { nombre: "Trenes", tabla: "ResultadosTrenes" },
+        { nombre: "Memorion", tabla: "ResultadosMemorion" },
+        { nombre: "Escondite", tabla: "ResultadosEscondite", especial: true } // Se maneja diferente
+    ];
 
+    let puntuaciones = new Map();
+    let detallesUsuarios = new Map();
+
+    try {
+        for (const prueba of pruebas) {
+            const url = `https://api.airtable.com/v0/${baseId}/${prueba.tabla}`;
+            const response = await fetch(url, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const data = await response.json();
+
+            if (prueba.especial) {
+                // 🟢 CASO ESPECIAL: Escondite (2 puntos por cada registro)
+                data.records.forEach(record => {
+                    const usuario = record.fields?.NombreUsuario?.trim();
+                    if (usuario) {
+                        if (!puntuaciones.has(usuario)) {
+                            puntuaciones.set(usuario, 0);
+                            detallesUsuarios.set(usuario, []);
+                        }
+                        puntuaciones.set(usuario, puntuaciones.get(usuario) + 2);
+                        detallesUsuarios.get(usuario).push({ prueba: prueba.nombre, puntos: 2 });
+                    }
+                });
+            } else {
+                // 🔹 CASO GENERAL: Otras pruebas
+                let puntuacionActual = usuarios.length;
+
+                data.records.forEach(record => {
+                    const usuario = record.fields?.NombreUsuario?.trim();
+
+                    if (usuario) {
+                        if (!puntuaciones.has(usuario)) {
+                            puntuaciones.set(usuario, 0);
+                            detallesUsuarios.set(usuario, []);
+                        }
+                        puntuaciones.set(usuario, puntuaciones.get(usuario) + puntuacionActual);
+                        detallesUsuarios.get(usuario).push({ prueba: prueba.nombre, puntos: puntuacionActual });
+                        puntuacionActual--;
+                    }
+                });
+            }
+        }
+
+        console.log("Puntuaciones totales por usuario:", Object.fromEntries(puntuaciones));
+
+        // 🔹 Generar la tabla de puntuaciones
+        let tablaHtml = "<table>";
+        tablaHtml += "<caption>Puntuaciones Generales</caption>";
+        tablaHtml += "<thead><tr><th>Nombre Usuario</th><th>Puntuación Total</th></tr></thead>";
+        let cuerpo = "<tbody>";
+
+        puntuaciones.forEach((puntos, usuario) => {
+            cuerpo += `<tr onclick="mostrarDetalles('${usuario}')">
+                <td style="cursor: pointer; color: #007bff; text-decoration: underline;">${usuario}</td>
+                <td>${puntos}</td>
+            </tr>`;
+        });
+
+        cuerpo += "</tbody>";
+        tablaHtml += cuerpo + "</table>";
+        puntuacion.innerHTML = tablaHtml;
+
+        // 🟢 Guardamos los detalles para mostrarlos en el popup
+        window.detallesUsuarios = detallesUsuarios;
+
+    } catch (error) {
+        console.error("Error al obtener los resultados:", error);
+        alert("Hubo un error al procesar las puntuaciones.");
+    } finally {
+        cargando.style.display = "none";
+    }
+};
+
+// 🟢 Función para mostrar detalles en un popup
+window.mostrarDetalles = function(usuario) {
+    const detalles = window.detallesUsuarios.get(usuario);
+    if (!detalles) return;
+
+    let detalleHtml = `<h2>Detalles de ${usuario}</h2><table><thead><tr><th>Prueba</th><th>Puntos</th></tr></thead><tbody>`;
+    detalles.forEach(d => {
+        detalleHtml += `<tr><td>${d.prueba}</td><td>${d.puntos}</td></tr>`;
+    });
+    detalleHtml += "</tbody></table>";
+
+    // Crear el popup si no existe
+    let popup = document.getElementById("popupDetalles");
+    if (!popup) {
+        popup = document.createElement("div");
+        popup.id = "popupDetalles";
+        popup.style.position = "fixed";
+        popup.style.top = "50%";
+        popup.style.left = "50%";
+        popup.style.transform = "translate(-50%, -50%)";
+        popup.style.background = "#fff";
+        popup.style.color = "#000";
+        popup.style.padding = "20px";
+        popup.style.borderRadius = "10px";
+        popup.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.5)";
+        popup.style.zIndex = "1000";
+        popup.innerHTML = '<button onclick="cerrarPopup()">Cerrar</button><div id="contenidoPopup"></div>';
+        document.body.appendChild(popup);
+    }
+
+    document.getElementById("contenidoPopup").innerHTML = detalleHtml;
+    popup.style.display = "block";
+};
+
+// 🟢 Función para cerrar el popup
+window.cerrarPopup = function() {
+    document.getElementById("popupDetalles").style.display = "none";
+};
 
 </script>
 
