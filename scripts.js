@@ -856,7 +856,7 @@ export function verificarFrase() {
     // Registrar el resultado en Airtable
     registrarResultadoDiccionario("diccionarios", username, "Correcta");
 	 setTimeout(() => {
-      window.location.href = 'BingoPrevioTrenes.html';
+      window.location.href = 'BingoPreviaTrenes.html';
     }, 1000);
   } else {
     alert("Frase incorrecta. Inténtalo de nuevo.");
@@ -1298,31 +1298,65 @@ function flipCard(card) {
     }
 }
 
-function checkRoom() {
+function showPopup(message) {
+    return new Promise(resolve => {
+        // Crear el contenedor del popup
+        const popup = document.createElement("div");
+        popup.classList.add("popup-overlay");
+        
+        // Contenido del popup
+        popup.innerHTML = `
+            <div class="popup-content">
+                <p>${message}</p>
+            </div>
+        `;
+
+        // Agregar el popup al body
+        document.body.appendChild(popup);
+
+        // Evitar interacciones
+        document.body.style.pointerEvents = "none";
+
+        // Desaparece después de 3 segundos
+        setTimeout(() => {
+            popup.style.opacity = "0";
+            setTimeout(() => {
+                popup.remove();
+                document.body.style.pointerEvents = "auto";
+                resolve(); // Aquí se resuelve la promesa y continúa la ejecución
+            }, 500); // Tiempo para desvanecerse
+        }, 1500);
+    });
+}
+
+async function checkRoom() {
     const habitacion = selectedCards[0].dataset.habitacion;
     const allSameRoom = selectedCards.every(card => card.dataset.habitacion === habitacion);
 
     if (allSameRoom) {
         const totalHuespedes = habitacionesMemorion.find(hab => hab.habitacion === habitacion).huespedes.length;
         if (selectedCards.length === totalHuespedes) {
-            alert("¡Has encontrado todos los huéspedes de la habitación " + habitacion + "!");
+            await showPopup("¡Has encontrado todos los huéspedes de la habitación " + habitacion + "!");
             discoveredRooms.push(habitacion);
             selectedCards = [];
-            
+
             // Verificar si se han encontrado todas las habitaciones
             if (discoveredRooms.length === habitacionesMemorion.length) {
-                const usuarioLogueado =  localStorage.getItem("userName"); // Aquí deberías obtener el nombre del usuario logueado
-                registrarResultadoEnAirtableMemorion(usuarioLogueado); // Registrar el resultado en Airtable
-                window.location.href = "esconditePrevia.html";  // Redirige a esconditePrevia.html
+                const usuarioLogueado = localStorage.getItem("userName"); 
+                registrarResultadoEnAirtableMemorion(usuarioLogueado);
+                setTimeout(() => {
+                    window.location.href = "esconditePrevia.html";
+                }, 500); // Espera un poco antes de redirigir
             }
             return;
         }
     } else {
-        alert("¡Error! No pertenece a la misma habitación.");
+        await showPopup("¡Error! No pertenece a la misma habitación.");
         selectedCards.forEach(card => card.classList.remove("flipped"));
         selectedCards = [];
     }
 }
+
 
 // Función para generar el formulario dinámicamente en la página
 export function generarFormularioPregunta() {
@@ -1461,14 +1495,14 @@ export function insertarEstilosYParticulas() {
     /* Animación de partículas */
     @keyframes floatParticles {
         0% {
-            transform: translateY(-10vh) scale(0.5);
+            transform: translateY(100vh) scale(0.5);
             opacity: 0;
         }
         50% {
             opacity: 1;
         }
         100% {
-            transform: translateY(100vh) scale(1);
+            transform: translateY(-10vh) scale(1);
             opacity: 0;
         }
     }
