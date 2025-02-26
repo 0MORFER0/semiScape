@@ -77,9 +77,43 @@
             font-size: 20px;
             border: none;
             border-radius: 5px;
-            width: 40px;
-            height: 40px;
+            width: auto;
+            height: auto;
             cursor: pointer;
+        }
+
+        /* Tabla de respuestas individuales */
+        #tablaRespuestas {
+            display: none;
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 90%;
+            margin: auto;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #tablaRespuestas th, #tablaRespuestas td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        #tablaRespuestas th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .correcta {
+            background-color: lightgreen !important;
+            color: black !important;
+        }
+        
+        .incorrecta {
+            background-color: red !important;
+            color: white !important;
         }
 
     </style>
@@ -90,6 +124,8 @@
     <button class="btn" onclick="mostrarRanking()">Mostrar Gráfico</button>
     <button class="btn fullscreen" onclick="mostrarPantallaCompleta()">Pantalla Completa</button>
     <button class="btn" onclick="ocultarGrafico()">Ocultar Gráfico</button>
+    <button class="btn" onclick="mostrarRespuestas()">Mostrar Respuestas</button>
+    <button class="btn" onclick="ocultarTabla()">Ocultar Tabla</button>
     <button class="btn pausar" onclick="pausarActualizacion()">Pausar/Reanudar</button>
 
     <div id="chart-container">
@@ -101,116 +137,130 @@
         <canvas id="graficoFull"></canvas>
     </div>
 
+    <table id="tablaRespuestas">
+        <caption>📋 Respuestas Individuales</caption>
+        <thead>
+            <tr>
+                <th>Usuario Responde</th>
+                <th>Pregunta</th>
+                <th>Su Respuesta</th>
+                <th>Respuesta Correcta</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
     <script>
-        const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3";
+       const token = "patINyZ6fcrXhaEfY.5a17ebb4f88d4f3df1942277fc7372cf4680eba1ddcd604d07558e99d1ca1aa3";
         const baseId = "appDePnktLp2dzqNX";
-        const tableName = "RespuestasFinal";
-        const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+       const tableName = "RespuestasFinal";
+       const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
 
-        let intervalo;
-        let chartInstance = null;
-        let chartFullInstance = null;
-        let actualizacionActiva = true;
+       let intervalo;
+       let chartInstance = null;
+       let chartFullInstance = null;
+       let actualizacionActiva = true;
 
-        async function obtenerDatos() {
-            try {
-                const response = await fetch(url, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                const data = await response.json();
-                return data.records.map(record => ({
-                    UsuarioResponde: record.fields.UsuarioResponde,
-                    RespuestaUsuario: record.fields.RespuestaUsuarioResponde,
-                    RespuestaCorrecta: record.fields["Respuesta Correcta"]
-                }));
-            } catch (error) {
-                console.error("❌ Error al obtener datos:", error);
-                return [];
-            }
-        }
+       async function obtenerDatos() {
+           try {
+               const response = await fetch(url, {
+                   headers: { Authorization: `Bearer ${token}` }
+               });
+               const data = await response.json();
+               return data.records.map(record => ({
+                   UsuarioResponde: record.fields.UsuarioResponde,
+                   Pregunta: record.fields.Pregunta,
+                   RespuestaUsuario: record.fields.RespuestaUsuarioResponde,
+                   RespuestaCorrecta: record.fields["Respuesta Correcta"]
+               }));
+           } catch (error) {
+               console.error("❌ Error al obtener datos:", error);
+               return [];
+           }
+       }
 
-        async function mostrarRanking() {
-            const datos = await obtenerDatos();
-            const puntuaciones = {};
+       async function mostrarRanking() {
+           const datos = await obtenerDatos();
+           const puntuaciones = {};
 
-            datos.forEach(({ UsuarioResponde, RespuestaUsuario, RespuestaCorrecta }) => {
-                if (!puntuaciones[UsuarioResponde]) {
-                    puntuaciones[UsuarioResponde] = 0;
-                }
+           datos.forEach(({ UsuarioResponde, RespuestaUsuario, RespuestaCorrecta }) => {
+               if (!puntuaciones[UsuarioResponde]) {
+                   puntuaciones[UsuarioResponde] = 0;
+               }
 
-                if (RespuestaUsuario === RespuestaCorrecta) {
-                    puntuaciones[UsuarioResponde] += 20;
-                } else {
-                    puntuaciones[UsuarioResponde] -= 5;
-                }
-            });
+               if (RespuestaUsuario === RespuestaCorrecta) {
+                   puntuaciones[UsuarioResponde] += 20;
+               } else {
+                   puntuaciones[UsuarioResponde] -= 5;
+               }
+           });
 
-            const labels = Object.keys(puntuaciones);
-            const values = Object.values(puntuaciones);
+           const labels = Object.keys(puntuaciones);
+           const values = Object.values(puntuaciones);
 
-            if (chartInstance) chartInstance.destroy();
-            
-            const ctx = document.getElementById("graficoRespuestas").getContext("2d");
-            chartInstance = new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels,
-                    datasets: [{
-                        label: "Puntuación",
-                        data: values,
-                        backgroundColor: "blue"
-                    }]
-                },
-                options: { responsive: true }
-            });
+           if (chartInstance) chartInstance.destroy();
+           
+           const ctx = document.getElementById("graficoRespuestas").getContext("2d");
+           chartInstance = new Chart(ctx, {
+               type: "bar",
+               data: {
+                   labels,
+                   datasets: [{
+                       label: "Puntuación",
+                       data: values,
+                       backgroundColor: "blue"
+                   }]
+               },
+               options: { responsive: true }
+           });
 
-            document.getElementById("chart-container").style.display = "block";
-        }
+           document.getElementById("chart-container").style.display = "block";
+       }
 
-        function ocultarGrafico() {
-            document.getElementById("chart-container").style.display = "none";
-        }
+       async function mostrarRespuestas() {
+           const datos = await obtenerDatos();
+           const tbody = document.querySelector("#tablaRespuestas tbody");
+           tbody.innerHTML = "";
 
-        function mostrarPantallaCompleta() {
-            if (!chartInstance) {
-                alert("Primero debes generar el gráfico.");
-                return;
-            }
+           datos.forEach(({ UsuarioResponde, Pregunta, RespuestaUsuario, RespuestaCorrecta }) => {
+               const fila = document.createElement("tr");
+               fila.className = (RespuestaUsuario === RespuestaCorrecta) ? "correcta" : "incorrecta";
 
-            const ctx = document.getElementById("graficoFull").getContext("2d");
+               fila.innerHTML = `
+                   <td>${UsuarioResponde}</td>
+                   <td>${Pregunta}</td>
+                   <td>${RespuestaUsuario}</td>
+                   <td>${RespuestaCorrecta}</td>
+               `;
 
-            if (chartFullInstance) chartFullInstance.destroy();
+               tbody.appendChild(fila);
+           });
 
-            chartFullInstance = new Chart(ctx, {
-                type: "bar",
-                data: chartInstance.data,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
+           document.getElementById("tablaRespuestas").style.display = "table";
+       }
 
-            document.getElementById("fullscreen-chart").style.display = "flex";
-        }
+       function ocultarGrafico() {
+           document.getElementById("chart-container").style.display = "none";
+       }
 
-        function cerrarPantallaCompleta() {
-            document.getElementById("fullscreen-chart").style.display = "none";
-        }
+       function ocultarTabla() {
+           document.getElementById("tablaRespuestas").style.display = "none";
+       }
 
-        function iniciarActualizacion() {
-            intervalo = setInterval(() => {
-                if (actualizacionActiva) {
-                    mostrarRanking();
-                }
-            }, 15000);
-        }
+       function iniciarActualizacion() {
+           intervalo = setInterval(() => {
+               if (actualizacionActiva) {
+                   mostrarRanking();
+               }
+           }, 15000);
+       }
 
-        function pausarActualizacion() {
-            actualizacionActiva = !actualizacionActiva;
-            console.log(actualizacionActiva ? "▶ Reanudado" : "⏸ Pausado");
-        }
+       function pausarActualizacion() {
+           actualizacionActiva = !actualizacionActiva;
+           console.log(actualizacionActiva ? "▶ Reanudado" : "⏸ Pausado");
+       }
 
-        iniciarActualizacion();
+       iniciarActualizacion();
     </script>
 </body>
 </html>
