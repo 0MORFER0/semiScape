@@ -69,3 +69,4 @@ export const usuarios = [
     { habitacion: "Habitación 7", huespedes: ["ALFONSO", "DANI", "GONZA"] },
     { habitacion: "Habitación 8", huespedes: ["DAVID", "DANI MADRID", "FIRE", "FDEZ"] }
 ];
+const fraseDiccionario = "El bosque y sus enanos"
