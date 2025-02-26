@@ -1,6 +1,6 @@
 export const usuarios = [
   { nombre: "DANI MADRID", contraseña: "12345", cartaAsignada: "El Dragón Rojo", equipoEscondite: "1", rol: "LOBO", abecedarioDesordenado: "QWERTYUIOPASDFGHJKLZXCVBNM", abecedarioDesordenadoPareja: "MNBVCXZLKJHGFDSAPOIUYTREWQ", claveEscondite: "aBcDeF" },
-  { nombre: "ALBA ENFERMERA", contraseña: "12345", cartaAsignada: "El Dragón Rojo", equipoEscondite: "1", rol: "LOBO", abecedarioDesordenado: "MNBVCXZLKJHGFDSAPOIUYTREWQ", abecedarioDesordenadoPareja: "QWERTYUIOPASDFGHJKLZXCVBNM", claveEscondite: "gHiJkL" },
+  { nombre: "ALBA ENFERMERA", contraseña: "12345", cartaAsignada: "El Dragón Rojo", equipoEscondite: "1", rol: "LOBO", abecedarioDesordenado: "MNBVCXZLKJHGFDSAPOIUYTREWQ", abecedarioDesordenadoPareja: "QWERTYUIOPASDFGHJKLZXCVBNM", claveEscondite: "" },
 
   { nombre: "HELENA", contraseña: "12345", cartaAsignada: "El Lobo Gris", equipoEscondite: "2", rol: "LOBO", abecedarioDesordenado: "ZXCVBNMASDFGHJKLQWERTYUIOP", abecedarioDesordenadoPareja: "POIUYTREWQLKJHGFDSAMNBVCXZ", claveEscondite: "mNoPqR" },
   { nombre: "VICTOR", contraseña: "12345", cartaAsignada: "El Lobo Gris", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "POIUYTREWQLKJHGFDSAMNBVCXZ", abecedarioDesordenadoPareja: "ZXCVBNMASDFGHJKLQWERTYUIOP", claveEscondite: "sTuRwX" },
@@ -26,6 +26,7 @@ export const usuarios = [
   { nombre: "ALBA PERIODISTA", contraseña: "12345", cartaAsignada: "El Mago de Hierro", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "ZXCVBNMASDFGHJKLQWERTYUIOP", abecedarioDesordenadoPareja: "POIUYTREWQLKJHGFDSAMNBVCXZ", claveEscondite: "sTuVwX" },
   { nombre: "RURU", contraseña: "12345", cartaAsignada: "El Mago de Hierro", equipoEscondite: "2", rol: "LOBO", abecedarioDesordenado: "POIUYTREWQLKJHGFDSAMNBVCXZ", abecedarioDesordenadoPareja: "ZXCVBNMASDFGHJKLQWERTYUIOP", claveEscondite: "yZaBcD" }
 ];
+ export const fraseDiccionario = "El bosque y sus enanos";
  export const trenes = [
         { nombre: "Regidor", distancia: 121 },
         { nombre: "Ribera", distancia: 83 },
@@ -69,4 +70,3 @@ export const usuarios = [
     { habitacion: "Habitación 7", huespedes: ["ALFONSO", "DANI", "GONZA"] },
     { habitacion: "Habitación 8", huespedes: ["DAVID", "DANI MADRID", "FIRE", "FDEZ"] }
 ];
-export const fraseDiccionario = "El bosque y sus enanos";
