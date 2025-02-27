@@ -28,30 +28,31 @@ export const usuarios = [
 ];
 
 
- export const fraseDiccionario = "El bosque y sus enanos";
-export const trenes = [
-  { nombre: "Regidor", distancia: 121 },
-  { nombre: "Ribera", distancia: 83 },
-  { nombre: "Rabano", distancia: 157 },
-  { nombre: "Wamba", distancia: 203 },
-  { nombre: "Urueña", distancia: 191 },
-  { nombre: "Bocos", distancia: 137 },
-  { nombre: "Lago", distancia: 97 },
-  { nombre: "Costa", distancia: 113 },
-  { nombre: "Monte", distancia: 251 },
-  { nombre: "Tiedra", distancia: 161 },
-  { nombre: "Río", distancia: 103 },
-  { nombre: "Luna", distancia: 141 },
-  { nombre: "Boecillo", distancia: 221 },
-  { nombre: "Este", distancia: 53 },
-  { nombre: "Mojados", distancia: 61 },
-  { nombre: "Sur", distancia: 173 },
-  { nombre: "Puente", distancia: 139 },
-  { nombre: "Cielo", distancia: 163 },
-  { nombre: "Castrobol", distancia: 131 },
-  { nombre: "Adalia", distancia: 199 },
-	
-];
+ export const fraseDiccionario = "El bosque y sus enanos descansan placidamente";
+ export const trenes = [
+        { nombre: "Regidor", distancia: 121 },
+        { nombre: "Ribera", distancia: 83 },
+        { nombre: "Rabano", distancia: 157 },
+        { nombre: "Tordesillas", distancia: 203 },
+        { nombre: "Castrobol", distancia: 191 },
+        { nombre: "Traspinedo", distancia: 137 },
+        { nombre: "Urueña", distancia: 97 },
+        { nombre: "Bercero", distancia: 113 },
+        { nombre: "Mayorga", distancia: 251 },
+        { nombre: "Tiedra", distancia: 161 },
+        { nombre: "Cuenca", distancia: 103 },
+        { nombre: "Serrada", distancia: 141 },
+        { nombre: "Boecillo", distancia: 221 },
+        { nombre: "Torrelobatón", distancia: 53 },
+        { nombre: "Mojados", distancia: 61 },
+        { nombre: "Tiedra", distancia: 173 },
+        { nombre: "Zaratán", distancia: 139 },
+        { nombre: "Pollos", distancia: 163 },
+        { nombre: "Castrobol", distancia: 131 },
+        { nombre: "Adalia", distancia: 199 },
+        { nombre: "Viloria", distancia: 199 },
+        { nombre: "Wamba", distancia: 199 },
+    ];
  export const respuestasTrenes = [
         { sumaDistancias: "361", inicialesTrenes: "RRR" }
     ];
