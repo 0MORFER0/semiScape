@@ -56,14 +56,7 @@ export const usuarios = [
  export const respuestasTrenes = [
         { sumaDistancias: "361", inicialesTrenes: "RRR" }
     ];
- export const parejasMemorion = [
-        { Nombre1: "HELENA", Nombre2: "AMBRINOS" },
-        { Nombre1: "TAMARA", Nombre2: "SOTO" },
-        { Nombre1: "SARA", Nombre2: "RUBEN" },
-        { Nombre1: "LORENA", Nombre2: "VICTOR" },
-        { Nombre1: "ALBA", Nombre2: "JOTA" },
-        { Nombre1: "TANIA", Nombre2: "RIAGUAS" },
-    ];
+
 	export const habitacionesMemorion = [
     { habitacion: "Habitación 1", huespedes: ["HELENA", "AMBRINOS"] },
     { habitacion: "Habitación 2", huespedes: ["CRIS", "ALBA C." ] },
