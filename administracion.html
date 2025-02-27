@@ -61,7 +61,12 @@
             display: none; /* Por defecto oculto */
         }
     </style>
+<script type="module">
+    // Lista de usuarios importada desde variables.js
+    import { shuffleUsuarios } from './scripts.js';
+	window.shuffleUsuarios = shuffleUsuarios;
 
+</script>
 </head>
 <body>
 <h1>Panel de Administración</h1>
@@ -73,6 +78,7 @@
         <button class="btn" onclick="mostrarResultadosEscondite();">Resultados Escondite</button>
         <button class="btn" onclick="otraFuncionMas();">Puntuación General</button>
         <button class="btn" onclick="window.location.href='mostrarResultadosFinal.html'">FINAL</button>
+        <button class="btn" onclick="shuffleUsuarios();">Sacar emparajamientos</button>
     </div>
     <div id="puntuacion"></div>
     <div id="errores"></div>
