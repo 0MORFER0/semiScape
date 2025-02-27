@@ -1,17 +1,17 @@
 export const usuarios = [
-  { nombre: "DANI MADRID", contraseña: "itKH85", cartaAsignada: "El Dragón Rojo", equipoEscondite: "1", rol: "LOBO", abecedarioDesordenado: "QWERTYUIOPASDFGHJKLZXCVBNM", abecedarioDesordenadoPareja: "MNBVCXZLKJHGFDSAPOIUYTREWQ", claveEscondite: "aBcDeF" },
-  { nombre: "ALBA ENFERMERA", contraseña: "MhzE51", cartaAsignada: "El Dragón Rojo", equipoEscondite: "1", rol: "LOBO", abecedarioDesordenado: "MNBVCXZLKJHGFDSAPOIUYTREWQ", abecedarioDesordenadoPareja: "QWERTYUIOPASDFGHJKLZXCVBNM", claveEscondite: "RtLhTg" },
+  { nombre: "CRIS", contraseña: "itKH85", cartaAsignada: "El Dragón Rojo", equipoEscondite: "1", rol: "LOBO", abecedarioDesordenado: "QWERTYUIOPASDFGHJKLZXCVBNM", abecedarioDesordenadoPareja: "MNBVCXZLKJHGFDSAPOIUYTREWQ", claveEscondite: "aBcDeF" },
+  { nombre: "ALBA C.", contraseña: "MhzE51", cartaAsignada: "El Dragón Rojo", equipoEscondite: "1", rol: "LOBO", abecedarioDesordenado: "MNBVCXZLKJHGFDSAPOIUYTREWQ", abecedarioDesordenadoPareja: "QWERTYUIOPASDFGHJKLZXCVBNM", claveEscondite: "RtLhTg" },
 
   { nombre: "HELENA", contraseña: "PKgw40", cartaAsignada: "El Lobo Gris", equipoEscondite: "2", rol: "LOBO", abecedarioDesordenado: "ZXCVBNMASDFGHJKLQWERTYUIOP", abecedarioDesordenadoPareja: "POIUYTREWQLKJHGFDSAMNBVCXZ", claveEscondite: "mNoPqR" },
   { nombre: "VICTOR", contraseña: "MPht23", cartaAsignada: "El Lobo Gris", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "POIUYTREWQLKJHGFDSAMNBVCXZ", abecedarioDesordenadoPareja: "ZXCVBNMASDFGHJKLQWERTYUIOP", claveEscondite: "sTuRwX" },
 
   { nombre: "RIAGUAS", contraseña: "Cssa36", cartaAsignada: "La Serpiente Esmeralda", equipoEscondite: "1", rol: "OVEJA", abecedarioDesordenado: "ASDFGHJKLZXCVBNMQWERTYUIOP", abecedarioDesordenadoPareja: "PLMOKNIJBUVYCTRXEZWQSDGFAH", claveEscondite: "yZaBcD" },
-  { nombre: "DANI GEMELO", contraseña: "GIWN61", cartaAsignada: "La Serpiente Esmeralda", equipoEscondite: "1", rol: "OVEJA", abecedarioDesordenado: "PLMOKNIJBUVYCTRXEZWQSDGFAH", abecedarioDesordenadoPareja: "ASDFGHJKLZXCVBNMQWERTYUIOP", claveEscondite: "eFgHiJ" },
+  { nombre: "DANI", contraseña: "GIWN61", cartaAsignada: "La Serpiente Esmeralda", equipoEscondite: "1", rol: "OVEJA", abecedarioDesordenado: "PLMOKNIJBUVYCTRXEZWQSDGFAH", abecedarioDesordenadoPareja: "ASDFGHJKLZXCVBNMQWERTYUIOP", claveEscondite: "eFgHiJ" },
 
   { nombre: "AMBRINOS", contraseña: "wNuT19", cartaAsignada: "El Águila Negra", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "MLPOKNIJBUVYCTRXEZWQSDGFAH", abecedarioDesordenadoPareja: "HGFDSAQWERTYUIOPLKJHZXCVBNM", claveEscondite: "kLmNoP" },
   { nombre: "DAVID", contraseña: "EWnD09", cartaAsignada: "El Águila Negra", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "HGFDSAQWERTYUIOPLKJHZXCVBNM", abecedarioDesordenadoPareja: "MLPOKNIJBUVYCTRXEZWQSDGFAH", claveEscondite: "qRsTuV" },
 
-  { nombre: "GONZALO", contraseña: "sEqV38", cartaAsignada: "El Cuervo Plateado", equipoEscondite: "1", rol: "OVEJA", abecedarioDesordenado: "LKJHGFDSAMNBVCXZPOIUYTREWQ", abecedarioDesordenadoPareja: "QAZWSXEDCRFVTGBYHNUJMIKOLP", claveEscondite: "wXyZaB" },
+  { nombre: "GONZA", contraseña: "sEqV38", cartaAsignada: "El Cuervo Plateado", equipoEscondite: "1", rol: "OVEJA", abecedarioDesordenado: "LKJHGFDSAMNBVCXZPOIUYTREWQ", abecedarioDesordenadoPareja: "QAZWSXEDCRFVTGBYHNUJMIKOLP", claveEscondite: "wXyZaB" },
   { nombre: "RUBEN", contraseña: "Ijyk57", cartaAsignada: "El Cuervo Plateado", equipoEscondite: "1", rol: "OVEJA", abecedarioDesordenado: "QAZWSXEDCRFVTGBYHNUJMIKOLP", abecedarioDesordenadoPareja: "LKJHGFDSAMNBVCXZPOIUYTREWQ", claveEscondite: "cDeFgH" },
 
   { nombre: "ALFONSO", contraseña: "kdzd56", cartaAsignada: "La Rosa Negra", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "MKIOLPNUJHYGBVFTRDCXESZWAQ", abecedarioDesordenadoPareja: "WSXEDCRFVTGBYHNUJMIKOLPZAQ", claveEscondite: "iJkLmN" },
@@ -64,7 +64,7 @@ export const usuarios = [
     ];
 	export const habitacionesMemorion = [
     { habitacion: "Habitación 1", huespedes: ["HELENA", "AMBRINOS"] },
-    { habitacion: "Habitación 2", huespedes: ["CRIS", "ALBA ENFERMERA" ] },
+    { habitacion: "Habitación 2", huespedes: ["CRIS", "ALBA C." ] },
     { habitacion: "Habitación 3", huespedes: ["SARA", "RUBEN"] },
     { habitacion: "Habitación 4", huespedes: ["LORENA", "VICTOR"] },
     { habitacion: "Habitación 5", huespedes: ["ALBA PERIODISTA", "JOTA"] },
