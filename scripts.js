@@ -719,7 +719,7 @@ async function mostrarResultados() {
 }
 
 // Llamar a la función para mostrar los resultados cuando se cargue la página
-document.addEventListener("DOMContentLoaded", mostrarResultados);
+//document.addEventListener("DOMContentLoaded", mostrarResultados);
 
 export function mostrarTelon(mensaje) {
     // Deshabilitar scroll y colocar la vista en la parte superior
@@ -740,7 +740,7 @@ export function mostrarTelon(mensaje) {
     contenido.className = "telon-contenido";
     contenido.innerHTML = `
         <p>${mensaje}</p>
-        <p class="contador">.</p>
+        <p class="contador">...</p>
         <img style="border-radius:100%;" src="/semiScape/IMAGEN/huella2.png" alt="huella de alguien..">
     `;
 
@@ -776,16 +776,18 @@ export function mostrarAbecedarioUsuario() {
   if (abecedarioElemento) {
     if (usuarioEncontrado) {
       const abecedario = usuarioEncontrado.abecedarioDesordenado.split(""); // Convertir en array
+      const letras = "abcdefghijklmnopqrstuvwxyz".split(""); // Abecedario sin la ñ
 
       abecedarioElemento.innerHTML = abecedario.map((letra, index) => 
         `<div class="abecedario-celda">
-          <span>${index + 1}</span> ${letra}
-        </div>`).join(""); // Cada letra en su celda con numeración
+          <span>${letras[index % letras.length]}</span> ${letra}
+        </div>`).join(""); // Usa letras en lugar de números, reciclando si hay más de 26 elementos
     } else {
-      abecedarioElemento.textContent = "Usuario no encontrado.";
+      abecedarioElemento.textContent = "F.";
     }
   }
 }
+
 export function transformarMensaje() {
   const username = localStorage.getItem("userName");
   const usuarioEncontrado = usuarios.find(user => user.nombre === username);
@@ -1533,4 +1535,60 @@ export function insertarEstilosYParticulas() {
 
     document.body.appendChild(particlesContainer);
 }
-
+export function shuffleUsuarios() {
+    // Clonar el array original para evitar modificarlo directamente
+    let shuffledUsuarios = [...usuarios];
+    
+    // Extraer los valores que deben moverse juntos
+    let cartas = shuffledUsuarios.map(u => ({
+        cartaAsignada: u.cartaAsignada,
+        abecedarioDesordenado: u.abecedarioDesordenado,
+        abecedarioDesordenadoPareja: u.abecedarioDesordenadoPareja
+    }));
+    
+    // Mezclar los valores de cartas sin alterar el orden de usuarios
+    let shuffledCartas = [...cartas].sort(() => Math.random() - 0.5);
+    
+    // Asignar los valores mezclados a los usuarios manteniendo el resto igual
+    shuffledUsuarios = shuffledUsuarios.map((user, index) => ({
+        ...user,
+        cartaAsignada: shuffledCartas[index].cartaAsignada,
+        abecedarioDesordenado: shuffledCartas[index].abecedarioDesordenado,
+        abecedarioDesordenadoPareja: shuffledCartas[index].abecedarioDesordenadoPareja
+    }));
+    
+    // Crear el contenido del txt manteniendo el formato original
+    let txtContent = `export const usuarios = [\n` +
+        shuffledUsuarios.map(u => 
+            `  { nombre: "${u.nombre}", contraseña: "${u.contraseña}", cartaAsignada: "${u.cartaAsignada}", equipoEscondite: "${u.equipoEscondite}", rol: "${u.rol}", abecedarioDesordenado: "${u.abecedarioDesordenado}", abecedarioDesordenadoPareja: "${u.abecedarioDesordenadoPareja}", claveEscondite: "${u.claveEscondite}" },` 
+        ).join('\n') + `\n];`;
+    
+    // Crear el elemento de texto en pantalla
+    let txtElement = document.createElement("div");
+    txtElement.textContent = txtContent;
+    txtElement.style.position = "fixed";
+    txtElement.style.bottom = "20px";
+    txtElement.style.left = "50%";
+    txtElement.style.transform = "translateX(-50%)";
+    txtElement.style.background = "black";
+    txtElement.style.color = "white";
+    txtElement.style.padding = "10px";
+    txtElement.style.borderRadius = "5px";
+    txtElement.style.cursor = "pointer";
+    txtElement.style.whiteSpace = "pre-wrap";
+    txtElement.style.zIndex = "1000";
+    txtElement.style.maxHeight = "80vh";
+    txtElement.style.overflowY = "auto";
+    document.body.appendChild(txtElement);
+    
+    // Copiar al portapapeles al hacer clic
+    txtElement.addEventListener("click", () => {
+        navigator.clipboard.writeText(txtContent);
+        alert("Copiado al portapapeles");
+    });
+    
+    // Eliminar después de 20 segundos
+    setTimeout(() => {
+        txtElement.remove();
+    }, 20000);
+}
