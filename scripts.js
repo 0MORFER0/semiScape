@@ -740,7 +740,7 @@ export function mostrarTelon(mensaje) {
     contenido.className = "telon-contenido";
     contenido.innerHTML = `
         <p>${mensaje}</p>
-        <p class="contador">...</p>
+        <p class="contador">.</p>
         <img style="border-radius:100%;" src="/semiScape/IMAGEN/huella2.png" alt="huella de alguien..">
     `;
 
