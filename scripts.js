@@ -1365,7 +1365,7 @@ export function generarFormularioPregunta() {
     const contenedor = document.getElementById("formulario-container");
     contenedor.innerHTML = `
         <form id="preguntaForm">
-            <label for="pregunta">Pregunta:</label>
+            <label for="pregunta">Tu pregunta por favor:</label>
             <input type="text" id="pregunta" name="pregunta" required>
 
             <label for="respuesta1">Respuesta 1 (esta es la correcta, después se colocará random):</label>
