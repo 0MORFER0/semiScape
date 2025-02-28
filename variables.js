@@ -23,7 +23,7 @@ export const usuarios = [
   { nombre: "LORENA", contraseña: "OPIA88", cartaAsignada: "El Espíritu del Bosque", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "MNBVCXZLKJHGFDSAPOIUYTREWQ", abecedarioDesordenadoPareja: "QWERTYUIOPASDFGHJKLZXCVBNM", claveEscondite: "gHiJkL" },
   { nombre: "MANRY", contraseña: "fooX22", cartaAsignada: "El Espíritu del Bosque", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "QWERTYUIOPASDFGHJKLZXCVBNM", abecedarioDesordenadoPareja: "MNBVCXZLKJHGFDSAPOIUYTREWQ", claveEscondite: "mNoPqR" },
 
-  { nombre: "ALBA PERIODISTA", contraseña: "RpMi67", cartaAsignada: "El Mago de Hierro", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "ZXCVBNMASDFGHJKLQWERTYUIOP", abecedarioDesordenadoPareja: "POIUYTREWQLKJHGFDSAMNBVCXZ", claveEscondite: "sTuVwX" },
+  { nombre: "ALBA S.", contraseña: "RpMi67", cartaAsignada: "El Mago de Hierro", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "ZXCVBNMASDFGHJKLQWERTYUIOP", abecedarioDesordenadoPareja: "POIUYTREWQLKJHGFDSAMNBVCXZ", claveEscondite: "sTuVwX" },
   { nombre: "RURU", contraseña: "jakp23", cartaAsignada: "El Mago de Hierro", equipoEscondite: "2", rol: "LOBO", abecedarioDesordenado: "POIUYTREWQLKJHGFDSAMNBVCXZ", abecedarioDesordenadoPareja: "ZXCVBNMASDFGHJKLQWERTYUIOP", claveEscondite: "yZaBcD" }
 ];
 
