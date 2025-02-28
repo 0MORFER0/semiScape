@@ -377,7 +377,6 @@ async function login() {
   }
 }
 */
-import { usuarios } from "./variables.js";
 import { trenes } from "./variables.js";
 import { respuestasTrenes } from "./variables.js";
 import { fraseDiccionario } from "./variables.js";
