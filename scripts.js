@@ -340,13 +340,15 @@ async function fetchUsers() {
   }
 }
 
+import { usuarios } from "./variables.js";
+
 // Función para llenar el select con los nombres de usuario
 function populateUsernames() {
   const usernameSelect = document.getElementById('username');
-  users.forEach(user => {
+  usuarios.forEach(user => {
     const option = document.createElement('option');
-    option.value = user.name;
-    option.textContent = user.name;
+    option.value = user.nombre;
+    option.textContent = user.nombre;
     usernameSelect.appendChild(option);
   });
 }
