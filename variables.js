@@ -1,21 +1,21 @@
 export const usuarios = [
   { nombre: "CRIS", contraseña: "itKH85", cartaAsignada: "El Dragón Rojo", equipoEscondite: "1", rol: "LOBO", abecedarioDesordenado: "QWERTYUIOPASDFGHJKLZXCVBNM", abecedarioDesordenadoPareja: "MNBVCXZLKJHGFDSAPOIUYTREWQ", claveEscondite: "aBcDeF" },
-  { nombre: "ALBA C.", contraseña: "MhzE51", cartaAsignada: "El Dragón Rojo", equipoEscondite: "1", rol: "LOBO", abecedarioDesordenado: "MNBVCXZLKJHGFDSAPOIUYTREWQ", abecedarioDesordenadoPareja: "QWERTYUIOPASDFGHJKLZXCVBNM", claveEscondite: "RtLhTg" },
+  { nombre: "ALBA C.", contraseña: "MhzE51", cartaAsignada: "El Dragón Rojo", equipoEscondite: "1", rol: "OVEJA", abecedarioDesordenado: "MNBVCXZLKJHGFDSAPOIUYTREWQ", abecedarioDesordenadoPareja: "QWERTYUIOPASDFGHJKLZXCVBNM", claveEscondite: "RtLhTg" },
 
-  { nombre: "ELENA", contraseña: "PKgw40", cartaAsignada: "El Lobo Gris", equipoEscondite: "2", rol: "LOBO", abecedarioDesordenado: "ZXCVBNMASDFGHJKLQWERTYUIOP", abecedarioDesordenadoPareja: "POIUYTREWQLKJHGFDSAMNBVCXZ", claveEscondite: "mNoPqR" },
+  { nombre: "ELENA", contraseña: "PKgw40", cartaAsignada: "El Lobo Gris", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "ZXCVBNMASDFGHJKLQWERTYUIOP", abecedarioDesordenadoPareja: "POIUYTREWQLKJHGFDSAMNBVCXZ", claveEscondite: "mNoPqR" },
   { nombre: "VICTOR", contraseña: "MPht23", cartaAsignada: "El Lobo Gris", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "POIUYTREWQLKJHGFDSAMNBVCXZ", abecedarioDesordenadoPareja: "ZXCVBNMASDFGHJKLQWERTYUIOP", claveEscondite: "sTuRwX" },
 
   { nombre: "RIAGUAS", contraseña: "Cssa36", cartaAsignada: "La Serpiente Esmeralda", equipoEscondite: "1", rol: "OVEJA", abecedarioDesordenado: "ASDFGHJKLZXCVBNMQWERTYUIOP", abecedarioDesordenadoPareja: "PLMOKNIJBUVYCTRXEZWQSDGFAH", claveEscondite: "yZaBcD" },
   { nombre: "DANI", contraseña: "GIWN61", cartaAsignada: "La Serpiente Esmeralda", equipoEscondite: "1", rol: "OVEJA", abecedarioDesordenado: "PLMOKNIJBUVYCTRXEZWQSDGFAH", abecedarioDesordenadoPareja: "ASDFGHJKLZXCVBNMQWERTYUIOP", claveEscondite: "eFgHiJ" },
 
-  { nombre: "AMBRINOS", contraseña: "wNuT19", cartaAsignada: "El Águila Negra", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "MLPOKNIJBUVYCTRXEZWQSDGFAH", abecedarioDesordenadoPareja: "HGFDSAQWERTYUIOPLKJHZXCVBNM", claveEscondite: "kLmNoP" },
+  { nombre: "AMBRINOS", contraseña: "wNuT19", cartaAsignada: "El Águila Negra", equipoEscondite: "2", rol: "LOBO", abecedarioDesordenado: "MLPOKNIJBUVYCTRXEZWQSDGFAH", abecedarioDesordenadoPareja: "HGFDSAQWERTYUIOPLKJHZXCVBNM", claveEscondite: "kLmNoP" },
   { nombre: "DAVID", contraseña: "EWnD09", cartaAsignada: "El Águila Negra", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "HGFDSAQWERTYUIOPLKJHZXCVBNM", abecedarioDesordenadoPareja: "MLPOKNIJBUVYCTRXEZWQSDGFAH", claveEscondite: "qRsTuV" },
 
   { nombre: "GONZA", contraseña: "sEqV38", cartaAsignada: "El Cuervo Plateado", equipoEscondite: "1", rol: "OVEJA", abecedarioDesordenado: "LKJHGFDSAMNBVCXZPOIUYTREWQ", abecedarioDesordenadoPareja: "QAZWSXEDCRFVTGBYHNUJMIKOLP", claveEscondite: "wXyZaB" },
   { nombre: "RUBEN", contraseña: "Ijyk57", cartaAsignada: "El Cuervo Plateado", equipoEscondite: "1", rol: "OVEJA", abecedarioDesordenado: "QAZWSXEDCRFVTGBYHNUJMIKOLP", abecedarioDesordenadoPareja: "LKJHGFDSAMNBVCXZPOIUYTREWQ", claveEscondite: "cDeFgH" },
 
-  { nombre: "ALFONSO", contraseña: "kdzd56", cartaAsignada: "La Rosa Negra", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "MKIOLPNUJHYGBVFTRDCXESZWAQ", abecedarioDesordenadoPareja: "WSXEDCRFVTGBYHNUJMIKOLPZAQ", claveEscondite: "iJkLmN" },
-  { nombre: "SARA", contraseña: "lGqn88", cartaAsignada: "La Rosa Negra", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "WSXEDCRFVTGBYHNUJMIKOLPZAQ", abecedarioDesordenadoPareja: "MKIOLPNUJHYGBVFTRDCXESZWAQ", claveEscondite: "oPqRsT" },
+  { nombre: "ALFONSO", contraseña: "kdzd56", cartaAsignada: "La Rosa Negra", equipoEscondite: "2", rol: "LOBO", abecedarioDesordenado: "MKIOLPNUJHYGBVFTRDCXESZWAQ", abecedarioDesordenadoPareja: "WSXEDCRFVTGBYHNUJMIKOLPZAQ", claveEscondite: "iJkLmN" },
+  { nombre: "SARA", contraseña: "lGqn88", cartaAsignada: "La Rosa Negra", equipoEscondite: "2", rol: "LOBO", abecedarioDesordenado: "WSXEDCRFVTGBYHNUJMIKOLPZAQ", abecedarioDesordenadoPareja: "MKIOLPNUJHYGBVFTRDCXESZWAQ", claveEscondite: "oPqRsT" },
 
   { nombre: "FIRE", contraseña: "rXwF51", cartaAsignada: "El Camaleón Dorado", equipoEscondite: "1", rol: "OVEJA", abecedarioDesordenado: "PLMOKNIJBUVYCTRXEZWQSDGFAH", abecedarioDesordenadoPareja: "ASDFGHJKLZXCVBNMQWERTYUIOP", claveEscondite: "uVwXyZ" },
   { nombre: "JOTA", contraseña: "vrSq56", cartaAsignada: "El Camaleón Dorado", equipoEscondite: "1", rol: "OVEJA", abecedarioDesordenado: "ASDFGHJKLZXCVBNMQWERTYUIOP", abecedarioDesordenadoPareja: "PLMOKNIJBUVYCTRXEZWQSDGFAH", claveEscondite: "aBcDeF" },
@@ -24,7 +24,7 @@ export const usuarios = [
   { nombre: "MANRY", contraseña: "fooX22", cartaAsignada: "El Espíritu del Bosque", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "QWERTYUIOPASDFGHJKLZXCVBNM", abecedarioDesordenadoPareja: "MNBVCXZLKJHGFDSAPOIUYTREWQ", claveEscondite: "mNoPqR" },
 
   { nombre: "ALBA S.", contraseña: "RpMi67", cartaAsignada: "El Mago de Hierro", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "ZXCVBNMASDFGHJKLQWERTYUIOP", abecedarioDesordenadoPareja: "POIUYTREWQLKJHGFDSAMNBVCXZ", claveEscondite: "sTuVwX" },
-  { nombre: "RURU", contraseña: "jakp23", cartaAsignada: "El Mago de Hierro", equipoEscondite: "2", rol: "LOBO", abecedarioDesordenado: "POIUYTREWQLKJHGFDSAMNBVCXZ", abecedarioDesordenadoPareja: "ZXCVBNMASDFGHJKLQWERTYUIOP", claveEscondite: "yZaBcD" }
+  { nombre: "RURU", contraseña: "jakp23", cartaAsignada: "El Mago de Hierro", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "POIUYTREWQLKJHGFDSAMNBVCXZ", abecedarioDesordenadoPareja: "ZXCVBNMASDFGHJKLQWERTYUIOP", claveEscondite: "yZaBcD" }
 ];
 
 
