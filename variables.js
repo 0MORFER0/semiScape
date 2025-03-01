@@ -58,11 +58,11 @@ export const usuarios = [
     ];
 
 	export const habitacionesMemorion = [
-    { habitacion: "Habitación 1", huespedes: ["HELENA", "AMBRINOS"] },
+    { habitacion: "Habitación 1", huespedes: ["ELENA", "AMBRINOS"] },
     { habitacion: "Habitación 2", huespedes: ["CRIS", "ALBA C." ] },
     { habitacion: "Habitación 3", huespedes: ["SARA", "RUBEN"] },
     { habitacion: "Habitación 4", huespedes: ["LORENA", "VICTOR"] },
-    { habitacion: "Habitación 5", huespedes: ["ALBA PERIODISTA", "JOTA"] },
+    { habitacion: "Habitación 5", huespedes: ["ALBA S.", "JOTA"] },
     { habitacion: "Habitación 6", huespedes: ["MANRY", "RIAGUAS", "RURU"] },
     { habitacion: "Habitación 7", huespedes: ["ALFONSO", "DANI", "GONZA"] },
     { habitacion: "Habitación 8", huespedes: ["DAVID", "DANI MADRID", "FIRE", "FDEZ"] }
