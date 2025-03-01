@@ -2,7 +2,7 @@ export const usuarios = [
   { nombre: "CRIS", contraseña: "itKH85", cartaAsignada: "El Dragón Rojo", equipoEscondite: "1", rol: "LOBO", abecedarioDesordenado: "QWERTYUIOPASDFGHJKLZXCVBNM", abecedarioDesordenadoPareja: "MNBVCXZLKJHGFDSAPOIUYTREWQ", claveEscondite: "aBcDeF" },
   { nombre: "ALBA C.", contraseña: "MhzE51", cartaAsignada: "El Dragón Rojo", equipoEscondite: "1", rol: "LOBO", abecedarioDesordenado: "MNBVCXZLKJHGFDSAPOIUYTREWQ", abecedarioDesordenadoPareja: "QWERTYUIOPASDFGHJKLZXCVBNM", claveEscondite: "RtLhTg" },
 
-  { nombre: "HELENA", contraseña: "PKgw40", cartaAsignada: "El Lobo Gris", equipoEscondite: "2", rol: "LOBO", abecedarioDesordenado: "ZXCVBNMASDFGHJKLQWERTYUIOP", abecedarioDesordenadoPareja: "POIUYTREWQLKJHGFDSAMNBVCXZ", claveEscondite: "mNoPqR" },
+  { nombre: "ELENA", contraseña: "PKgw40", cartaAsignada: "El Lobo Gris", equipoEscondite: "2", rol: "LOBO", abecedarioDesordenado: "ZXCVBNMASDFGHJKLQWERTYUIOP", abecedarioDesordenadoPareja: "POIUYTREWQLKJHGFDSAMNBVCXZ", claveEscondite: "mNoPqR" },
   { nombre: "VICTOR", contraseña: "MPht23", cartaAsignada: "El Lobo Gris", equipoEscondite: "2", rol: "OVEJA", abecedarioDesordenado: "POIUYTREWQLKJHGFDSAMNBVCXZ", abecedarioDesordenadoPareja: "ZXCVBNMASDFGHJKLQWERTYUIOP", claveEscondite: "sTuRwX" },
 
   { nombre: "RIAGUAS", contraseña: "Cssa36", cartaAsignada: "La Serpiente Esmeralda", equipoEscondite: "1", rol: "OVEJA", abecedarioDesordenado: "ASDFGHJKLZXCVBNMQWERTYUIOP", abecedarioDesordenadoPareja: "PLMOKNIJBUVYCTRXEZWQSDGFAH", claveEscondite: "yZaBcD" },
